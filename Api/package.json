@@ -1,0 +1,19 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Si",
+  "main": "Api.js",
+  "scripts": {
+    "dev": "node --watch Api.js"
+  },
+  "author": "Unai",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "node": "^22.7.0",
+    "express": "4.19.2",
+    "mysql": "^2.18.1"
+  }
+}
