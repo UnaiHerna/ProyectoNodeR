@@ -1,11 +1,11 @@
 const { exec } = require('child_process');
 const path = require('path');
 
-function executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp) {
-    const scriptPath = path.join(__dirname, '../RPython/f_steady_state_wwtp.R');
+function r(a, b) {
+    const scriptPath = path.join(__dirname, '../RPython/suma.R');
 
     // Construye el comando con los argumentos
-    const command = `Rscript ${scriptPath} ${mltss_sp} ${so_aer_sp} ${q_int} ${tss_eff_sp} ${temp}`;
+    const command = `Rscript ${scriptPath} ${a} ${b}`;
 
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
@@ -14,11 +14,10 @@ function executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp) {
             } else if (stderr) {
                 reject(`Stderr: ${stderr}`);
             } else {
-                console.log(`${stdout}`);
-                resolve(stdout);
+                resolve(stdout.trim()); // Elimina espacios en blanco y saltos de línea
             }
         });
     });
 }
 
-module.exports = executeRScript;
+module.exports = r;
