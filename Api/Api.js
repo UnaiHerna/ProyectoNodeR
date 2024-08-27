@@ -1,6 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
-const executeRScript = require('./executeRScript');
+const executeRScript = require('./func/executeRScript');
 // const r = require('./r');
 // const path = require('path'); // Se necesita para manejar rutas correctamente
 
