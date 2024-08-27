@@ -34,8 +34,9 @@ const desiredPort = process.env.PORT ?? 1234;
     // res.sendFile(path.join(webPath, 'index.html')); // Sirve el index.html de React
 // });
 
-app.get('/', (req, res) => {
-    connection.query('SELECT * FROM variable', (err, rows, fields) => {
+
+app.get('/heatmap', (req, res) => {
+    connection.query('SELECT * FROM heatmap', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
             res.status(500).send('Internal server error');
