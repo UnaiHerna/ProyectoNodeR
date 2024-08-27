@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
+const executeRScript = require('./executeRScript');
 // const path = require('path'); // Se necesita para manejar rutas correctamente
 
 const connection = mysql.createConnection({
@@ -44,6 +45,15 @@ app.get('/', (req, res) => {
 
 app.listen(desiredPort, () => {
     console.log(`Server listening on port http://localhost:${desiredPort}`);
+});
+
+app.get('/r', async (req, res) => {
+    try {
+        const result = await executeRScript();
+        res.status(200).send(result);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 process.on('SIGINT', () => {
