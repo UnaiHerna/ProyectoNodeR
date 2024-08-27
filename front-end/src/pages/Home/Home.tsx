@@ -6,7 +6,7 @@ import DataDisplay from '../../components/DataDisplay'; // Ajusta la ruta según
 const Home: React.FC = () => {
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
+      <h1>DataPredictor</h1>
       <DataDisplay />
     </div>
   );
