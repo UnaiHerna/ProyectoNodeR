@@ -27,6 +27,8 @@ const useFetchData = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result: ApiResponse = await response.json();
+        console.log(result);
+        
         setData(result);
       } catch (error) {
         if (error instanceof Error) {

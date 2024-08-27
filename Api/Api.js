@@ -1,15 +1,14 @@
 const express = require('express');
 const mysql = require('mysql');
+const cors = require('cors'); // Importa el middleware CORS
 const executeRScript = require('./executeRScript');
-// const r = require('./r');
-// const path = require('path'); // Se necesita para manejar rutas correctamente
 
-
+const app = express();
 const connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'Cim12345!',
-    database : 'sergio'
+    host: 'localhost',
+    user: 'root',
+    password: 'Cim12345!',
+    database: 'sergio'
 });
 
 connection.connect(err => {
@@ -21,22 +20,21 @@ connection.connect(err => {
     }
 });
 
-const app = express();
 const desiredPort = process.env.PORT ?? 1234;
 
-// Ajusta la ruta para servir los archivos estáticos
+// Configura CORS para permitir solicitudes desde cualquier origen
+app.use(cors());
+
+// Si necesitas servir archivos estáticos, descomenta y ajusta esto
+// const path = require('path');
 // const webPath = path.join(__dirname, 'web');
-
-// Sirve todos los archivos estáticos dentro de la carpeta 'web'
 // app.use('/web', express.static(webPath));
-
 // app.get('/web/*', (req, res) => {
-    // res.sendFile(path.join(webPath, 'index.html')); // Sirve el index.html de React
+//     res.sendFile(path.join(webPath, 'index.html')); // Sirve el index.html de React
 // });
 
-
 app.get('/heatmap', (req, res) => {
-    connection.query('SELECT * FROM heatmap', (err, rows, fields) => {
+    connection.query('SELECT * FROM heatmap', (err, rows) => {
         if (err) {
             console.error('Error querying the database:', err);
             res.status(500).send('Internal server error');
@@ -46,17 +44,18 @@ app.get('/heatmap', (req, res) => {
     });
 });
 
-app.listen(desiredPort, () => {
-    console.log(`Server listening on port http://localhost:${desiredPort}`);
-});
-
 app.get('/r', async (req, res) => {
     try {
         const result = await executeRScript(3000.0, 3.0, 52300.0, 10.0, 20.0);
         res.status(200).send(result);
     } catch (error) {
-        res.status(500).send(error);
+        console.error('Error executing R script:', error);
+        res.status(500).send('Internal server error');
     }
+});
+
+app.listen(desiredPort, () => {
+    console.log(`Server listening on port http://localhost:${desiredPort}`);
 });
 
 process.on('SIGINT', () => {
@@ -69,4 +68,3 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
-
