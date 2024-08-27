@@ -43,7 +43,7 @@ const useFetchData = () => {
 
     fetchData();
   }, []);
-
+  
   return { data, loading, error };
 };
 

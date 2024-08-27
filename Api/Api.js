@@ -23,7 +23,11 @@ connection.connect(err => {
 const desiredPort = process.env.PORT ?? 1234;
 
 // Configura CORS para permitir solicitudes desde cualquier origen
-app.use(cors());
+app.use(cors({
+    origin: '*', // Permite todos los orígenes
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'] // Encabezados permitidos
+}));
 
 // Si necesitas servir archivos estáticos, descomenta y ajusta esto
 // const path = require('path');
