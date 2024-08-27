@@ -636,19 +636,20 @@ f_steady_state_wwtp <- function(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp) {
 
 # End of code --------------------------------------------------------------------------------------
 
-library(jsonlite)
+# library(jsonlite)
 
 args <- commandArgs(trailingOnly = TRUE)
 
 # Extract arguments
-mltss_sp <- as.numeric(args[1])
-so_aer_sp <- as.numeric(args[2])
-q_int <- as.numeric(args[3])
-tss_eff_sp <- as.numeric(args[4])
-temp <- as.numeric(args[5])
+mltss_sp <- as.double(x = args[1L])
+so_aer_sp <- as.double(x = args[2L])
+q_int <- as.double(x = args[3L])
+tss_eff_sp <- as.double(x = args[4L])
+temp <- as.double(x = args[5L])
 
 # Call the function and capture the result
-result <- f_steady_state_wwtp(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp)
+result <- f_steady_state_wwtp(mltss_sp = mltss_sp, so_aer_sp = so_aer_sp, q_int = q_int, tss_eff_sp = tss_eff_sp, temp = temp)
+remove(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp)
 
 # Output the result in JSON format
-cat(toJSON(result, auto_unbox = TRUE, pretty = TRUE))
+cat(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
