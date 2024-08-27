@@ -4,6 +4,7 @@ const executeRScript = require('./executeRScript');
 // const r = require('./r');
 // const path = require('path'); // Se necesita para manejar rutas correctamente
 
+
 const connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
