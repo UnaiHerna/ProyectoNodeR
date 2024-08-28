@@ -16,14 +16,12 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
         return cachedData;
     }
 
-    console.log(endDate);
-
-    let query = {
+    const resultados = await SensorDatos.findAll({
         attributes: [
             ['timestamp', 'time'],
             ['valor', 'value'],
-            [col('Equipo.descripcion'), 'equipo'],
-            ['deltat', 'deltat']
+            [col('Sensor.deltat'), 'deltat'],
+            [col('Sensor->Equipo.descripcion'), 'equipo']
         ],
         include: [
             {
@@ -42,18 +40,12 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
             }
         ],
         where: {
-            [Op.and]: [
-                { 'SensorDatos.timestamp': { [Op.between]: [startDate, endDate] } }
-            ]
+            timestamp: { [Op.between]: [startDate, endDate] }
         },
         order: [['timestamp', 'ASC']]
-    };
+    });
 
     try {
-        // Validar las fechas si es necesario
-        query = dateValidator(query, endDate, startDate);
-
-        const resultados = await SensorDatos.findAll(query);
 
         const datos = resultados.map(r => ({
             time: r.time,
