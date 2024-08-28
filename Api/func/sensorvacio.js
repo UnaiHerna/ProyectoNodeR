@@ -1,17 +1,17 @@
-const { Op, fn, col } = require('sequelize');
+const { Op, col } = require('sequelize');
 const Cache = require('node-cache');
-const { SensorDatos, Sensor, Variable, Equipo } = require('./models'); // Asegúrate de definir tus modelos
-const { setCachedResponse, getCachedResponse } = require('./redisClient'); // Implementa las funciones de caché
-const { dateValidator } = require('./utils/dateChecker'); // Implementa la función dateValidator
-const { generarHuecos } = require('./utils/gapGenerator'); // Implementa la función generarHuecos
-const { calcularDeltaPrima, getDatosSinHueco } = require('./utils/agregacion'); // Implementa las funciones de agregación
+const { Sensor, SensorDatos, Variable, Equipo } = require('../models'); // Asegúrate de definir tus modelos
+const redisClient = require('./redisClient'); // Implementa las funciones de caché
+const { dateValidator } = require('./dateChecker'); // Implementa la función dateValidator
+const { generarHuecos } = require('./gapGenerator'); // Implementa la función generarHuecos
+const { calcularDeltaPrima, getDatosSinHueco } = require('./agregacion'); // Implementa las funciones de agregación
 
 const cache = new Cache({ stdTTL: 3600, checkperiod: 600 }); // TTL de caché de 1 hora
 
 // Función para leer datos del sensor
 async function readDatosSensorByVariable(variable, equipo, startDate = null, endDate = null, tipo = null) {
     const cacheKey = `datos_sensor_${variable}_${equipo}_${startDate}_${endDate}_${tipo}`;
-    const cachedData = getCachedResponse(cacheKey);
+    const cachedData = await redisClient.getCachedResponse(cacheKey);
     if (cachedData) {
         return cachedData;
     }
@@ -68,7 +68,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
         const { datosWithGaps, huecosInfo } = generarHuecos(datos);
         const datosFinales = agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo);
 
-        setCachedResponse(cacheKey, datosFinales);
+        redisClient.setCachedResponse(cacheKey, datosFinales);
 
         return datosFinales;
     } catch (error) {

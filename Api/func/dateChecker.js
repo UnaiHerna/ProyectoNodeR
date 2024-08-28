@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { SensorDatos } = require('./models'); // Asegúrate de definir y exportar el modelo SensorDatos
+const { SensorDatos } = require('../models'); // Asegúrate de definir y exportar el modelo SensorDatos
 
 /**
  * Valida y ajusta las fechas en la consulta.
