@@ -39,7 +39,7 @@ const Body: React.FC = () => {
 
       {/* Input del buscador usando NextUI */}
       <Input
-        clearable
+        isClearable
         underlined
         placeholder="Buscar planta..."
         value={searchTerm}
