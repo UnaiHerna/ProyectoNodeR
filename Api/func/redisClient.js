@@ -1,3 +1,4 @@
+// Api/func/redisClient.js
 const redis = require('redis');
 
 class RedisClient {
@@ -7,6 +8,10 @@ class RedisClient {
         });
 
         this.client.on('error', (err) => {
+            console.error('Error connecting to Redis:', err);
+        });
+
+        this.client.connect().catch(err => {
             console.error('Error connecting to Redis:', err);
         });
     }
@@ -32,6 +37,10 @@ class RedisClient {
         } catch (err) {
             console.error('Error setting data to Redis:', err);
         }
+    }
+
+    close() {
+        return this.client.quit(); // Asegúrate de cerrar la conexión correctamente
     }
 }
 

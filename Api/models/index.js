@@ -1,12 +1,24 @@
-// Api/models/index.js
-
+const sequelize = require('../func/sequelize.js');
 const Sensor = require('./sensor');
-const SensorDatos = require('./sensorDatos'); // Importa el modelo de SensorDatos
-const Variable = require('./variable'); // Importa el modelo de Variable
-const Equipo = require('./equipo'); // Importa el modelo de Equipo
+const SensorDatos = require('./sensorDatos');
+const Variable = require('./variable');
+const Equipo = require('./equipo');
 
-// Exporta todos los modelos
+// Asociaciones
+Sensor.belongsTo(Equipo, { foreignKey: 'id_equipo' });
+Equipo.hasMany(Sensor, { foreignKey: 'id_equipo' });
+
+Sensor.belongsTo(Variable, { foreignKey: 'id_variable' });
+Variable.hasMany(Sensor, { foreignKey: 'id_variable' });
+
+Sensor.hasMany(SensorDatos, { foreignKey: 'id_equipo' });
+SensorDatos.belongsTo(Sensor, { foreignKey: 'id_equipo' });
+
+Sensor.hasMany(SensorDatos, { foreignKey: 'id_variable' });
+SensorDatos.belongsTo(Sensor, { foreignKey: 'id_variable' });
+
 module.exports = {
+    sequelize,
     Sensor,
     SensorDatos,
     Variable,

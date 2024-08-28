@@ -4,7 +4,7 @@ const { Sensor, SensorDatos, Variable, Equipo } = require('../models'); // Aseg�
 const redisClient = require('./redisClient'); // Implementa las funciones de caché
 const { dateValidator } = require('./dateChecker'); // Implementa la función dateValidator
 const { generarHuecos } = require('./gapGenerator'); // Implementa la función generarHuecos
-const { calcularDeltaPrima, getDatosSinHueco } = require('./agregacion'); // Implementa las funciones de agregación
+const { calcularDeltaPrima, getDatosSinHueco } = require('./dateModifier'); // Implementa las funciones de agregación
 
 const cache = new Cache({ stdTTL: 3600, checkperiod: 600 }); // TTL de caché de 1 hora
 
@@ -15,6 +15,8 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
     if (cachedData) {
         return cachedData;
     }
+
+    console.log(endDate);
 
     let query = {
         attributes: [
@@ -52,6 +54,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
         query = dateValidator(query, endDate, startDate);
 
         const resultados = await SensorDatos.findAll(query);
+
         const datos = resultados.map(r => ({
             time: r.time,
             value: r.value,
