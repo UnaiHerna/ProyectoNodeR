@@ -98,9 +98,9 @@ function getDatosSinHueco(timeLimits, rawData, rawTime, z) {
     const groupedData = [];
     let currentGroup = [];
 
-    const t0 = moment(timeLimits[0]).valueOf();
-    const tiempoFinal = moment(timeLimits[1]).valueOf();
-    const intervalo = z * 1000; // en milisegundos
+    let t0 = moment(timeLimits[0]).valueOf();
+    let tiempoFinal = moment(timeLimits[1]).valueOf();
+    let intervalo = z * 1000; // en milisegundos
 
     let offset_ = 0;
     let t1 = t0 + intervalo;
