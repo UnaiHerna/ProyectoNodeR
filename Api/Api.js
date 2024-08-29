@@ -2,10 +2,18 @@ const express = require('express');
 const executeRScript = require('./utils/executeRScript');
 const { readDatosSensorByVariable } = require('./utils/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
 const connection = require('./db/database'); // Importa la conexión a la base de datos
+const cors = require('cors');
 
 const app = express();
 
-const desiredPort = process.env.PORT ?? 1234;
+app.use(cors({
+    origin: '*', // Permitir todas las orígenes
+    credentials: true, // Permitir cookies o autorizaciones
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Permitir todos los métodos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Permitir todos los headers
+}));
+
+const desiredPort = process.env.PORT ?? 8000;
 
 app.get('/heatmap', (res) => {
     connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
@@ -18,9 +26,10 @@ app.get('/heatmap', (res) => {
     });
 });
 
-app.get('/r', async (res) => {
+app.get('/r', async (req, res) => {
+    const { mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp } = req.query;
     try {
-        const result = await executeRScript(3000.0, 3.0, 52300.0, 10.0, 20.0);
+        const result = await executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp);
         res.status(200).send(result);
     } catch (error) {
         console.error('Error executing R script:', error);
