@@ -2,5 +2,6 @@
     "relativePath.omitParts": [
         
         "\\/index$"
-    ]
+    ],
+    "r.lsp.promptToInstall": false
 }

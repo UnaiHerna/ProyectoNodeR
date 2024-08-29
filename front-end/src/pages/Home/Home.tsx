@@ -6,10 +6,10 @@ import Body from './Home_components/Body';
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <SidebarAndNavbar />
+    <>
+      <SidebarAndNavbar title=''/>
       <Body />
-    </div>
+    </>
   );
 };
 

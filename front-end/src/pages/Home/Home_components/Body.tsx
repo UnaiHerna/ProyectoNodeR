@@ -1,54 +1,54 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Input } from "@nextui-org/react";
 import Tarjetas from "./nexUI/Tarjetas";
+import SelectUI from "./nexUI/select";
+import { tarjetasData } from "../../../hooks/tarjetasData";
 
 const Body: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  // Listado de datos de tarjetas
-  const tarjetasData = [
-    {
-      title: "EDAR Ranilla",
-      subtitle: "EDAR Ranilla",
-      address: "Calle Teodoro Murua, 20500,1C....",
-      buttonText: "Gestionar Planta",
-      imageUrl: "https://www.retema.es/sites/default/files/styles/imagen_contenido_ampliado/public/2022-07/eEtcKxBuiKPzy5JzmOeXqVkawLr6FICI9kP.jpg.webp?itok=eCVv0Mdi",
-      iconUrl: "/online.png",
-    },
-    {
-      title: "EDAR Sedatez",
-      subtitle: "EDAR Sedatez",
-      address: "Calle Teodoro Murua, 20500,1C....",
-      buttonText: "Gestionar Planta",
-      imageUrl: "https://www.residuosprofesional.com/wp-content/uploads/2020/09/edar.jpg",
-      iconUrl: "/online.png",
-    },
-    // Añade más tarjetas aquí
-  ];
+  const handleButtonClick = () => {
+    navigate('/gestionar-planta');
+  };
+  
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
-  // Filtrar las tarjetas basándose en el término de búsqueda
-  const filteredTarjetas = tarjetasData.filter((tarjeta) =>
-    tarjeta.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tarjeta.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tarjeta.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredTarjetas = tarjetasData.filter((tarjeta) => {
+    const matchesSearchTerm =
+      tarjeta.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tarjeta.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tarjeta.address.toLowerCase().includes(searchTerm.toLowerCase());
+  
+    const matchesStatus =
+      selectedStatus.length === 0 || selectedStatus.includes('all') || selectedStatus.includes(tarjeta.status);
+  
+    // Return true if both search term and status match
+    return matchesSearchTerm && matchesStatus;
+  });
 
   return (
-    <div className="p-8 w-full">
-      <h1 className="text-3xl font-bold mb-4">Welcome to the Home Page</h1>
+    <div className="p-8 w-full pt-24">
+      <div className="flex flex-row w-full justify-between pb-4">
+        <h1 className="text-black font-pt-sans text-2xl font-bold leading-normal self-end">Machine List</h1>
+        <ul className="flex flex-row-reverse gap-4">
+          <Input
+            type="text"
+            label="Buscar..."
+            isClearable
+            value={searchTerm}
+            className="w-12/12 h-11"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <SelectUI
+            selectedStatus={selectedStatus}
+            onChange={setSelectedStatus} // Ensure this is correctly updating state
+          />
+        </ul>
+      </div>
 
-      {/* Input del buscador usando NextUI */}
-      <Input
-        isClearable
-        underlined
-        placeholder="Buscar planta..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-4"
-        width="100%"
-      />
-
-      <div className="w-full gap-2 grid md:grid-cols-2 lg:grid-cols-3 grid-rows-2 px-8">
+      <div className="w-full gap-3 grid md:grid-cols-2 lg:grid-cols-3 grid-rows-2">
         {filteredTarjetas.length > 0 ? (
           filteredTarjetas.map((tarjeta, index) => (
             <Tarjetas
@@ -59,6 +59,7 @@ const Body: React.FC = () => {
               buttonText={tarjeta.buttonText}
               imageUrl={tarjeta.imageUrl}
               iconUrl={tarjeta.iconUrl}
+              handleButtonClick={handleButtonClick}
             />
           ))
         ) : (
@@ -70,3 +71,5 @@ const Body: React.FC = () => {
 };
 
 export default Body;
+
+  

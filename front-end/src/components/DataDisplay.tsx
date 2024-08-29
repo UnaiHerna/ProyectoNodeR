@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import useFetchData from '../hooks/useFetchData';
 import './App.css'; // Asegúrate de que la ruta sea correcta
+import SidebarAndNavbar from '../pages/Home/Home_components/Navbar';
+import { useParams } from 'react-router-dom';
 
 const DataDisplay: React.FC = () => {
   const [inputMltssSp, setInputMltssSp] = useState<string>('');
@@ -8,8 +10,9 @@ const DataDisplay: React.FC = () => {
   const [inputQInt, setInputQInt] = useState<string>('');
   const [inputTssEffSp, setInputTssEffSp] = useState<string>('');
   const [inputTemp, setInputTemp] = useState<string>('');
-
   const [shouldFetch, setShouldFetch] = useState<boolean>(false);
+  
+  const { title } = useParams<{ title: string }>();
 
   const params = {
     mltss_sp: inputMltssSp,
@@ -37,6 +40,8 @@ const DataDisplay: React.FC = () => {
   }, [shouldFetch]);
 
   return (
+    <>
+    <SidebarAndNavbar title={title}/>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-screen">
       {/* Ingreso de Datos */}
       <div className="p-4 custom-background overflow-auto h-full">
@@ -51,7 +56,7 @@ const DataDisplay: React.FC = () => {
               onChange={handleInputChange(setInputMltssSp)}
               placeholder="3000"
               className="w-full p-2 border border-gray-300 rounded"
-            />
+              />
           </label>
         </div>
 
@@ -64,7 +69,7 @@ const DataDisplay: React.FC = () => {
               onChange={handleInputChange(setInputSoAerSp)}
               placeholder="229.7024"
               className="w-full p-2 border border-gray-300 rounded"
-            />
+              />
           </label>
         </div>
 
@@ -77,7 +82,7 @@ const DataDisplay: React.FC = () => {
               onChange={handleInputChange(setInputQInt)}
               placeholder="100"
               className="w-full p-2 border border-gray-300 rounded"
-            />
+              />
           </label>
         </div>
 
@@ -90,7 +95,7 @@ const DataDisplay: React.FC = () => {
               onChange={handleInputChange(setInputTssEffSp)}
               placeholder="10"
               className="w-full p-2 border border-gray-300 rounded"
-            />
+              />
           </label>
         </div>
 
@@ -103,14 +108,14 @@ const DataDisplay: React.FC = () => {
               onChange={handleInputChange(setInputTemp)}
               placeholder="25"
               className="w-full p-2 border border-gray-300 rounded"
-            />
+              />
           </label>
         </div>
 
         <button
           onClick={updateData}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
+          >
           Actualizar Datos
         </button>
       </div>
@@ -128,6 +133,7 @@ const DataDisplay: React.FC = () => {
         )}
       </div>
     </div>
+  </>
   );
 };
 
