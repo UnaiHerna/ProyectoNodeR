@@ -68,7 +68,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
         // Almacenar en caché los datos procesados
         await redisClient.setCachedResponse(cacheKey, datosFinales);
 
-        return datosFinales;
+        return datosWithGaps;
 
     } catch (error) {
         console.error('Error al procesar los datos del sensor:', error);
