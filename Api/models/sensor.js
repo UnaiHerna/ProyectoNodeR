@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../func/sequelize.js');
-const Equipo = require('./equipo');
 const Variable = require('./variable');
+const Equipo = require('./equipo');
 
 const Sensor = sequelize.define('Sensor', {
     id_equipo: {

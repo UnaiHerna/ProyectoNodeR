@@ -1,11 +1,11 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../func/sequelize.js'); // Importa la configuración de sequelize
+const sequelize = require('../func/sequelize.js');
 
 const Variable = sequelize.define('Variable', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        autoIncrement: true
     },
     simbolo: {
         type: DataTypes.STRING(10)
@@ -18,7 +18,7 @@ const Variable = sequelize.define('Variable', {
     }
 }, {
     tableName: 'variable',
-    timestamps: false // Ajusta esto si usas timestamps
+    timestamps: false
 });
 
 module.exports = Variable;

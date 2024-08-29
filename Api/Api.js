@@ -1,15 +1,13 @@
 const express = require('express');
 const mysql = require('mysql');
 const executeRScript = require('./func/executeRScript');
-// const r = require('./r');
-// const path = require('path'); // Se necesita para manejar rutas correctamente
-
+const { readDatosSensorByVariable } = require('./func/sensorvacio'); // Asegúrate de que la ruta sea correcta para importar la función
 
 const connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'Cim12345!',
-    database : 'sergio'
+    host: 'localhost',
+    user: 'root',
+    password: 'Cim12345!',
+    database: 'datos'
 });
 
 connection.connect(err => {
@@ -24,19 +22,8 @@ connection.connect(err => {
 const app = express();
 const desiredPort = process.env.PORT ?? 1234;
 
-// Ajusta la ruta para servir los archivos estáticos
-// const webPath = path.join(__dirname, 'web');
-
-// Sirve todos los archivos estáticos dentro de la carpeta 'web'
-// app.use('/web', express.static(webPath));
-
-// app.get('/web/*', (req, res) => {
-    // res.sendFile(path.join(webPath, 'index.html')); // Sirve el index.html de React
-// });
-
-
 app.get('/heatmap', (req, res) => {
-    connection.query('SELECT * FROM heatmap', (err, rows, fields) => {
+    connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
             res.status(500).send('Internal server error');
@@ -46,10 +33,6 @@ app.get('/heatmap', (req, res) => {
     });
 });
 
-app.listen(desiredPort, () => {
-    console.log(`Server listening on port http://localhost:${desiredPort}`);
-});
-
 app.get('/r', async (req, res) => {
     try {
         const result = await executeRScript(3000.0, 3.0, 52300.0, 10.0, 20.0);
@@ -57,6 +40,29 @@ app.get('/r', async (req, res) => {
     } catch (error) {
         res.status(500).send(error);
     }
+});
+
+// Nueva ruta para /datos/sensorvacio/
+app.get('/datos/sensorvacio', async (req, res) => {
+    const { variable, equipo, start_date, end_date, tipo } = req.query;
+
+    // Verificar que los parámetros requeridos estén presentes
+    if (!variable || !equipo || !start_date || !end_date) {
+        return res.status(400).send('Faltan parámetros requeridos');
+    }
+
+    try {
+        // Llama a la función para leer los datos con los parámetros proporcionados
+        const data = await readDatosSensorByVariable(variable, equipo, start_date, end_date, tipo);
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('Error al obtener los datos del sensor:', error.message);
+        res.status(500).send('Error al obtener los datos del sensor.');
+    }
+});
+
+app.listen(desiredPort, () => {
+    console.log(`Server listening on port http://localhost:${desiredPort}`);
 });
 
 process.on('SIGINT', () => {
@@ -69,4 +75,3 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
-

@@ -1,69 +1,49 @@
+// Api/func/redisClient.js
 const redis = require('redis');
-const { promisify } = require('util');
 
-// Cliente de Redis
 class RedisClient {
     constructor(host = 'localhost', port = 6379, db = 0) {
         this.client = redis.createClient({
-            host: host,
-            port: port,
-            db: db
+            url: `redis://${host}:${port}/${db}`
         });
 
-        // Promisify Redis commands
-        this.getAsync = promisify(this.client.get).bind(this.client);
-        this.setexAsync = promisify(this.client.setex).bind(this.client);
+        this.client.on('error', (err) => {
+            console.error('Error connecting to Redis:', err);
+        });
+
+        this.client.connect().catch(err => {
+            console.error('Error connecting to Redis:', err);
+        });
     }
 
-    getClient() {
-        return this.client;
-    }
-
-    async getAsyncWrapper(key) {
-        return await this.getAsync(key);
-    }
-
-    async setexAsyncWrapper(key, expiration, data) {
-        return await this.setexAsync(key, expiration, data);
-    }
-}
-
-// Inicializa el cliente de Redis
-const redisClient = new RedisClient();
-
-// Serializador de JSON
-function jsonSerializer(obj) {
-    if (obj instanceof Date) {
-        return obj.toISOString();
-    }
-    throw new TypeError(`Type ${typeof obj} not serializable`);
-}
-
-// Deserializador de JSON
-function jsonDeserializer(key, value) {
-    if (typeof value === 'string' && value.length === 24) {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
-            return date;
+    async getCachedResponse(key) {
+        try {
+            const cachedData = await this.client.get(key);
+            if (cachedData) {
+                console.log(`Data retrieved from Redis for key: ${key}`);
+                return JSON.parse(cachedData);
+            }
+            return null;
+        } catch (err) {
+            console.error('Error getting data from Redis:', err);
+            return null;
         }
     }
-    return value;
-}
 
-// Obtener respuesta cacheada
-async function getCachedResponse(key) {
-    const cachedData = await redisClient.getAsyncWrapper(key);
-    if (cachedData) {
-        console.log(`Data retrieved from Redis for key: ${key}`); // Aviso en consola
-        return JSON.parse(cachedData, jsonDeserializer);
+    async setCachedResponse(key, data, expiration = 30) {
+        try {
+            console.log(`Data sent to Redis for key: ${key}`);
+            await this.client.setEx(key, expiration, JSON.stringify(data));
+        } catch (err) {
+            console.error('Error setting data to Redis:', err);
+        }
     }
-    return null;
+
+    close() {
+        return this.client.quit(); // Asegúrate de cerrar la conexión correctamente
+    }
 }
 
-// Guardar respuesta en cache
-async function setCachedResponse(key, data, expiration = 30) {
-    console.log(`Data sent to Redis for key: ${key}`); // Aviso en consola
-    await redisClient.setexAsyncWrapper(key, expiration, JSON.stringify(data, jsonSerializer));
-}
-
-module.exports = { getCachedResponse, setCachedResponse };
+// Exporta una instancia del cliente de Redis
+const redisClient = new RedisClient();
+module.exports = redisClient;
