@@ -43,6 +43,7 @@ app.get('/r', async (req, res) => {
     }
 });
 
+
 // Nueva ruta para /datos/sensorvacio/
 app.get('/datos/sensorvacio', async (req, res) => {
     const { variable, equipo, start_date, end_date, tipo } = req.query;
