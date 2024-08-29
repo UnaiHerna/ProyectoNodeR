@@ -1,8 +1,8 @@
-const knex = require('./knex');
-const redisClient = require('./redisClient');
+const knex = require('../db/knex');
+const redisClient = require('../db/redisClient');
 const { dateValidator } = require('./dateChecker');
 const { generarHuecos } = require('./gapGenerator');
-const { calcularDeltaPrima, getDatosSinHueco } = require('./dateModifier');
+const { calcularDeltaPrima, getDatosSinHueco } = require('./agregacionScript');
 const moment = require('moment-timezone');
 
 

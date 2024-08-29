@@ -1,6 +1,6 @@
 const express = require('express');
-const executeRScript = require('./func/executeRScript');
-const { readDatosSensorByVariable } = require('./func/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
+const executeRScript = require('./utils/executeRScript');
+const { readDatosSensorByVariable } = require('./utils/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 
 const app = express();
