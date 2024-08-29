@@ -1,14 +1,14 @@
 const express = require('express');
 const mysql = require('mysql');
-const cors = require('cors'); // Importa el middleware CORS
-const executeRScript = require('./executeRScript');
+const executeRScript = require('./func/executeRScript');
+const { readDatosSensorByVariable } = require('./func/sensorvacio'); // Asegúrate de que la ruta sea correcta para importar la función
 
 const app = express();
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'Cim12345!',
-    database: 'sergio'
+    database: 'datos'
 });
 
 connection.connect(err => {
@@ -22,23 +22,8 @@ connection.connect(err => {
 
 const desiredPort = process.env.PORT ?? 1234;
 
-// Configura CORS para permitir solicitudes desde cualquier origen
-app.use(cors({
-    origin: '*', // Permite todos los orígenes
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'] // Encabezados permitidos
-}));
-
-// Si necesitas servir archivos estáticos, descomenta y ajusta esto
-// const path = require('path');
-// const webPath = path.join(__dirname, 'web');
-// app.use('/web', express.static(webPath));
-// app.get('/web/*', (req, res) => {
-//     res.sendFile(path.join(webPath, 'index.html')); // Sirve el index.html de React
-// });
-
 app.get('/heatmap', (req, res) => {
-    connection.query('SELECT * FROM heatmap', (err, rows) => {
+    connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
             res.status(500).send('Internal server error');
@@ -55,6 +40,25 @@ app.get('/r', async (req, res) => {
     } catch (error) {
         console.error('Error executing R script:', error);
         res.status(500).send('Internal server error');
+    }
+});
+
+// Nueva ruta para /datos/sensorvacio/
+app.get('/datos/sensorvacio', async (req, res) => {
+    const { variable, equipo, start_date, end_date, tipo } = req.query;
+
+    // Verificar que los parámetros requeridos estén presentes
+    if (!variable || !equipo || !start_date || !end_date) {
+        return res.status(400).send('Faltan parámetros requeridos');
+    }
+
+    try {
+        // Llama a la función para leer los datos con los parámetros proporcionados
+        const data = await readDatosSensorByVariable(variable, equipo, start_date, end_date, tipo);
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('Error al obtener los datos del sensor:', error.message);
+        res.status(500).send('Error al obtener los datos del sensor.');
     }
 });
 
