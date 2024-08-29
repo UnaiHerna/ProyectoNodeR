@@ -29,7 +29,7 @@ const Body: React.FC = () => {
   });
 
   return (
-    <div className="p-8 w-full pt-24">
+    <div className="p-8 w-full pt-20">
       <div className="flex flex-row w-full justify-between pb-4">
         <h1 className="text-black font-pt-sans text-2xl font-bold leading-normal self-end">Machine List</h1>
         <ul className="flex flex-row-reverse gap-4">
