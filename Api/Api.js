@@ -51,7 +51,6 @@ app.get('/datos/sensorvacio', async (req, res) => {
     if (!variable || !equipo || !start_date || !end_date) {
         return res.status(400).send('Faltan parámetros requeridos');
     }
-
     try {
         // Llama a la función para leer los datos con los parámetros proporcionados
         const data = await readDatosSensorByVariable(variable, equipo, start_date, end_date, tipo);
