@@ -1,56 +1,43 @@
-// Api/func/dateChecker.js
-const { Op } = require('sequelize');
-const { SensorDatos } = require('../models'); // Asegúrate de definir y exportar el modelo SensorDatos
-
 /**
- * Valida y ajusta las fechas en la consulta.
- * @param {Object} query - Consulta Sequelize.
- * @param {Date} endDate - Fecha de fin.
- * @param {Date} startDate - Fecha de inicio.
- * @returns {Object} Consulta ajustada.
- * @throws {Error} Si las fechas no son válidas.
+ * Aplica los filtros de fecha a la consulta
+ * @param {Object} query - La consulta Knex a la que se le aplicarán los filtros
+ * @param {Date} startDate - La fecha de inicio para filtrar los datos
+ * @param {Date} endDate - La fecha de fin para filtrar los datos
+ * @returns {Object} - La consulta modificada con los filtros aplicados
+ * @throws {Error} - Lanza errores con mensajes específicos si las validaciones fallan
  */
-function dateValidator(query, endDate, startDate) {
-    // Obtener la fecha y hora actuales
+function dateValidator(query, startDate, endDate) {
     const currentDatetime = new Date();
 
+    // Validar fecha de inicio
     if (startDate) {
-        // Asegúrate de que startDate es posterior a 2023
-        const minStartDate = new Date('2024-01-01');
-        if (startDate <= minStartDate) {
+        if (startDate < new Date('2024-01-01')) {
             throw new Error("La fecha de inicio debe ser posterior a 2023");
         }
-
-        // Establece el valor de la fecha de inicio en la consulta
-        query.where[SensorDatos.timestamp] = {
-            ...query.where[SensorDatos.timestamp],
-            [Op.gte]: startDate
-        };
+        query = query.where('timestamp', '>=', startDate);
     } else {
-        throw new Error("La fecha de inicio es requerida.");
+        throw new Error("La fecha de inicio es requerida y debe ser posterior a 2023");
     }
 
+    // Validar fecha de fin
     if (endDate) {
-        // Verifica que endDate sea mayor que startDate
         if (endDate <= startDate) {
-            throw new Error("La fecha de fin debe ser mayor que la fecha de inicio.");
+            throw new Error("La fecha de fin debe ser posterior a la fecha de inicio.");
         }
-
-        // Verifica que endDate no sea posterior a la fecha actual
         if (endDate > currentDatetime) {
             throw new Error("La fecha de fin no puede ser posterior a la fecha actual.");
         }
-
-        // Establece el valor de la fecha de fin en la consulta
-        query.where[SensorDatos.timestamp] = {
-            ...query.where[SensorDatos.timestamp],
-            [Op.lte]: endDate
-        };
+        query = query.where('timestamp', '<=', endDate);
     } else {
-        throw new Error("La fecha de fin es requerida.");
+        throw new Error("La fecha de fin es requerida y debe ser posterior a la fecha de inicio.");
     }
+
+    // Validar que la fecha final no sea posterior a la fecha actual
+    query = query.where('timestamp', '<=', currentDatetime);
 
     return query;
 }
 
-module.exports = { dateValidator };
+module.exports = {
+    dateValidator
+};
