@@ -68,7 +68,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
         // Almacenar en caché los datos procesados
         await redisClient.setCachedResponse(cacheKey, datosFinales);
 
-        return datosWithGaps;
+        return datosFinales;
 
     } catch (error) {
         console.error('Error al procesar los datos del sensor:', error);
@@ -83,7 +83,7 @@ function agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo
     const z = calcularDeltaPrima(tipo, deltat, [datosWithGaps[0].time, datosWithGaps[datosWithGaps.length - 1].time]);
 
     if (z === deltat) {
-        for (const [pos, length, time] of huecosInfo) {
+        for (const [pos, length] of huecosInfo) {
             for (let i = pos; i < pos + length; i++) {
                 datosWithGaps.splice(i, 0, { time: datos[i].time, value: null, equipo: datos[i].equipo });
             }

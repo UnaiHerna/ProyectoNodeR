@@ -1,28 +1,13 @@
 const express = require('express');
-const mysql = require('mysql');
 const executeRScript = require('./func/executeRScript');
-const { readDatosSensorByVariable } = require('./func/sensorvacio'); // Asegúrate de que la ruta sea correcta para importar la función
+const { readDatosSensorByVariable } = require('./func/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
+const connection = require('./db/database'); // Importa la conexión a la base de datos
 
 const app = express();
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Cim12345!',
-    database: 'datos'
-});
-
-connection.connect(err => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-        process.exit(1);
-    } else {
-        console.log('Connected to the database');
-    }
-});
 
 const desiredPort = process.env.PORT ?? 1234;
 
-app.get('/heatmap', (req, res) => {
+app.get('/heatmap', (res) => {
     connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
@@ -33,7 +18,7 @@ app.get('/heatmap', (req, res) => {
     });
 });
 
-app.get('/r', async (req, res) => {
+app.get('/r', async (res) => {
     try {
         const result = await executeRScript(3000.0, 3.0, 52300.0, 10.0, 20.0);
         res.status(200).send(result);
@@ -42,7 +27,6 @@ app.get('/r', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
-
 
 // Nueva ruta para /datos/sensorvacio/
 app.get('/datos/sensorvacio', async (req, res) => {
@@ -64,15 +48,4 @@ app.get('/datos/sensorvacio', async (req, res) => {
 
 app.listen(desiredPort, () => {
     console.log(`Server listening on port http://localhost:${desiredPort}`);
-});
-
-process.on('SIGINT', () => {
-    connection.end(err => {
-        if (err) {
-            console.error('Error closing the database connection:', err);
-        } else {
-            console.log('Database connection closed');
-        }
-        process.exit(0);
-    });
 });
