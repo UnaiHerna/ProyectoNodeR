@@ -28,6 +28,7 @@ const DataDisplay: React.FC = () => {
     setter(event.target.value);
   };
 
+  
   const updateData = () => {
     setShouldFetch(true);
   };
