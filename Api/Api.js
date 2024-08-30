@@ -28,15 +28,20 @@ app.get('/heatmap', (res) => {
 
 app.get('/r', async (req, res) => {
     const { mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp } = req.query;
+
+    // Validar que todos los parámetros requeridos están presentes
+    if (!mltss_sp || !so_aer_sp || !q_int || !tss_eff_sp || !temp) {
+        return res.status(400).send('Faltan parámetros requeridos');
+    }
+
     try {
         const result = await executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp);
         res.status(200).send(result);
     } catch (error) {
-        console.error('Error executing R script:', error);
-        res.status(500).send('Internal server error');
+        console.error('Error ejecutando el script R:', error.message, error.stack);
+        res.status(500).send('Error interno del servidor');
     }
 });
-
 // Nueva ruta para /datos/sensorvacio/
 app.get('/datos/sensorvacio', async (req, res) => {
     const { variable, equipo, start_date, end_date, tipo } = req.query;
