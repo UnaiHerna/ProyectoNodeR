@@ -1,25 +1,48 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import GeneralChartComponent from './FrameWorkCimico';
 
-const data = [
-  { name: '03:00', DO_SENS: 2.5, DOSP: 2.5 },
-  { name: '03:30', DO_SENS: 2.7, DOSP: 2.5 },
-  // Add all your chart data here
-];
+// Utility function to format dates as YYYY-MM-DDTHH:mm:ss
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};
 
-const LineChartComponent = () => (
-  <div className="w-full h-64">
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="DO_SENS" stroke="#0000FF" />
-        <Line type="monotone" dataKey="DOSP" stroke="#FF4500" />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-);
+const LineChartComponent = () => {
+  // Get the current date and time
+  const now = new Date();
+  
+  // Calculate the endDate as the current date and time
+  const endDate = formatDate(now);
+  
+  // Calculate the startDate as 6 hours ago
+  now.setHours(now.getHours() - 6);
+  const startDate = formatDate(now);
+  
+  // Define the chart parameters
+  const variables = ['NH4', 'NH4_FILT', 'DO_SP', 'DO']; // Variables to fetch
+  const chartType = 'line'; // Chart type: 'line', 'bar', or 'pie'
+  const zoomEnabled = true; // Whether zoom is enabled
+  const yAxisLeft = ['NH4', 'DO_SP']; // Variables for the left Y axis
+  const yAxisRight = ['NH4_FILT', 'DO']; // Variables for the right Y axis
+
+  return (
+    <div className="w-full">
+      <GeneralChartComponent
+        variables={variables}
+        startDate={startDate}
+        endDate={endDate}
+        chartType={chartType}
+        zoomEnabled={zoomEnabled}
+        yAxisLeft={yAxisLeft}
+        yAxisRight={yAxisRight}
+      />
+    </div>
+  );
+};
 
 export default LineChartComponent;

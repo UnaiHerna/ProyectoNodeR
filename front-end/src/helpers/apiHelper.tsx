@@ -1,55 +1,153 @@
 // apiHelper.ts
+
+// Define types for better clarity
 interface FetchOptions {
-    variable?: string;
-    equipo?: string;
-    nombre?: string;
-    startDate?: string;
-    endDate?: string;
-  }
-  
-  const BASE_URL = "http://16.171.35.71:8000";
-  
-  const buildUrl = (endpoint: string, params: FetchOptions): string => {
-    const queryParams = new URLSearchParams({
-      ...params,
-      tipo: 'timeseries'
-    }).toString();
-    return `${BASE_URL}${endpoint}?${queryParams}`;
-  };
-  
-  const fetchData = async (endpoint: string, params: FetchOptions) => {
-    const url = buildUrl(endpoint, params);
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      throw error;
+  variable?: string;
+  equipo?: string;
+  nombre?: string;
+  start_date?: string; // Use start_date
+  end_date?: string; // Use end_date
+  tipo?: "timeseries" | "barchart"; // Default is 'timeseries'
+}
+
+// Define the type for the API response
+interface SensorDataResponse {
+  time: string; // Assuming time is in ISO format or a similar string representation
+  value: number; // Assuming value is a number
+}
+
+// Base URL for API
+const BASE_URL = "http://13.60.162.78:8000";
+
+// Build URL with query parameters
+const buildUrl = (endpoint: string, params: FetchOptions): string => {
+  const queryParams = new URLSearchParams();
+
+  if (params.variable) queryParams.append("variable", params.variable);
+  if (params.equipo) queryParams.append("equipo", params.equipo);
+  if (params.nombre) queryParams.append("nombre", params.nombre);
+  if (params.start_date) queryParams.append("start_date", params.start_date);
+  if (params.end_date) queryParams.append("end_date", params.end_date);
+  queryParams.append("tipo", params.tipo || "timeseries"); // Default to 'timeseries' if tipo is not specified
+
+  return `${BASE_URL}${endpoint}?${queryParams}`;
+};
+
+// Fetch data from the API
+const fetchData = async <T,>(
+  endpoint: string,
+  params: FetchOptions
+): Promise<T> => {
+  const url = buildUrl(endpoint, params);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
-  };
-  
-  // Functions to fetch different types of data
-  export const fetchNH4Data = async (startDate: string, endDate: string) => {
-    return await fetchData('/datos/sensorvacio/', { variable: 'NH4', equipo: 'AER.COMB', startDate, endDate });
-  };
-  
-  export const fetchNH4FiltData = async (startDate: string, endDate: string) => {
-    return await fetchData('/datos/senal/', { nombre: 'nnh4_filt', startDate, endDate });
-  };
-  
-  export const fetchDO_SPData = async (startDate: string, endDate: string) => {
-    return await fetchData('/datos/consigna/', { nombre: 'do_sp', startDate, endDate });
-  };
-  
-  export const fetchQinfData = async (startDate: string, endDate: string) => {
-    return await fetchData('/datos/sensorvacio/', { variable: 'QW', equipo: 'INF_PIPE.FM', startDate, endDate });
-  };
-  
-  export const fetchDOSensData = async (startDate: string, endDate: string) => {
-    return await fetchData('/datos/sensorvacio/', { variable: 'do', equipo: 'AER.DO', startDate, endDate });
-  };
-  
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error; // Re-throw the error to be handled by the calling function
+  }
+};
+
+// Define type for data points
+interface DataPoint {
+  time: string; // Assuming time is in ISO format or a similar string representation
+  value: number; // Assuming value is a number
+}
+
+// Functions to fetch specific types of data
+export const fetchNH4Data = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/sensorvacio/", {
+    variable: "NH4",
+    equipo: "AER.COMB",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map((item) => ({
+    time: item.time,
+    value: item.value,
+  }));
+};
+
+export const fetchNH4FiltData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/senal/", {
+    nombre: "nnh4_filt",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map((item) => ({
+    time: item.time,
+    value: item.value,
+  }));
+};
+
+export const fetchDO_SPData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/consigna/", {
+    nombre: "do_sp",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map((item) => ({
+    time: item.time,
+    value: item.value,
+  }));
+};
+
+export const fetchQinfData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/sensorvacio/", {
+    variable: "QW",
+    equipo: "INF_PIPE.FM",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map((item) => ({
+    time: item.time,
+    value: item.value,
+  }));
+};
+
+export const fetchDOSensData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/sensorvacio/", {
+    variable: "do",
+    equipo: "AER.DO",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map((item) => ({
+    time: item.time,
+    value: item.value,
+  }));
+};

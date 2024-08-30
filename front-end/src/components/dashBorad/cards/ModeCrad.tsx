@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { fetchDO_SPData, fetchNH4FiltData } from "../../../helpers/apiHelper"
+import { fetchDO_SPData, fetchNH4FiltData } from "../../../helpers/apiHelper";
 
 // Define una interfaz TypeScript para la respuesta de la API
 interface ApiResponseItem {
   time: string;
   value: number;
-  mode: number; // Ajusta el tipo según el valor real de 'mode'
+  mode: number;
   consigna: string;
 }
 
-// Define las propiedades del componente
 interface ModeComponentProps {
   nombre: string;
 }
 
 const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
   const [displayValue, setDisplayValue] = useState<string>("");  
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEstado = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        // Obtener la fecha actual en formato YYYY-MM-DD
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -40,7 +43,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
 
         if (data.length > 0) {
           const firstItem = data[0];
-          
+
           if (nombre === "DO_SP") {
             const modo = firstItem.mode === 1 ? "AUTO" : "MANUAL";
             setDisplayValue(modo);
@@ -50,15 +53,39 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
         } else {
           setDisplayValue("No data available");
         }
-
       } catch (error) {
-        console.error("Error al obtener el estado:", error);
-        setDisplayValue("Error fetching data");
+        console.error("Error fetching data:", error);
+        setError("Error fetching data");
+        setDisplayValue("");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchEstado();
-  }, [nombre]);  
 
+    fetchEstado();
+  }, [nombre]);
+
+  // Muestra un mensaje de carga si aún está esperando datos
+  if (loading) {
+    return (
+      <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-[293px] h-[87px]">
+        <h2 className="text-lg font-bold mb-2 text-gray-800">Loading...</h2>
+        <div className="sp-mode text-3xl font-semibold text-center text-blue-600">...</div>
+      </div>
+    );
+  }
+
+  // Muestra un mensaje de error si hubo problemas al cargar los datos
+  if (error) {
+    return (
+      <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-[293px] h-[87px]">
+        <h2 className="text-lg font-bold mb-2 text-gray-800">Error</h2>
+        <div className="sp-mode text-3xl font-semibold text-center text-red-600">{error}</div>
+      </div>
+    );
+  }
+
+  // Renderiza el valor si todo está correcto
   return (
     <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-[293px] h-[87px]">
       <h2 className="text-lg font-bold mb-2 text-gray-800">
