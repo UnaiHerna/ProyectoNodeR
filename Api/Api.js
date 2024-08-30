@@ -8,7 +8,7 @@ const consignaRoutes = require('./routes/consigna'); // Ajusta la ruta si es nec
 
 const app = express();
 
-app.use('/consigna', consignaRoutes);
+app.use('/datos/consigna', consignaRoutes);
 
 app.use(cors({
     origin: '*', // Permitir todas las orígenes
