@@ -3,8 +3,12 @@ const executeRScript = require('./utils/executeRScript');
 const { readDatosSensorByVariable } = require('./utils/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 const cors = require('cors');
+const { log } = require('mathjs');
+const consignaRoutes = require('./routes/consigna'); // Ajusta la ruta si es necesario
 
 const app = express();
+
+app.use('/consigna', consignaRoutes);
 
 app.use(cors({
     origin: '*', // Permitir todas las orígenes
