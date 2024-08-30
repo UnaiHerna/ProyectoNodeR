@@ -1,7 +1,7 @@
 import GeneralChartComponent from './FrameWorkCimico';
 
 // Utility function to format dates as YYYY-MM-DDTHH:mm:ss
-const formatDate = (date: Date) => {
+const formatDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   const day = String(date.getDate()).padStart(2, '0');
@@ -19,9 +19,10 @@ const LineChartComponent = () => {
   // Calculate the endDate as the current date and time
   const endDate = formatDate(now);
   
-  // Calculate the startDate as 6 hours ago
-  now.setHours(now.getHours() - 6);
-  const startDate = formatDate(now);
+  // Calculate the startDate as 6 months ago
+  const startDate = new Date(now);
+  startDate.setMonth(startDate.getMonth() - 6);
+  const formattedStartDate = formatDate(startDate);
   
   // Define the chart parameters
   const variables = ['NH4', 'NH4_FILT', 'DO_SP', 'DO']; // Variables to fetch
@@ -30,11 +31,13 @@ const LineChartComponent = () => {
   const yAxisLeft = ['NH4', 'DO_SP']; // Variables for the left Y axis
   const yAxisRight = ['NH4_FILT', 'DO']; // Variables for the right Y axis
 
+  console.log(formattedStartDate, endDate, "Date range");
+
   return (
     <div className="w-full">
       <GeneralChartComponent
         variables={variables}
-        startDate={startDate}
+        startDate={formattedStartDate}
         endDate={endDate}
         chartType={chartType}
         zoomEnabled={zoomEnabled}

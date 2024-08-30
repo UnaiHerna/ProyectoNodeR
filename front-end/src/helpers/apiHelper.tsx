@@ -21,16 +21,27 @@ const BASE_URL = "http://13.60.162.78:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
-  const queryParams = new URLSearchParams();
+  // Base URL and endpoint
+  let url = `${BASE_URL}${endpoint}?`;
 
-  if (params.variable) queryParams.append("variable", params.variable);
-  if (params.equipo) queryParams.append("equipo", params.equipo);
-  if (params.nombre) queryParams.append("nombre", params.nombre);
-  if (params.start_date) queryParams.append("start_date", params.start_date);
-  if (params.end_date) queryParams.append("end_date", params.end_date);
-  queryParams.append("tipo", params.tipo || "timeseries"); // Default to 'timeseries' if tipo is not specified
+  // Create an array to hold query parameter strings
+  const queryParams: string[] = [];
 
-  return `${BASE_URL}${endpoint}?${queryParams}`;
+  // Append each parameter if it exists
+  if (params.variable) queryParams.push(`variable=${encodeURIComponent(params.variable)}`);
+  if (params.equipo) queryParams.push(`equipo=${encodeURIComponent(params.equipo)}`);
+  if (params.nombre) queryParams.push(`nombre=${encodeURIComponent(params.nombre)}`);
+  if (params.start_date) queryParams.push(`start_date=${params.start_date}`);
+  if (params.end_date) queryParams.push(`end_date=${params.end_date}`);
+  queryParams.push(`tipo=${encodeURIComponent(params.tipo || 'timeseries')}`); // Default to 'timeseries' if tipo is not specified
+
+  // Join all query parameters with '&'
+  url += queryParams.join('&');
+
+  // Log the constructed URL for debugging
+  console.log("Constructed URL:", params.start_date, url);
+
+  return url;
 };
 
 // Fetch data from the API
