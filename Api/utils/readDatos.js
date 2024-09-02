@@ -78,14 +78,23 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
 
 // Función de agregación
 function agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo) {
+    
+    // Redondear todos los length a un valor entero
+    huecosInfo = huecosInfo.map(item => ({
+        ...item,
+        length: Math.floor(item.length)
+    }));
+
     const sData = datosWithGaps.map(dato => dato.value);
     const sTime = datosWithGaps.map(dato => new Date(dato.time).getTime());
     const z = calcularDeltaPrima(tipo, deltat, [datosWithGaps[0].time, datosWithGaps[datosWithGaps.length - 1].time]);
 
     if (z === deltat) {
-        for (const [pos, length] of huecosInfo) {
+        for (const { pos, length } of huecosInfo) {
             for (let i = pos; i < pos + length; i++) {
-                datosWithGaps.splice(i, 0, { time: datos[i].time, value: null, equipo: datos[i].equipo });
+                if (i >= 0 && i < datosWithGaps.length) { // Verifica si el índice está dentro del rango válido
+                    datosWithGaps.splice(i, 0, { time: datosWithGaps[i].time, value: null, equipo: datosWithGaps[i].equipo });
+                }
             }
         }
         return datosWithGaps;
