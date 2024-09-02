@@ -4,11 +4,10 @@ const { readDatosSensorByVariable } = require('./utils/readDatos'); // Asegúrat
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 const cors = require('cors');
 const { log } = require('mathjs');
-const consignaRoutes = require('./routes/consigna'); // Ajusta la ruta si es necesario
+const consignaRoutes = require('./routes/consigna');
+const senalRoutes = require('./routes/senal'); 
 
 const app = express();
-
-app.use('/datos/consigna', consignaRoutes);
 
 app.use(cors({
     origin: '*', // Permitir todas las orígenes
@@ -17,9 +16,14 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'], // Permitir todos los headers
 }));
 
+app.use('/datos/consigna', consignaRoutes);
+app.use('/datos/senal', senalRoutes); 
+
+
+
 const desiredPort = process.env.PORT ?? 8000;
 
-app.get('/heatmap', (res) => {
+app.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no funciona
     connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
