@@ -43,7 +43,7 @@ interface ChartProps {
   chartType: 'line' | 'bar' | 'pie'; // Tipo de gráfico
   zoomEnabled: boolean; // Si el zoom está habilitado o no
   yAxisLeft: string[]; // Variables asignadas al eje Y izquierdo
-  yAxisRight: string[]; // Variables asignadas al eje Y derecho
+  yAxisRight?: string[]; // Variables asignadas al eje Y derecho (opcional)
   useDataset?: boolean; // Opción para usar dataset en lugar de series
 }
 
@@ -56,13 +56,14 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   chartType,
   zoomEnabled,
   yAxisLeft,
-  yAxisRight,
+  yAxisRight = [], // Default to empty array if not provided
   useDataset = false
 }) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [datasetSource, setDatasetSource] = useState<DatasetDimension[]>([]);
   const [pieData, setPieData] = useState<PieData[]>([]);
+  const [shouldFetchData, setShouldFetchData] = useState(true);
 
   const fetchFunctions: Record<string, FetchFunction> = {
     NH4: fetchNH4Data,
@@ -73,6 +74,8 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   };
 
   useEffect(() => {
+    if (!shouldFetchData) return;
+
     const fetchDataForChart = async () => {
       try {
         const allData: ChartData[] = [];
@@ -103,7 +106,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
                     name: variable,
                     data: data.map((item) => item.value),
                     type: chartType,
-                    smooth: chartType === 'line',
+                    smooth: chartType === 'line' ? false : undefined,
                     yAxisIndex: yAxisLeft.includes(variable) ? 0 : 1,
                   });
 
@@ -130,24 +133,28 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
         } else {
           setChartData(allData);
         }
+        
+        setShouldFetchData(false); // Prevent future fetches if not needed
       } catch (error) {
         console.error("Error fetching data for chart:", error);
       }
     };
 
     fetchDataForChart();
-  }, [variables, startDate, endDate, chartType, yAxisLeft, yAxisRight, useDataset]);
+  }, [shouldFetchData, variables, startDate, endDate, chartType, yAxisLeft, yAxisRight, useDataset]);
 
   const getOption = () => {
+    const baseLegend = {
+      bottom: '0%',  // Mueve la leyenda a la parte inferior
+      left: 'center', // Centra la leyenda horizontalmente
+    };
+
     if (chartType === 'pie') {
       return {
         tooltip: {
           trigger: 'item',
         },
-        legend: {
-          top: '5%',
-          left: 'center',
-        },
+        legend: baseLegend,
         series: [
           {
             name: 'Access From',
@@ -176,7 +183,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
 
     if (useDataset) {
       return {
-        legend: {},
+        legend: baseLegend,
         tooltip: {},
         dataset: {
           dimensions: ['product', ...categories],
@@ -196,34 +203,25 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
       yAxis: [
         {
           type: 'value',
-          name: 'Left Axis',
+          name: 'Axis',
           scale: true,
           position: 'left',
           axisLabel: { formatter: '{value}' },
-        },
-        {
-          type: 'value',
-          name: 'Right Axis',
-          scale: true,
-          position: 'right',
-          axisLabel: { formatter: '{value}' },
-        },
+        }
       ],
       dataZoom: zoomEnabled ? [{ type: 'inside' }, { type: 'slider' }] : [],
       series: chartData,
       tooltip: {
         trigger: 'axis',
       },
-      legend: {
-        data: variables,
-      },
+      legend: baseLegend,
     };
   };
 
   return (
-    <div className="w-full h-64">
+    <>
       <ReactEcharts option={getOption()} style={{ height: '100%', width: '100%' }} />
-    </div>
+    </>
   );
 };
 

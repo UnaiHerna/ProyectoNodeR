@@ -1,40 +1,34 @@
-import GeneralChartComponent from './FrameWorkCimico';
-
+import GeneralChartComponent from "./FrameWorkCimico";
+import React from "react";
 // Utility function to format dates as YYYY-MM-DDTHH:mm:ss
-const formatDate = (date: Date): string => {
+const formatDate = (date: Date) => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
 
 const LineChartComponent = () => {
-  // Get the current date and time
   const now = new Date();
-  
-  // Calculate the endDate as the current date and time
   const endDate = formatDate(now);
-  
-  // Calculate the startDate as 6 months ago
+
   const startDate = new Date(now);
-  startDate.setMonth(startDate.getMonth() - 6);
+  startDate.setHours(startDate.getHours() - 6);
   const formattedStartDate = formatDate(startDate);
-  
-  // Define the chart parameters
-  const variables = ['NH4', 'NH4_FILT', 'DO_SP', 'DO']; // Variables to fetch
-  const chartType = 'line'; // Chart type: 'line', 'bar', or 'pie'
-  const zoomEnabled = true; // Whether zoom is enabled
-  const yAxisLeft = ['NH4', 'DO_SP']; // Variables for the left Y axis
-  const yAxisRight = ['NH4_FILT', 'DO']; // Variables for the right Y axis
+
+  const variables = ["NH4", "NH4_FILT", "DO_SP", "DO"];
+  const chartType = "line";
+  const zoomEnabled = false;
+  const yAxisLeft = ["NH4", "NH4_FILT", "DO_SP", "DO"];
 
   console.log(formattedStartDate, endDate, "Date range");
 
   return (
-    <div className="w-full">
+    <>
       <GeneralChartComponent
         variables={variables}
         startDate={formattedStartDate}
@@ -42,10 +36,9 @@ const LineChartComponent = () => {
         chartType={chartType}
         zoomEnabled={zoomEnabled}
         yAxisLeft={yAxisLeft}
-        yAxisRight={yAxisRight}
       />
-    </div>
+    </>
   );
 };
 
-export default LineChartComponent;
+export default React.memo(LineChartComponent);

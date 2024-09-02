@@ -1,6 +1,24 @@
 // apiHelper.ts
 
-// Define types for better clarity
+// Define the types for API parameters and responses
+interface ApiParams {
+  mltss_sp: number;
+  so_aer_sp: number;
+  q_int: number;
+  tss_eff_sp: number;
+  temp: number;
+}
+
+interface ApiResponse {
+  v_conc_anx: number[];
+  v_conc_aer: number[];
+  precis: number;
+  mltss: number;
+  kla_aer: number;
+  tss_eff: number;
+  sludge_prod: number;
+}
+
 interface FetchOptions {
   variable?: string;
   equipo?: string;
@@ -10,37 +28,40 @@ interface FetchOptions {
   tipo?: "timeseries" | "barchart"; // Default is 'timeseries'
 }
 
-// Define the type for the API response
 interface SensorDataResponse {
   time: string; // Assuming time is in ISO format or a similar string representation
   value: number; // Assuming value is a number
+  mode?: number; // Optional field
+  consigna?: string; // Optional field
+}
+
+interface HeatmapDataResponse {
+  id: number;
+  temp: number;
+  mltss: number;
+  sludge_prod: number;
 }
 
 // Base URL for API
-const BASE_URL = "http://13.60.162.78:8000";
+const BASE_URL = "http://13.51.207.212:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
-  // Base URL and endpoint
   let url = `${BASE_URL}${endpoint}?`;
-
-  // Create an array to hold query parameter strings
   const queryParams: string[] = [];
 
-  // Append each parameter if it exists
-  if (params.variable) queryParams.push(`variable=${encodeURIComponent(params.variable)}`);
-  if (params.equipo) queryParams.push(`equipo=${encodeURIComponent(params.equipo)}`);
-  if (params.nombre) queryParams.push(`nombre=${encodeURIComponent(params.nombre)}`);
+  if (params.variable)
+    queryParams.push(`variable=${encodeURIComponent(params.variable)}`);
+  if (params.equipo)
+    queryParams.push(`equipo=${encodeURIComponent(params.equipo)}`);
+  if (params.nombre)
+    queryParams.push(`nombre=${encodeURIComponent(params.nombre)}`);
   if (params.start_date) queryParams.push(`start_date=${params.start_date}`);
   if (params.end_date) queryParams.push(`end_date=${params.end_date}`);
-  queryParams.push(`tipo=${encodeURIComponent(params.tipo || 'timeseries')}`); // Default to 'timeseries' if tipo is not specified
+  queryParams.push(`tipo=${encodeURIComponent(params.tipo || "timeseries")}`);
 
-  // Join all query parameters with '&'
-  url += queryParams.join('&');
-
-  // Log the constructed URL for debugging
-  console.log("Constructed URL:", params.start_date, url);
-
+  url += queryParams.join("&");
+  console.log("Constructed URL:", url);
   return url;
 };
 
@@ -55,18 +76,20 @@ const fetchData = async <T,>(
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
-    const data = await response.json();
+    const data: T = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error; // Re-throw the error to be handled by the calling function
+    throw error;
   }
 };
 
 // Define type for data points
 interface DataPoint {
-  time: string; // Assuming time is in ISO format or a similar string representation
-  value: number; // Assuming value is a number
+  time: string;
+  value: number;
+  mode?: number; // Optional field
+  consigna?: string; // Optional field
 }
 
 // Functions to fetch specific types of data
@@ -83,10 +106,7 @@ export const fetchNH4Data = async (
     tipo,
   });
 
-  return data.map((item) => ({
-    time: item.time,
-    value: item.value,
-  }));
+  return data.map(({ time, value }) => ({ time, value }));
 };
 
 export const fetchNH4FiltData = async (
@@ -101,10 +121,7 @@ export const fetchNH4FiltData = async (
     tipo,
   });
 
-  return data.map((item) => ({
-    time: item.time,
-    value: item.value,
-  }));
+  return data.map(({ time, value }) => ({ time, value }));
 };
 
 export const fetchDO_SPData = async (
@@ -119,9 +136,11 @@ export const fetchDO_SPData = async (
     tipo,
   });
 
-  return data.map((item) => ({
-    time: item.time,
-    value: item.value,
+  return data.map(({ time, value, mode, consigna }) => ({
+    time,
+    value,
+    mode,
+    consigna,
   }));
 };
 
@@ -138,10 +157,7 @@ export const fetchQinfData = async (
     tipo,
   });
 
-  return data.map((item) => ({
-    time: item.time,
-    value: item.value,
-  }));
+  return data.map(({ time, value }) => ({ time, value }));
 };
 
 export const fetchDOSensData = async (
@@ -157,8 +173,69 @@ export const fetchDOSensData = async (
     tipo,
   });
 
-  return data.map((item) => ({
-    time: item.time,
-    value: item.value,
-  }));
+  return data.map(({ time, value }) => ({ time, value }));
+};
+
+// Function to build the query parameters string for the new API functionality
+const buildQueryParams = (params: ApiParams): string => {
+  const queryParams = new URLSearchParams({
+    mltss_sp: params.mltss_sp.toString(),
+    so_aer_sp: params.so_aer_sp.toString(),
+    q_int: params.q_int.toString(),
+    tss_eff_sp: params.tss_eff_sp.toString(),
+    temp: params.temp.toString(),
+  });
+  return queryParams.toString();
+};
+
+// Function to fetch data from the new API functionality
+export const fetchApi_R_Data = async (
+  params: ApiParams
+): Promise<ApiResponse> => {
+  const query = buildQueryParams(params);
+  const url = `${BASE_URL}/r?${query}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const data: ApiResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from API:", error);
+    throw error;
+  }
+};
+
+// Function to fetch heatmap data
+export const fetchHeatmapData = async (): Promise<HeatmapDataResponse[]> => {
+  try {
+    const response = await fetch(`${BASE_URL}/heatmap`);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    const data: HeatmapDataResponse[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching heatmap data:", error);
+    throw error;
+  }
+};
+
+// Function to fetch data for a specific consigna
+export const fetchNNH4_SPData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/consigna/", {
+    nombre: "NNH4_SP",
+    start_date,
+    end_date,
+    tipo,
+  });
+
+  return data.map(({ time, value }) => ({ time, value }));
 };
