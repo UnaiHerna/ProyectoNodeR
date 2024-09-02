@@ -11,17 +11,17 @@ async function readDatosConsignaByNombre(consigna, startDate, endDate) {
         return cachedData;
     }
 
-    let query = knex('Valores_Consigna')
-        .select('Consigna.nombre as consigna', 'Valores_Consigna.valor as value', 'Valores_Consigna.timestamp as time', 'Valores_Consigna.mode as mode')
-        .join('Consigna', 'Valores_Consigna.id_consigna', '=', 'Consigna.id')
-        .where('Consigna.nombre', consigna)
-        .orderBy('Valores_Consigna.timestamp', 'asc');
+    let query = knex('valores_consigna')
+        .select('consigna.nombre as consigna', 'valores_consigna.valor as value', 'valores_consigna.timestamp as time', 'valores_consigna.mode as mode')
+        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+        .where('consigna.nombre', consigna)
+        .orderBy('valores_consigna.timestamp', 'asc');
 
     if (startDate) {
-        query = query.andWhere('Valores_Consigna.timestamp', '>=', startDate);
+        query = query.andWhere('valores_consigna.timestamp', '>=', startDate);
     }
     if (endDate) {
-        query = query.andWhere('Valores_Consigna.timestamp', '<=', endDate);
+        query = query.andWhere('valores_consigna.timestamp', '<=', endDate);
     }
 
     const results = await query;
@@ -45,10 +45,10 @@ async function readDatosConsignaByEquipo(equipo, startDate, endDate) {
     }
 
     let query = knex('valores_consigna')
-        .select('Consigna.nombre as consigna', 'valores_consigna.valor as value', 'valores_consigna.timestamp as time', 'valores_consigna.mode as mode')
-        .join('Consigna', 'valores_consigna.id_consigna', '=', 'Consigna.id')
-        .join('Equipo', 'Consigna.id_equipo', '=', 'Equipo.id')
-        .where('Equipo.nombre', equipo)
+        .select('consigna.nombre as consigna', 'valores_consigna.valor as value', 'valores_consigna.timestamp as time', 'valores_consigna.mode as mode')
+        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+        .join('equipo', 'consigna.id_equipo', '=', 'equipo.id')
+        .where('equipo.nombre', equipo)
         .orderBy('valores_consigna.timestamp', 'asc');
 
     if (startDate) {
@@ -106,11 +106,11 @@ router.get('/porcentaje', async (req, res) => {
         return cachedData;
     }
 
-    let query = knex('Valores_Consigna')
+    let query = knex('valores_consigna')
         .count('valores_consigna.id_consigna as count')
         .select('valores_consigna.mode')
-        .join('Consigna', 'valores_consigna.id_consigna', '=', 'Consigna.id')
-        .where('Consigna.nombre', nombre)
+        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+        .where('consigna.nombre', nombre)
         .groupBy('valores_consigna.mode');
 
     if (start_date) {
@@ -150,10 +150,10 @@ router.get('/avg_modo', async (req, res) => {
 
     let query = knex('valores_consigna')
         .avg('valores_consigna.valor as avg')
-        .select('Consigna.nombre as consigna', 'valores_consigna.mode')
-        .join('Consigna', 'valores_consigna.id_consigna', '=', 'Consigna.id')
-        .where('Consigna.nombre', nombre)
-        .groupBy('Consigna.nombre', 'valores_consigna.mode');
+        .select('consigna.nombre as consigna', 'valores_consigna.mode')
+        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+        .where('consigna.nombre', nombre)
+        .groupBy('consigna.nombre', 'valores_consigna.mode');
 
     if (start_date) {
         query = query.andWhere('valores_consigna.timestamp', '>=', start_date);
