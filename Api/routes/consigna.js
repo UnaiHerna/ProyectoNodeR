@@ -142,11 +142,6 @@ router.get('/porcentaje', async (req, res) => {
 // Ruta para obtener promedio del modo
 router.get('/avg_modo', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
-    const cacheKey = `avg_modo_${nombre}_${start_date}_${end_date}`;
-    let cachedData = await redisClient.getCachedResponse(cacheKey);
-    if (cachedData) {
-        return cachedData;
-    }
 
     let query = knex('valores_consigna')
         .avg('valores_consigna.valor as avg')
@@ -174,7 +169,6 @@ router.get('/avg_modo', async (req, res) => {
         { avg: modosPresentes[1] || null, consigna: nombre, mode: "AUTO" }
     ];
 
-    redisClient.setCachedResponse(cacheKey, datos);
     res.json(datos);
 });
 

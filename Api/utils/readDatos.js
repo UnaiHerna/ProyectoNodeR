@@ -63,6 +63,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
 
         // Generar huecos y realizar agregación de datos
         const { datosWithGaps, huecosInfo } = generarHuecos(datos);
+
         const datosFinales = agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo);
 
         // Almacenar en caché los datos procesados
@@ -77,7 +78,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
 }
 
 // Función de agregación
-function agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo) {
+function agregacion(datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo) {
     
     // Redondear todos los length a un valor entero
     huecosInfo = huecosInfo.map(item => ({
