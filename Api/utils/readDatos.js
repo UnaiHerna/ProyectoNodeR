@@ -78,7 +78,7 @@ async function readDatosSensorByVariable(variable, equipo, startDate = null, end
 }
 
 // Función de agregación
-function agregacion(datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo) {
+function agregacion(datos, datosWithGaps, deltat, huecosInfo, nombreEquipo, tipo) {
     
     // Redondear todos los length a un valor entero
     huecosInfo = huecosInfo.map(item => ({
