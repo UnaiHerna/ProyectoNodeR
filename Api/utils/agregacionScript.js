@@ -73,8 +73,7 @@ function calcularDeltaPrima(tipo, deltaDts, timeLimits) {
     };
 
     const numTime = b / values.valor;
-    let agrupacionRangoValor = 0;
-
+    let agrupacionRangoValor = values.rango[values.rango.length - 1]; // Valor por defecto
     for (const rango of values.rango) {
         if (numTime < rango) {
             agrupacionRangoValor = rango;
@@ -83,6 +82,7 @@ function calcularDeltaPrima(tipo, deltaDts, timeLimits) {
     }
 
     const z = agrupacionRangoValor * diccionario2[values.unidad];
+
     return z;
 }
 
