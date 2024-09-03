@@ -107,7 +107,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
                     data: data.map((item) => item.value),
                     type: chartType,
                     smooth: chartType === 'line' ? false : undefined,
-                    yAxisIndex: yAxisLeft.includes(variable) ? 0 : 1,
+                    yAxisIndex: yAxisLeft.includes(variable) ? 0 : (yAxisRight.includes(variable) ? 1 : 0),
                   });
 
                   // Update categories only once
@@ -145,8 +145,8 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
 
   const getOption = () => {
     const baseLegend = {
-      bottom: '0%',  // Mueve la leyenda a la parte inferior
-      left: 'center', // Centra la leyenda horizontalmente
+      bottom: '0%',
+      left: 'center',
     };
 
     if (chartType === 'pie') {
@@ -190,7 +190,10 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
           source: datasetSource,
         },
         xAxis: { type: 'category' },
-        yAxis: {},
+        yAxis: [
+          { type: 'value', name: 'Axis Left', position: 'left' },
+          { type: 'value', name: 'Axis Right', position: 'right' },
+        ],
         series: Array(categories.length).fill({ type: chartType as 'line' | 'bar' }),
       };
     }
@@ -201,13 +204,8 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
         data: categories,
       },
       yAxis: [
-        {
-          type: 'value',
-          name: 'Axis',
-          scale: true,
-          position: 'left',
-          axisLabel: { formatter: '{value}' },
-        }
+        { type: 'value', name: 'Axis Left', scale: true, position: 'left' },
+        ...(yAxisRight.length > 0 ? [{ type: 'value', name: 'Axis Right', scale: true, position: 'right' }] : []),
       ],
       dataZoom: zoomEnabled ? [{ type: 'inside' }, { type: 'slider' }] : [],
       series: chartData,
@@ -219,9 +217,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   };
 
   return (
-    <>
-      <ReactEcharts option={getOption()} style={{ height: '100%', width: '100%' }} />
-    </>
+    <ReactEcharts option={getOption()} style={{ height: '100%', width: '100%' }} />
   );
 };
 

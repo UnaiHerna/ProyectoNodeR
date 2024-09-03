@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchDO_SPData, fetchNNH4_SPData } from "../../../helpers/apiHelper";
+import { fetchDO_SPData, fetchNh4_SPData } from "../../../helpers/apiHelper";
 
 interface ApiResponseItem {
   time: string;
@@ -25,7 +25,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
       try {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const month = String(today.getMonth() + 2).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         const currentDate = `${year}-${month}-${day}`;
 
@@ -34,7 +34,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
         if (nombre === "DO_SP") {
           data = await fetchDO_SPData(currentDate, currentDate);
         } else if (nombre === "NNH4_SP") {
-          data = await fetchNNH4_SPData(currentDate, currentDate);
+          data = await fetchNh4_SPData(currentDate, currentDate);
         } else {
           setDisplayValue("No data available");
           return;

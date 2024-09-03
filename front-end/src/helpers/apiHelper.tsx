@@ -1,5 +1,3 @@
-// apiHelper.ts
-
 // Define the types for API parameters and responses
 interface ApiParams {
   mltss_sp: number;
@@ -42,8 +40,34 @@ interface HeatmapDataResponse {
   sludge_prod: number;
 }
 
+// Define the type for the response from /datos/consigna/avg_modo
+interface NNH4_SPResponse  {
+  consigna: string;
+  Automatico: string; // Assuming percentage is a string
+  Manual: string; // Assuming percentage is a string
+}
+
+// Define possible consigna names
+type ConsignaName = 'nnh4_sp' | 'do_sp';
+
+// Define the type for the response from /datos/consigna/avg_modo
+interface AvgModoEntry {
+  avg: number | null; // The average value can be null
+  consigna: ConsignaName;
+  mode: "MANUAL" | "AUTO";
+}
+
+// Define the type for the response array
+interface AvgModoResponse {
+  data: AvgModoEntry[];
+  avg: number | null;
+  mode: string | null;
+}
+
+
+
 // Base URL for API
-const BASE_URL = "http://13.51.207.212:8000";
+const BASE_URL = "http://13.60.95.144:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
@@ -58,7 +82,7 @@ const buildUrl = (endpoint: string, params: FetchOptions): string => {
     queryParams.push(`nombre=${encodeURIComponent(params.nombre)}`);
   if (params.start_date) queryParams.push(`start_date=${params.start_date}`);
   if (params.end_date) queryParams.push(`end_date=${params.end_date}`);
-  queryParams.push(`tipo=${encodeURIComponent(params.tipo || "timeseries")}`);
+  if (params.tipo) queryParams.push(`tipo=${encodeURIComponent(params.tipo || "timeseries")}`);
 
   url += queryParams.join("&");
   console.log("Constructed URL:", url);
@@ -88,6 +112,7 @@ const fetchData = async <T,>(
 interface DataPoint {
   time: string;
   value: number;
+  avg?: number | null,
   mode?: number; // Optional field
   consigna?: string; // Optional field
 }
@@ -112,7 +137,7 @@ export const fetchNH4Data = async (
 export const fetchNH4FiltData = async (
   start_date: string,
   end_date: string,
-  tipo: "timeseries" | "barchart" = "timeseries"
+  tipo: "timeseries" | "barchart"
 ): Promise<DataPoint[]> => {
   const data = await fetchData<SensorDataResponse[]>("/datos/senal/", {
     nombre: "nnh4_filt",
@@ -131,6 +156,24 @@ export const fetchDO_SPData = async (
 ): Promise<DataPoint[]> => {
   const data = await fetchData<SensorDataResponse[]>("/datos/consigna/", {
     nombre: "do_sp",
+    start_date,
+    end_date,
+    tipo,
+  });
+  return data.map(({ time, value, mode, consigna }) => ({
+    time,
+    value,
+    mode,
+    consigna,
+  }));
+};
+export const fetchNh4_SPData = async (
+  start_date: string,
+  end_date: string,
+  tipo: "timeseries" | "barchart" = "timeseries"
+): Promise<DataPoint[]> => {
+  const data = await fetchData<SensorDataResponse[]>("/datos/consigna/", {
+    nombre: "NNH4_SP",
     start_date,
     end_date,
     tipo,
@@ -224,18 +267,59 @@ export const fetchHeatmapData = async (): Promise<HeatmapDataResponse[]> => {
   }
 };
 
-// Function to fetch data for a specific consigna
+// Function to fetch NNH4 SP data for a specific consigna
 export const fetchNNH4_SPData = async (
   start_date: string,
   end_date: string,
   tipo: "timeseries" | "barchart" = "timeseries"
-): Promise<DataPoint[]> => {
-  const data = await fetchData<SensorDataResponse[]>("/datos/consigna/", {
+): Promise<{ consigna: string; automatico: number; manual: number }> => {
+  const data = await fetchData<NNH4_SPResponse>("/datos/consigna/porcentaje", {
     nombre: "NNH4_SP",
     start_date,
     end_date,
     tipo,
   });
 
-  return data.map(({ time, value }) => ({ time, value }));
+  // Convert percentage strings to numbers
+  return {
+    consigna: data.consigna,
+    automatico: parseFloat(data.Automatico.replace('%', '')),
+    manual: parseFloat(data.Manual.replace('%', '')),
+  };
+};
+
+// Function to fetch consigna average mode data
+export const fetchConsignaAvgModoData = async (
+  nombre: ConsignaName,
+  start_date: string,
+  end_date: string
+): Promise<{ consigna: ConsignaName; automatico: number; manual: number }> => {
+  // Fetch data from the API
+  const response = await fetchData<AvgModoResponse[]>("/datos/consigna/avg_modo", {
+    nombre,
+    start_date,
+    end_date,
+  });
+
+  // Initialize values
+  let automatico = 0;
+  let manual = 0;
+
+  console.log(JSON.stringify(response));
+
+  // Process each entry in the response array
+  response.forEach(({ avg, mode }) => {
+    if (mode === "AUTO" && avg !== null) {
+      automatico = avg;
+    } else if (mode === "MANUAL" && avg !== null) {
+      manual = avg;
+    }
+  });
+
+  // Return the processed data
+  return {
+    consigna: nombre,
+    automatico,
+    manual,
+  };
 };
