@@ -1,5 +1,4 @@
 import GeneralChartComponent from "./FrameWorkCimico";
-import React from "react";
 // Utility function to format dates as YYYY-MM-DDTHH:mm:ss
 const formatDate = (date: Date) => {
   const year = date.getFullYear();
@@ -41,4 +40,4 @@ const LineChartComponent = () => {
   );
 };
 
-export default React.memo(LineChartComponent);
+export default LineChartComponent;

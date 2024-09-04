@@ -60,7 +60,7 @@ const DataDisplay: React.FC = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-screen mt-[-4rem]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-screen mt-[-1rem]">
         <div className="p-4 custom-background overflow-auto h-full">
           <h1 className="text-xl font-bold mb-2">Ingreso de Datos</h1>
           <div className="mb-4">

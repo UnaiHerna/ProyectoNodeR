@@ -1,61 +1,118 @@
-import React from 'react';
-import ReactECharts from 'echarts-for-react';
+import React, { useEffect, useState } from 'react';
 import * as echarts from 'echarts';
+import 'echarts/lib/chart/heatmap';
+import 'echarts/lib/component/calendar';
+import 'echarts/lib/component/tooltip';
+import 'echarts/lib/component/visualMap';
+import { fetchHeatmapDataForYear } from '../../helpers/apiHelper'; // Ajusta la ruta según tu estructura de carpetas
 
-// Function to generate virtual data
-function getVirtualData(year: string) {
-  const date = +echarts.time.parse(year + '-01-01');
-  const end = +echarts.time.parse(+year + 1 + '-01-01');
-  const dayTime = 3600 * 24 * 1000;
-  const data = [];
-  for (let time = date; time < end; time += dayTime) {
-    data.push([
-      echarts.time.format(time, '{yyyy}-{MM}-{dd}', false),
-      Math.floor(Math.random() * 10000)
-    ]);
-  }
-  return data;
+interface HeatmapDayData {
+  day: string; // El día de la semana, por ejemplo, "Tuesday"
+  week: number; // El número de la semana en el año
+  average_value: number; // El valor promedio para ese día
 }
 
-const CalendarHeatmap: React.FC = () => {
-  const option = {
-    title: {
-      top: 30,
-      left: 'center',
-      text: 'Daily Step Count',
-    },
-    tooltip: {},
-    visualMap: {
-      min: 0,
-      max: 10000,
-      type: 'piecewise',
-      orient: 'horizontal',
-      left: 'center',
-      top: 65,
-    },
-    calendar: {
-      top: 120,
-      left: 30,
-      right: 30,
-      cellSize: ['auto', 13],
-      range: '2016',
-      itemStyle: {
-        borderWidth: 0.5,
-      },
-      yearLabel: { show: false },
-    },
-    series: {
-      type: 'heatmap',
-      coordinateSystem: 'calendar',
-      data: getVirtualData('2016'),
-    },
-  };
+const HeatmapComponent: React.FC<{ year: string; variable: string; equipo: string; }> = ({ year, variable, equipo }) => {
+  const [data, setData] = useState<HeatmapDayData[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchHeatmapDataForYear(year, variable, equipo);
+        setData(result);
+      } catch (err) {
+        setError('Failed to fetch data.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [year, variable, equipo]);
+
+  useEffect(() => {
+    if (data) {
+      const chartContainer = document.getElementById('heatmap') as HTMLDivElement;
+      const chart = echarts.init(chartContainer);
+
+      const transformHeatmapData = (data: HeatmapDayData[]) => {
+        return data.map(item => {
+          const [dayName, weekNumber] = [item.day, item.week];
+          const date = new Date(Date.UTC(Number(year), 0, (weekNumber - 1) * 7 + (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].indexOf(dayName) + 1)));
+          console.log(date.toISOString(), item.average_value);
+          return [
+            echarts.time.format(date.getTime(), '{yyyy}-{MM}-{dd}', false),
+            item.average_value
+          ];
+        });
+      };
+
+      const option = {
+        title: {
+          top: 30,
+          left: 'center',
+          text: 'Heatmap Data'
+        },
+        tooltip: {},
+        visualMap: {
+          min: 0,
+          max: Math.max(...data.map(item => item.average_value)),
+          type: 'piecewise',
+          orient: 'horizontal',
+          left: 'center',
+          top: 65,
+          inRange: {
+            color: [
+              '#d0e4f5', // Light blue
+              '#9ab8e8', // Medium light blue
+              '#5e7dbd', // Medium blue
+              '#1e4a9c', // Dark blue
+              'rgb(5, 35, 170)' // Very dark blue
+            ]
+          }
+        },
+        calendar: {
+          top: 120,
+          left: 30,
+          right: 30,
+          cellSize: ['auto', 13],
+          range: year,
+          itemStyle: {
+            borderWidth: 0.5
+          },
+          yearLabel: { show: false }
+        },
+        series: {
+          type: 'heatmap',
+          coordinateSystem: 'calendar',
+          data: transformHeatmapData(data)
+        }
+      };
+
+      chart.setOption(option);
+
+      // Resize the chart when the window is resized
+      window.addEventListener('resize', () => chart.resize());
+
+      return () => {
+        chart.dispose();
+        window.removeEventListener('resize', () => chart.resize());
+      };
+    }
+  }, [data, year]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
-      <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
+    <div style={{ width: '100%', height: '100%' }}>
+      <h2 className='mt-28'>Heatmap Data for {year}</h2>
+      <div id="heatmap" style={{ width: '100%', height: '100%' }} />
     </div>
   );
 };
 
-export default CalendarHeatmap;
+export default HeatmapComponent;

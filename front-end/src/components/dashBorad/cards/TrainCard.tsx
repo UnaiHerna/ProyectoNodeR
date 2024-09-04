@@ -24,7 +24,7 @@ export default function TrainCrad() {
             <CardBody className="bg-transparent p-0">MLSS</CardBody>
           </Card>
         </Tab>
-        <Tab key="HeatMap" title="HeatMap">
+        <Tab key="HeatMap" title="Countor">
           <Card className="bg-transparent shadow-none">
             <CardBody className="bg-transparent p-0">
               <HeatmapChart />

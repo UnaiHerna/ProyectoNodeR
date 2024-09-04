@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { fetchNNH4_SPData } from '../../helpers/apiHelper'; // Adjust the path as needed
 
-// Define the type for the pie chart data
 interface PieChartData {
   consigna: string;
   automatico: number;
   manual: number;
 }
 
-// Configuration for the pie chart
+interface PropsP {
+  startDate: string;
+  endDate: string;
+}
+
 const getOption = (data: PieChartData) => {
   const total = data.automatico + data.manual;
   const automaticoPercentage = (data.automatico / total) * 100;
@@ -57,14 +60,13 @@ const getOption = (data: PieChartData) => {
           { value: data.automatico, name: 'Automatico' },
           { value: data.manual, name: 'Manual' }
         ],
-        color: ['#072AC8', '#909DAD'] // Color for Automatico and Manual
+        color: ['#072AC8', '#909DAD']
       }
     ]
   };
 };
 
-// PieChartComponent
-const PieChartComponent: React.FC = () => {
+const PieChartComponent: React.FC<PropsP> = ({ startDate, endDate }) => {
   const [data, setData] = useState<PieChartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,11 +74,6 @@ const PieChartComponent: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Use fixed dates or parameters for the API call
-        const startDate = '2024-04-04T09:57';
-        const endDate = '2024-09-03T09:57';
-
-        // Fetch the NNH4 SP data
         const fetchedData = await fetchNNH4_SPData(startDate, endDate);
         setData(fetchedData);
       } catch (err) {
@@ -88,9 +85,8 @@ const PieChartComponent: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [startDate, endDate]);
 
-  // Default option when data is not yet available
   const defaultOption = {
     tooltip: {
       trigger: 'item',
@@ -122,7 +118,7 @@ const PieChartComponent: React.FC = () => {
           show: false
         },
         data: [],
-        color: [] // Empty array for default option
+        color: []
       }
     ]
   };
@@ -132,7 +128,7 @@ const PieChartComponent: React.FC = () => {
   return (
     <div className='w-9/12 h-full p-0 m-0'>
       {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {error && <p>Error fetching data: {error}</p>}
       {!loading && !error && (
         <ReactEcharts
           option={option}

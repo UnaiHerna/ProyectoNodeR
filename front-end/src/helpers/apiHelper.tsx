@@ -7,6 +7,12 @@ interface ApiParams {
   temp: number;
 }
 
+interface HeatmapDayData {
+  day: string;
+  week: number;
+  average_value: number;
+}
+
 interface ApiResponse {
   v_conc_anx: number[];
   v_conc_aer: number[];
@@ -67,7 +73,7 @@ interface AvgModoResponse {
 
 
 // Base URL for API
-const BASE_URL = "http://13.60.95.144:8000";
+const BASE_URL = "http://13.61.34.124:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
@@ -305,7 +311,7 @@ export const fetchConsignaAvgModoData = async (
   let automatico = 0;
   let manual = 0;
 
-  console.log(JSON.stringify(response));
+  // console.log(JSON.stringify(response));
 
   // Process each entry in the response array
   response.forEach(({ avg, mode }) => {
@@ -322,4 +328,39 @@ export const fetchConsignaAvgModoData = async (
     automatico,
     manual,
   };
+};
+
+
+// Función para construir la URL para el endpoint de heatmap
+const buildHeatmapUrl = (year: string, variable: string, equipo: string): string => {
+  return `${BASE_URL}/datos/sensorvacio/heatmap?variable=${encodeURIComponent(variable)}&equipo=${encodeURIComponent(equipo)}&year=${encodeURIComponent(year)}`;
+};
+// Función para obtener los datos del heatmap para un año específico
+export const fetchHeatmapDataForYear = async (
+  year: string,
+  variable: string,
+  equipo: string
+): Promise<HeatmapDayData[]> => {
+  const url = buildHeatmapUrl(year, variable, equipo);
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    // Obtiene los datos en formato JSON
+    const data: HeatmapDayData[] = await response.json();
+
+    // Redondea los valores a enteros
+    const roundedData = data.map(item => ({
+      ...item,
+      average_value: Math.round(item.average_value)
+    }));
+
+    return roundedData;
+  } catch (error) {
+    console.error("Error fetching heatmap data:", error);
+    throw error;
+  }
 };

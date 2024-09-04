@@ -39,7 +39,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
             data = await fetchNH4Data(startDate, endDate);
             break;
           case "NH4_FILT":
-            data = await fetchNH4FiltData(startDate, endDate);
+            data = await fetchNH4FiltData(startDate, endDate, 'timeseries');
             break;
           case "DO_SP":
             data = await fetchDO_SPData(startDate, endDate);

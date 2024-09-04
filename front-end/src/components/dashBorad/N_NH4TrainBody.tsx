@@ -1,4 +1,4 @@
-import React from "react";
+import  { useState } from "react";
 import BarChartComponent from "./Barchart";
 import BigChart from "./BigLinechart";
 import ModeComponent from "./cards/ModeCrad";
@@ -7,11 +7,52 @@ import CustomLineChart from "./customLinechart";
 import GaugeChart from "./Gauje";
 import LineChartComponent from "./LineCharts";
 import PieChartComponent from "./Piechart";
-import CalendarHeatmap from "./HeatCalendar";
 import DatePicker2 from "./cards/DatePicker";
+import HeatmapComponent from "./HeatCalendar";
+import ElectricityChart from "./Arerachart";
 
 export default function N_NH4TrainBody() {
-  console.log("N_NH4TrainBody rendered");
+  // State for date ranges used by different charts
+  const [bigChartDateRange, setBigChartDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  }>({
+    startDate: "2024-09-01T00:00:00",
+    endDate: "2024-09-30T23:59:59",
+  });
+
+  const [barChartDateRange, setBarChartDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  }>({
+    startDate: "2024-09-01T00:00:00",
+    endDate: "2024-09-30T23:59:59",
+  });
+
+  const [dynamicChartDateRange, setDynamicChartDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  }>({
+    startDate: "2024-09-01T00:00:00",
+    endDate: "2024-09-30T23:59:59",
+  });
+
+  // Callback functions to handle date changes
+  const handleBigChartDateChange = (startDate: string, endDate: string) => {
+    setBigChartDateRange({ startDate, endDate });
+    console.log("BigChart Date Range Changed:", { startDate, endDate });
+  };
+
+  const handleBarChartDateChange = (startDate: string, endDate: string) => {
+    setBarChartDateRange({ startDate, endDate });
+    console.log("BarChart Date Range Changed:", { startDate, endDate });
+  };
+
+  const handleDynamicChartDateChange = (startDate: string, endDate: string) => {
+    setDynamicChartDateRange({ startDate, endDate });
+    console.log("DynamicChart Date Range Changed:", { startDate, endDate });
+  };
+
   return (
     <div className="grid grid-cols-1 grid-rows-[auto_1fr_auto] gap-4 p-4 h-full w-full">
       {/* Header */}
@@ -22,12 +63,12 @@ export default function N_NH4TrainBody() {
 
       {/* Main content */}
       <div className="grid grid-cols-1 gap-4 h-full">
-        {/* LineChartComponent */}
+        {/* LineChartComponent (without DatePicker) */}
         <div className="h-[30rem]">
           <LineChartComponent />
         </div>
 
-        {/* Gauge Charts */}
+        {/* Gauge Charts (without DatePicker) */}
         <div className="grid grid-cols-4 gap-4">
           <GaugeChart variable="NH4" />
           <GaugeChart variable="NH4_FILT" />
@@ -35,7 +76,7 @@ export default function N_NH4TrainBody() {
           <GaugeChart variable="DO" />
         </div>
 
-        {/* Custom Line Charts */}
+        {/* Custom Line Charts (without DatePicker) */}
         <div className="grid grid-cols-1 gap-4">
           <div className="h-40">
             <CustomLineChart variable="DO" />
@@ -46,29 +87,54 @@ export default function N_NH4TrainBody() {
         </div>
       </div>
 
-      {/* BigChart */}
+      {/* BigChart with DatePicker */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4 h-[30rem]">
         <div className="col-span-4 max-h-auto">
-        <DatePicker2 />
-          <BigChart />
+          <section className="w-64">
+            <DatePicker2 onDateChange={handleBigChartDateChange} />
+          </section>
+          <BigChart
+            startDate={bigChartDateRange.startDate}
+            endDate={bigChartDateRange.endDate}
+          />
         </div>
         <div className="col-span-2">
-          <PieChartComponent />
+          <PieChartComponent
+            startDate={bigChartDateRange.startDate}
+            endDate={bigChartDateRange.endDate}
+          />
         </div>
       </div>
 
-      {/* BarChart */}
+      {/* BarChart with DatePicker */}
       <div className="col-span-1 mt-4 h-[30rem]">
-        <BarChartComponent />
+        <section className="w-64 mb-4">
+          <DatePicker2 onDateChange={handleBarChartDateChange} />
+        </section>
+        <BarChartComponent
+          startDate={barChartDateRange.startDate}
+          endDate={barChartDateRange.endDate}
+        />
       </div>
 
-      {/* DynamicChart */}
+      {/* DynamicChart with DatePicker */}
       <div className="col-span-1 mt-4 h-[30rem]">
-        <DynamicChart />
+        <section className="w-64 mb-4">
+          <DatePicker2 onDateChange={handleDynamicChartDateChange} />
+        </section>
+        <DynamicChart
+          startDate={dynamicChartDateRange.startDate}
+          endDate={dynamicChartDateRange.endDate}
+        />
       </div>
-      {/* DynamicChart */}
-      <div className="col-span-1 mt-4 h-[40rem]">
-        <CalendarHeatmap />
+
+      {/* CalendarHeatmap with DatePicker */}
+      <div className="col-span-1 mt-5 h-[40rem]">
+        <HeatmapComponent year="2024" variable="qw" equipo="INF_PIPE.FM" />
+      </div>
+      {/* CalendarHeatmap with DatePicker */}
+      <div className="col-span-1 h-[40rem]">
+          <ElectricityChart />
       </div>
     </div>
   );

@@ -1,12 +1,14 @@
+import React from 'react';
 import GeneralChartComponent from "./FrameWorkCimico";
 
-const BigChart = () => {
+interface BigChartProps {
+  startDate: string; // Start date as an ISO string
+  endDate: string;   // End date as an ISO string
+}
+
+const BigChart: React.FC<BigChartProps> = ({ startDate, endDate }) => {
   // Definir las variables que queremos graficar
   const variables = ['NH4', 'NH4_FILT', 'DO_SP', 'QW', 'DO'];
-
-  // Definir el rango de fechas (ajustar según necesidades)
-  const startDate = '2024-09-01T00:00:00';
-  const endDate = '2024-09-02T00:00:00';
 
   // Definir los ejes Y para las variables
   const yAxisLeft = [variables[0], variables[1], variables[2], variables[4]]; // Eje Y izquierdo

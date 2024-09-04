@@ -47,7 +47,8 @@ interface ChartProps {
   useDataset?: boolean; // Opción para usar dataset en lugar de series
 }
 
-type FetchFunction = (startDate: string, endDate: string, chartType?: 'timeseries' | 'barchart') => Promise<DataPoint[]>;
+// Cambiado para que `chartType` no sea `undefined`
+type FetchFunction = (startDate: string, endDate: string, chartType: 'timeseries' | 'barchart') => Promise<DataPoint[]>;
 
 const GeneralChartComponent: React.FC<ChartProps> = ({
   variables,
@@ -63,7 +64,6 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   const [categories, setCategories] = useState<string[]>([]);
   const [datasetSource, setDatasetSource] = useState<DatasetDimension[]>([]);
   const [pieData, setPieData] = useState<PieData[]>([]);
-  const [shouldFetchData, setShouldFetchData] = useState(true);
 
   const fetchFunctions: Record<string, FetchFunction> = {
     NH4: fetchNH4Data,
@@ -74,8 +74,6 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   };
 
   useEffect(() => {
-    if (!shouldFetchData) return;
-
     const fetchDataForChart = async () => {
       try {
         const allData: ChartData[] = [];
@@ -85,7 +83,10 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
         const fetchPromises = variables.map(async (variable) => {
           const fetchFunction = fetchFunctions[variable];
           if (fetchFunction) {
-            const data = await fetchFunction(startDate, endDate, chartType === 'line' ? 'timeseries' : 'barchart');
+            // Convert 'line' to 'timeseries' and 'bar' to 'barchart'
+            const convertedChartType = chartType === 'line' ? 'timeseries' : 'barchart';
+
+            const data = await fetchFunction(startDate, endDate, convertedChartType);
             if (data.length > 0) {
               if (useDataset) {
                 dataset.push({
@@ -133,19 +134,18 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
         } else {
           setChartData(allData);
         }
-        
-        setShouldFetchData(false); // Prevent future fetches if not needed
       } catch (error) {
         console.error("Error fetching data for chart:", error);
       }
     };
 
     fetchDataForChart();
-  }, [shouldFetchData, variables, startDate, endDate, chartType, yAxisLeft, yAxisRight, useDataset]);
+  }, [variables, startDate, endDate, chartType, yAxisLeft, yAxisRight, useDataset]); // Dependencias del useEffect
 
   const getOption = () => {
     const baseLegend = {
       bottom: '0%',
+      top: "5%",
       left: 'center',
     };
 

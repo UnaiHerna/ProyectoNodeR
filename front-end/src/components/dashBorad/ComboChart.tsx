@@ -12,15 +12,16 @@ interface DataPoint {
   value: number;
 }
 
-const DynamicChart: React.FC = () => {
+interface DynamicChartProps {
+  startDate: string;
+  endDate: string;
+}
+
+const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
   // States for different API data
   const [doSensData, setDoSensData] = useState<DataPoint[]>([]);
   const [nh4Data, setNh4Data] = useState<DataPoint[]>([]);
   const [qinfData, setQinfData] = useState<DataPoint[]>([]);
-
-  // States for date handling
-  const [startDate] = useState("2024-09-01T00:00:00");
-  const [endDate] = useState("2024-09-30T23:59:59");
 
   // Fetch data from all APIs
   const fetchAllData = async () => {
@@ -39,7 +40,7 @@ const DynamicChart: React.FC = () => {
     }
   };
 
-  // Fetch data on component mount or when dates change
+  // Fetch data when startDate or endDate changes
   useEffect(() => {
     fetchAllData();
   }, [startDate, endDate]);
@@ -49,7 +50,7 @@ const DynamicChart: React.FC = () => {
     const timeLabels = doSensData.map((d) => d.time);
 
     return {
-      title: { },
+      title: {},
       xAxis: {
         type: "category",
         data: timeLabels,
@@ -70,11 +71,13 @@ const DynamicChart: React.FC = () => {
           name: "DO Sensor",
           data: doSensData.map((d) => d.value),
           type: "bar",
+          color: "orange"
         },
         {
           name: "NH4 Sensor",
           data: nh4Data.map((d) => d.value),
           type: "bar",
+          color: "#A4C975"
         },
         {
           name: "Qinf Data",
@@ -82,6 +85,7 @@ const DynamicChart: React.FC = () => {
           type: "line",
           yAxisIndex: 1,
           smooth: true,
+          color: "blue"
         },
       ],
       legend: {
@@ -94,9 +98,9 @@ const DynamicChart: React.FC = () => {
   };
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div style={{ height: "100%", width: "100%" }}>
       <h2>Datos Combinados de Sensores (DO, NH4, Qinf)</h2>
-      <ReactECharts option={getCombinedOption()} style={{ height: '100%', width: '100%' }} />
+      <ReactECharts option={getCombinedOption()} style={{ height: "100%", width: "100%" }} />
     </div>
   );
 };
