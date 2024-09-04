@@ -1,11 +1,10 @@
 const express = require('express');
 const executeRScript = require('./utils/executeRScript');
-const { readDatosSensorByVariable } = require('./utils/readDatos'); // Asegúrate de que la ruta sea correcta para importar la función
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 const cors = require('cors');
-const { log } = require('mathjs');
 const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
+const sensorRoutes = require('./routes/sensor'); 
 
 const app = express();
 
@@ -18,6 +17,7 @@ app.use(cors({
 
 app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
+app.use('/datos/sensorvacio', sensorRoutes); 
 
 
 
@@ -48,23 +48,6 @@ app.get('/r', async (req, res) => {
     } catch (error) {
         console.error('Error ejecutando el script R:', error.message, error.stack);
         res.status(500).send('Error interno del servidor');
-    }
-});
-// Nueva ruta para /datos/sensorvacio/
-app.get('/datos/sensorvacio', async (req, res) => {
-    const { variable, equipo, start_date, end_date, tipo } = req.query;
-
-    // Verificar que los parámetros requeridos estén presentes
-    if (!variable || !equipo || !start_date || !end_date) {
-        return res.status(400).send('Faltan parámetros requeridos');
-    }
-    try {
-        // Llama a la función para leer los datos con los parámetros proporcionados
-        const data = await readDatosSensorByVariable(variable, equipo, start_date, end_date, tipo);
-        res.status(200).json(data);
-    } catch (error) {
-        console.error('Error al obtener los datos del sensor:', error.message);
-        res.status(500).send('Error al obtener los datos del sensor.');
     }
 });
 

@@ -100,76 +100,101 @@ router.get('/', async (req, res) => {
 // Ruta para obtener porcentaje de modo
 router.get('/porcentaje', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
+    const cacheKey = `porcentaje_${nombre}_${start_date}_${end_date}`;
 
-    let query = knex('valores_consigna')
-        .count('valores_consigna.id_consigna as count')
-        .select('valores_consigna.mode')
-        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
-        .where('consigna.nombre', nombre)
-        .groupBy('valores_consigna.mode');
+    try {
+        let cachedData = await redisClient.getCachedResponse(cacheKey);
+        if (cachedData) {
+            return res.json(cachedData);
+        }
 
-    if (start_date) {
-        query = query.andWhere('valores_consigna.timestamp', '>=', start_date);
+        let query = knex('valores_consigna')
+            .count('valores_consigna.id_consigna as count')
+            .select('valores_consigna.mode')
+            .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+            .where('consigna.nombre', nombre)
+            .groupBy('valores_consigna.mode');
+
+        if (start_date) {
+            query = query.andWhere('valores_consigna.timestamp', '>=', start_date);
+        }
+        if (end_date) {
+            query = query.andWhere('valores_consigna.timestamp', '<=', end_date);
+        }
+
+        const results = await query;
+
+        // Calcular el total y porcentajes
+        const totalCount = results.reduce((sum, r) => sum + parseInt(r.count), 0);
+        const countMode1 = results.filter(r => r.mode == 1).reduce((sum, r) => sum + parseInt(r.count), 0);
+        const countMode0 = results.filter(r => r.mode == 0).reduce((sum, r) => sum + parseInt(r.count), 0);
+
+        const percentageMode1 = (countMode1 / totalCount) * 100 || 0;
+        const percentageMode0 = (countMode0 / totalCount) * 100 || 0;
+
+        const datos = {
+            consigna: nombre,
+            Automatico: `${percentageMode1.toFixed(2)}%`,
+            Manual: `${percentageMode0.toFixed(2)}%`
+        };
+
+        await redisClient.setCachedResponse(cacheKey, datos);
+        // Enviar la respuesta y finalizar la ejecución
+        return res.json(datos);
+
+    } catch (error) {
+        console.error('Error al obtener el porcentaje:', error);
     }
-    if (end_date) {
-        query = query.andWhere('valores_consigna.timestamp', '<=', end_date);
-    }
-
-    const results = await query;
-
-    const totalCount = results.reduce((sum, r) => sum + parseInt(r.count), 0);
-    const countMode1 = results.filter(r => r.mode == 1).reduce((sum, r) => sum + parseInt(r.count), 0);
-    const countMode0 = results.filter(r => r.mode == 0).reduce((sum, r) => sum + parseInt(r.count), 0);
-
-    const percentageMode1 = (countMode1 / totalCount) * 100 || 0;
-    const percentageMode0 = (countMode0 / totalCount) * 100 || 0;
-
-    const datos = {
-        consigna: nombre,
-        Automatico: `${percentageMode1.toFixed(2)}%`,
-        Manual: `${percentageMode0.toFixed(2)}%`
-    };
-
-    res.json(datos);
 });
 
 // Ruta para obtener promedio del modo
 router.get('/avg_modo', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
     const cacheKey = `avg_modo_${nombre}_${start_date}_${end_date}`;
-    let cachedData = await redisClient.getCachedResponse(cacheKey);
-    if (cachedData) {
-        return cachedData;
+
+    try {
+        // Intentar obtener datos de la caché
+        let cachedData = await redisClient.getCachedResponse(cacheKey);
+        if (cachedData) {
+            return res.json(cachedData); // Devuelve la respuesta y termina la ejecución
+        }
+
+        let query = knex('valores_consigna')
+            .avg('valores_consigna.valor as avg')
+            .select('consigna.nombre as consigna', 'valores_consigna.mode')
+            .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
+            .where('consigna.nombre', nombre)
+            .groupBy('consigna.nombre', 'valores_consigna.mode');
+
+        if (start_date) {
+            query = query.andWhere('valores_consigna.timestamp', '>=', start_date);
+        }
+        if (end_date) {
+            query = query.andWhere('valores_consigna.timestamp', '<=', end_date);
+        }
+
+        const results = await query;
+
+        // Procesar los resultados
+        const modosPresentes = results.reduce((acc, r) => {
+            acc[r.mode] = r.avg;
+            return acc;
+        }, {});
+
+        const datos = [
+            { avg: modosPresentes[0] || null, consigna: nombre, mode: "MANUAL" },
+            { avg: modosPresentes[1] || null, consigna: nombre, mode: "AUTO" }
+        ];
+
+        // Cachear la respuesta
+        await redisClient.setCachedResponse(cacheKey, datos);
+
+        // Enviar la respuesta y finalizar la ejecución
+        return res.json(datos);
+
+    } catch (error) {
+        console.error('Error al obtener el promedio del modo:', error);
     }
-
-    let query = knex('valores_consigna')
-        .avg('valores_consigna.valor as avg')
-        .select('consigna.nombre as consigna', 'valores_consigna.mode')
-        .join('consigna', 'valores_consigna.id_consigna', '=', 'consigna.id')
-        .where('consigna.nombre', nombre)
-        .groupBy('consigna.nombre', 'valores_consigna.mode');
-
-    if (start_date) {
-        query = query.andWhere('valores_consigna.timestamp', '>=', start_date);
-    }
-    if (end_date) {
-        query = query.andWhere('valores_consigna.timestamp', '<=', end_date);
-    }
-
-    const results = await query;
-
-    const modosPresentes = results.reduce((acc, r) => {
-        acc[r.mode] = r.avg;
-        return acc;
-    }, {});
-
-    const datos = [
-        { avg: modosPresentes[0] || null, consigna: nombre, mode: "MANUAL" },
-        { avg: modosPresentes[1] || null, consigna: nombre, mode: "AUTO" }
-    ];
-
-    redisClient.setCachedResponse(cacheKey, datos);
-    res.json(datos);
 });
 
 module.exports = router;
