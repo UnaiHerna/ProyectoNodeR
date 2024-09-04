@@ -140,7 +140,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
     };
 
     fetchDataForChart();
-  }, [variables, startDate, endDate, chartType, yAxisLeft, yAxisRight, useDataset]); // Dependencias del useEffect
+  }, [startDate, endDate, useDataset]); // Dependencias del useEffect
 
   const getOption = () => {
     const baseLegend = {

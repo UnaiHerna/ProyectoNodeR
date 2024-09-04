@@ -42,10 +42,10 @@ const HeatmapComponent: React.FC<{ year: string; variable: string; equipo: strin
         return data.map(item => {
           const [dayName, weekNumber] = [item.day, item.week];
           const date = new Date(Date.UTC(Number(year), 0, (weekNumber - 1) * 7 + (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].indexOf(dayName) + 1)));
-          console.log(date.toISOString(), item.average_value);
+          const value = Math.max(item.average_value, 5000); // Asegura que el valor sea al menos 5000
           return [
             echarts.time.format(date.getTime(), '{yyyy}-{MM}-{dd}', false),
-            item.average_value
+            value
           ];
         });
       };
@@ -54,12 +54,12 @@ const HeatmapComponent: React.FC<{ year: string; variable: string; equipo: strin
         title: {
           top: 30,
           left: 'center',
-          text: 'Heatmap Data'
+          text: 'Water Quality (QW) 2024'
         },
         tooltip: {},
         visualMap: {
-          min: 0,
-          max: Math.max(...data.map(item => item.average_value)),
+          min: 0, // Asegúrate de que el valor mínimo sea 5000
+          max: Math.max(...data.map(item => item.average_value)), // Asegúrate de que el máximo sea al menos 5000
           type: 'piecewise',
           orient: 'horizontal',
           left: 'center',
@@ -109,7 +109,6 @@ const HeatmapComponent: React.FC<{ year: string; variable: string; equipo: strin
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <h2 className='mt-28'>Heatmap Data for {year}</h2>
       <div id="heatmap" style={{ width: '100%', height: '100%' }} />
     </div>
   );
