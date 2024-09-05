@@ -77,7 +77,7 @@ const BASE_URL = "http://localhost:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
-  let url = `${BASE_URL}${endpoint}?`;
+  let url = `${endpoint}?`;
   const queryParams: string[] = [];
 
   if (params.variable)
