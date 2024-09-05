@@ -5,18 +5,18 @@ import {
   fetchNH4FiltData,
   fetchDO_SPData,
   fetchDOSensData
-} from "../../helpers/apiHelper"; // Adjust import as necessary
+} from "../../helpers/apiHelper"; // Ajusta el import según sea necesario
 
 type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
 
 interface GaugeChartProps {
-  variable: VariableType; // Variable to fetch data for
+  variable: VariableType; // Variable para la que se van a buscar los datos
 }
 
 const GaugeChart: React.FC<GaugeChartProps> = ({ variable }) => {
   const [value, setValue] = useState<number>(0);
 
-  // Calculate dates for the last 6 hours
+  // Calcular las fechas para las últimas 6 horas
   const now = new Date();
   const endDate = now.toISOString();
   now.setHours(now.getHours() - 6);
@@ -31,7 +31,7 @@ const GaugeChart: React.FC<GaugeChartProps> = ({ variable }) => {
             data = await fetchNH4Data(startDate, endDate);
             break;
           case "NH4_FILT":
-            data = await fetchNH4FiltData(startDate, endDate);
+            data = await fetchNH4FiltData(startDate, endDate, 'timeseries');
             break;
           case "DO_SP":
             data = await fetchDO_SPData(startDate, endDate);
@@ -40,7 +40,7 @@ const GaugeChart: React.FC<GaugeChartProps> = ({ variable }) => {
             data = await fetchDOSensData(startDate, endDate);
             break;
           default:
-            console.warn(`No fetch function defined for variable: ${variable}`);
+            console.warn(`No se definió una función de obtención de datos para la variable: ${variable}`);
             return;
         }
 
@@ -49,30 +49,30 @@ const GaugeChart: React.FC<GaugeChartProps> = ({ variable }) => {
           setValue(latestDataPoint.value);
         }
       } catch (error) {
-        console.error("Error fetching gauge data:", error);
+        console.error("Error al obtener datos para el gauge:", error);
       }
     };
 
     fetchData();
   }, [variable, startDate, endDate]);
 
-  // Define color mapping based on variable
+  // Definir el mapeo de colores según la variable
   const colorMapping: Record<VariableType, { gaugeColor: string, textColor: string }> = {
-    "NH4": { gaugeColor: "#4CAF50", textColor: "#000000" }, // Green gauge, black text
-    "NH4_FILT": { gaugeColor: "#4CAF50", textColor: "#000000" }, // Green gauge, black text
-    "DO_SP": { gaugeColor: "#4CAF50", textColor: "#000000" }, // Green gauge, black text
-    "DO": { gaugeColor: "#4CAF50", textColor: "#000000" } // Green gauge, black text
+    "NH4": { gaugeColor: "#4CAF50", textColor: "#000000" }, // Gauge verde, texto negro
+    "NH4_FILT": { gaugeColor: "#4CAF50", textColor: "#000000" },
+    "DO_SP": { gaugeColor: "#4CAF50", textColor: "#000000" },
+    "DO": { gaugeColor: "#4CAF50", textColor: "#000000" }
   };
 
-  const maxValue = 5; // Set this to a fixed value or fetch dynamically if needed
+  const maxValue = 5; // Establece un valor máximo fijo o busca dinámicamente si es necesario
   const data = [
     { value },
     { value: maxValue - value }
   ];
 
-  // Use color from the mapping
+  // Usar el color del mapeo
   const { gaugeColor, textColor } = colorMapping[variable];
-  const COLORS = [gaugeColor, '#E0E0E0']; // Color for filled and unfilled parts
+  const COLORS = [gaugeColor, '#E0E0E0']; // Colores para las partes llenas y vacías
 
   return (
     <div className="flex flex-col items-center justify-center bg-gray-200 bg-opacity-50 p-2 rounded-lg shadow-md relative w-full h-52">
@@ -88,7 +88,7 @@ const GaugeChart: React.FC<GaugeChartProps> = ({ variable }) => {
           outerRadius={90}
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index]} />
           ))}
         </Pie>

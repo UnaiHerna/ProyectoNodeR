@@ -9,7 +9,7 @@ import LineChartComponent from "./LineCharts";
 import PieChartComponent from "./Piechart";
 import DatePicker2 from "./cards/DatePicker";
 import HeatmapComponent from "./HeatCalendar";
-import ElectricityChart from "./Arerachart";
+// import ElectricityChart from "./Arerachart";
 
 export default function N_NH4TrainBody() {
   // State for date ranges used by different charts
@@ -134,7 +134,7 @@ export default function N_NH4TrainBody() {
       </div>
       {/* CalendarHeatmap with DatePicker */}
       <div className="col-span-1 h-[40rem]">
-          <ElectricityChart />
+          {/* <ElectricityChart /> */}
       </div>
     </div>
   );
