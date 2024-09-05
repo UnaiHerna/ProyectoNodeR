@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const executeRScript = require('./utils/executeRScript');
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 const cors = require('cors');
@@ -19,9 +20,14 @@ app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
 app.use('/datos/sensorvacio', sensorRoutes); 
 
+// Sirve la aplicación React desde la carpeta 'dist'
+app.use(express.static(path.join(__dirname, '../front-end/dist')));
 
+// Redirige todas las rutas al index.html de React
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../front-end/dist', 'index.html'));
+});
 
-const desiredPort = process.env.PORT ?? 8000;
 
 app.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no funciona
     connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
@@ -51,6 +57,8 @@ app.get('/r', async (req, res) => {
     }
 });
 
+// Configuración del puerto
+const desiredPort = process.env.PORT ?? 8000;
 app.listen(desiredPort, () => {
     console.log(`Server listening on port http://localhost:${desiredPort}`);
 });
