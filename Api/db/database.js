@@ -3,7 +3,7 @@ const mysql = require('mysql');
 // Configuración de la conexión a la base de datos
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
+    user: 'unai-pc',
     password: 'Cim12345!',
     database: 'datos'
 });

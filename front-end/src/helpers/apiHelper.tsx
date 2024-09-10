@@ -73,11 +73,11 @@ interface AvgModoResponse {
 
 
 // Base URL for API
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://16.171.12.172:8000";
 
 // Build URL with query parameters
 const buildUrl = (endpoint: string, params: FetchOptions): string => {
-  let url = `${endpoint}?`;
+  let url = `${BASE_URL}${endpoint}?`;
   const queryParams: string[] = [];
 
   if (params.variable)
