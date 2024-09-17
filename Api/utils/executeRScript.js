@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const path = require('path');
 
 function executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp) {
-    const scriptPath = path.join(__dirname, '../f_steady_state_wwtp.R');
+    const scriptPath = path.join(__dirname, '../files/r/f_steady_state_wwtp.R');
 
     // Construye el comando con los argumentos
     const command = `Rscript ${scriptPath} ${mltss_sp} ${so_aer_sp} ${q_int} ${tss_eff_sp} ${temp}`;
