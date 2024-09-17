@@ -3,7 +3,7 @@ module.exports = {
         client: 'mysql',  // Asegúrate de que el cliente esté especificado
         connection: {
             host: '127.0.0.1',
-            user: 'unai-pc',
+            user: 'root',
             password: 'Cim12345!',
             database: 'datos'
         }

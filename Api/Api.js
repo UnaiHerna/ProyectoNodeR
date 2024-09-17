@@ -6,6 +6,7 @@ const cors = require('cors');
 const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor'); 
+const executeJava = require('./utils/executeJava');
 
 const app = express();
 
@@ -45,6 +46,23 @@ app.get('/r', async (req, res) => {
         res.status(200).send(result);
     } catch (error) {
         console.error('Error ejecutando el script R:', error.message, error.stack);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+app.get('/java', async (req, res) => {
+    const { age, race, psa, gleason } = req.query;
+
+    // Validar que todos los parámetros requeridos están presentes
+    if (!age || !race || !psa || !gleason) {
+        return res.status(400).send('Faltan parámetros requeridos');
+    }
+
+    try {
+        const result = await executeJava(age, race, psa, gleason);
+        res.status(200).send(result);
+    } catch (error) {
+        console.error('Error ejecutando el script Java:', error.message, error.stack);
         res.status(500).send('Error interno del servidor');
     }
 });
