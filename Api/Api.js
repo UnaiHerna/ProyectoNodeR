@@ -7,6 +7,7 @@ const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor'); 
 const executeJava = require('./utils/executeJava');
+const executePython = require('./utils/executePython');
 
 const app = express();
 
@@ -64,6 +65,25 @@ app.get('/java', async (req, res) => {
     } catch (error) {
         console.error('Error ejecutando el script Java:', error.message, error.stack);
         res.status(500).send('Error interno del servidor');
+    }
+});
+
+app.get('/python', async (req, res) => {
+    const { num1, num2 } = req.query;
+
+    // Validar que todos los parámetros requeridos están presentes
+    if (!num1 || !num2) {
+        return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+    }
+
+    try {
+        // Espera el resultado de executePython
+        const result = await executePython(num1, num2);
+        // Envía el resultado en formato JSON
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error ejecutando el script Python:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
