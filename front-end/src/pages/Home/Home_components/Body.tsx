@@ -12,6 +12,7 @@ const Body: React.FC = () => {
     navigate('/gestionar-planta');
   };
   
+  
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
