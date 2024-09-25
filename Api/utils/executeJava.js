@@ -4,6 +4,7 @@ const path = require('path');
 function executeJava(age, race, psa, gleason) {
     // Ruta al directorio donde están los archivos .class
     const classPath = `${path.join(__dirname, '../files/java/build')};${path.join(__dirname, '../files/java/h2o_ai/src/files/h2o-genmodel.jar')}`; // Incluye el JAR de dependencias
+    //const classPath = `${path.join(__dirname, '../files/java/build')}:${path.join(__dirname, '../files/java/h2o_ai/src/files/h2o-genmodel.jar')}`;
     const javaFile = 'app.Main'; // Nombre completo de la clase que contiene el método main (sin extensión .class)
 
     const command = `java -cp "${classPath}" ${javaFile} ${age} ${race} ${psa} ${gleason}`;
