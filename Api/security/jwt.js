@@ -1,76 +1,89 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const rateLimit = require('express-rate-limit');
-const app = express();
+const connection = require('../db/database');
 
-// Secret key to encode and decode JWT tokens
-const SECRET_KEY = 'your-secret-key'; // Usa variables de entorno en producción
-const ALGORITHM = 'HS256';
-const ACCESS_TOKEN_EXPIRE_MINUTES = 30;
+const router = express.Router();
 
-// Middleware para la limitación de tasa por IP
-const ipRateLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minuto
-  max: 5, // Número máximo de peticiones permitidas
-  handler: (req, res) => {
-    return res.status(429).json({ message: 'Too many requests from this IP' });
-  }
+const secret = "f99bf1e250d2e6f3328bdfa25bfad89a72a113dba905d94b8081fbc4d5aa6918";
+const algorithm = "HS256";
+const accessTokenExpireMinutes = 1;
+
+async function searchUserdb(username) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM user WHERE username = ?', [username], (err, results) => {
+            if (err) reject(err);
+            if (results.length > 0) resolve(results[0]);
+            else resolve(null);
+        });
+    });
+}
+
+async function searchUser(username) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM user WHERE username = ?', [username], (err, results) => {
+            if (err) reject(err);
+            if (results.length > 0) resolve(results[0]);
+            else resolve(null);
+        });
+    });
+}
+
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const user = await searchUserdb(username);
+        if (!user) {
+            return res.status(400).json({ detail: "El usuario no es correcto" });
+        }
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(400).json({ detail: "Contraseña incorrecta" });
+        }
+
+        const accessToken = {
+            sub: user.username,
+            exp: Math.floor(Date.now() / 1000) + accessTokenExpireMinutes * 60,
+        };
+
+        const token = jwt.sign(accessToken, secret, { algorithm });
+
+        res.json({
+            access_token: token,
+            token_type: "bearer",
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ detail: "Error interno del servidor" });
+    }
 });
 
-// Middleware para la limitación de tasa por ruta
-const pathRateLimiter = (pathLimit) => {
-  return rateLimit({
-    windowMs: 60 * 1000, // 1 minuto
-    max: pathLimit, // Límite de peticiones por ruta
-    handler: (req, res) => {
-      return res.status(429).json({ message: 'This path has received too many requests' });
+const authenticateUser = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ detail: 'No has iniciado sesión o tu sesión ha expirado' });
     }
-  });
+
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, secret, { algorithms: [algorithm] }, async (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ detail: 'No has iniciado sesión o tu sesión ha expirado' });
+        }
+
+        const user = await searchUser(decoded.sub);
+        if (!user) {
+            return res.status(401).json({ detail: 'Usuario no encontrado' });
+        }
+
+        req.user = user;
+        next();
+    });
 };
 
-// Crear un token de acceso
-function createAccessToken(data, expiresIn = `${ACCESS_TOKEN_EXPIRE_MINUTES}m`) {
-  const payload = {
-    ...data,
-    exp: Math.floor(Date.now() / 1000) + (expiresIn * 60),
-  };
-  return jwt.sign(payload, SECRET_KEY, { algorithm: ALGORITHM });
-}
-
-// Verificar y obtener el usuario actual a partir del token
-function getCurrentUser(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Could not validate credentials' });
-  }
-
-  const token = authHeader.split(' ')[1];
-  jwt.verify(token, SECRET_KEY, { algorithms: [ALGORITHM] }, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Could not validate credentials' });
-    }
-    req.user = { username: decoded.sub };
-    next();
-  });
-}
-
-// Aplicar middlewares globales de rate limiting
-app.use(ipRateLimiter);
-
-// Ruta protegida con JWT
-app.get('/protected', getCurrentUser, (req, res) => {
-  res.json({ message: `Hello, ${req.user.username}!` });
+router.get('/users/me', authenticateUser, (req, res) => {
+    res.json(req.user);
 });
 
-// Ruta pública para obtener un token
-app.post('/token', (req, res) => {
-  const username = req.body.username;
-  if (!username) {
-    return res.status(400).json({ message: 'Username is required' });
-  }
-  const token = createAccessToken({ sub: username });
-  res.json({ token });
-});
-
-// Aplicar limitador por ruta
-app.use('/api/some-path', pathRateLimiter(10));
+module.exports = router;
