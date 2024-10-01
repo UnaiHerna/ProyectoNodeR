@@ -6,10 +6,16 @@ const cors = require('cors');
 const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor'); 
+const userRoutes = require('./security/jwt');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
 
 const app = express();
+// Middleware para manejar JSON
+app.use(express.json());
+
+// Middleware para manejar datos URL-encoded
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: '*', // Permitir todas las orígenes
@@ -21,6 +27,8 @@ app.use(cors({
 app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
 app.use('/datos/sensorvacio', sensorRoutes); 
+app.use('/datos/sensor', sensorRoutes);
+app.use('/user', userRoutes);
 
 
 app.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no funciona
