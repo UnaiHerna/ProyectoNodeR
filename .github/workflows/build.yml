@@ -45,7 +45,7 @@ jobs:
       - name: Commit and push build
         working-directory: ./front-end
         run: |
-          git config --global user.name UnaiHerna"
+          git config --global user.name "UnaiHerna"
           git config --global user.email "unaixiba@gmail.com"
           git add .
           git commit -m "Add production build"
