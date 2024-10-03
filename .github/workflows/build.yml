@@ -48,5 +48,10 @@ jobs:
           git config --global user.name "UnaiHerna"
           git config --global user.email "unaixiba@gmail.com"
           git add .
-          git commit -m "Add production build"
-          git push origin main  # Cambia esto si tu rama es diferentes
+          git commit -m "Add production build" || echo "No changes to commit"
+
+      - name: Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}  # Usa el secreto que creaste
+        run: |
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/UnaiHerna/ProyectoNodeR.git
