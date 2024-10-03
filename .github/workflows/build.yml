@@ -42,7 +42,7 @@ jobs:
           path: front-end/dist
 
       # Este paso hace commit y push del build generado
-      - name: Commit and push build
+      - name: Commit build
         working-directory: ./front-end
         run: |
           git config --global user.name "UnaiHerna"
@@ -50,8 +50,8 @@ jobs:
           git add .
           git commit -m "Add production build" || echo "No changes to commit"
 
-      - name: Push Changes
+      - name: Push Build Changes
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}  # Usa el secreto que creaste
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usa el secreto aquí
         run: |
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/UnaiHerna/ProyectoNodeR.git
+          git push origin main
