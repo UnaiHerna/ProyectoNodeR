@@ -34,9 +34,19 @@ jobs:
         working-directory: ./front-end
         run: npm run build
 
-      # Este paso sube el build generado a GitHub Pages
+      # Este paso sube el build generado a GitHub Actions
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: production-build
           path: front-end/dist
+
+      # Este paso hace commit y push del build generado
+      - name: Commit and push build
+        run: |
+          cd front-end
+          git config --global user.name UnaiHerna"
+          git config --global user.email "unaixiba@gmail.com"
+          git add .
+          git commit -m "Add production build"
+          git push origin main  # Cambia esto si tu rama es diferentes
