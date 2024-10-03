@@ -35,3 +35,8 @@ jobs:
         run: npm run build
 
       # Este paso sube el build generado a GitHub Pages
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-build
+          path: /dist
