@@ -26,14 +26,17 @@ jobs:
 
       # Este paso instala las dependencias usando npm
       - name: Install dependencies
+        working-directory: ./front-end
         run: npm install
 
       # Este paso ejecuta el script para generar el build de producción
       - name: Build production version
+        working-directory: ./front-end
         run: npm run build
 
       # Puedes incluir un paso adicional para ejecutar tests si lo deseas
       - name: Run tests
+        working-directory: ./front-end
         run: npm test
 
       # Este paso sube el build generado a GitHub Pages
