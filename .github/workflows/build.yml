@@ -1,0 +1,39 @@
+name: Build Node.js Application
+
+# Este workflow se ejecutará cada vez que haya un push en las ramas especificadas
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    # Define en qué sistema operativo se ejecutará la acción
+    runs-on: ubuntu-latest
+
+    # Pasos a seguir en el job
+    steps:
+      # Este paso usa la acción de GitHub para obtener el código de tu repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Este paso configura Node.js en el runner de GitHub
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Puedes cambiar esta versión según tu proyecto
+
+      # Este paso instala las dependencias usando npm
+      - name: Install dependencies
+        run: npm install
+
+      # Este paso ejecuta el script para generar el build de producción
+      - name: Build production version
+        run: npm run build
+
+      # Puedes incluir un paso adicional para ejecutar tests si lo deseas
+      - name: Run tests
+        run: npm test
+
+      # Este paso sube el build generado a GitHub Pages
