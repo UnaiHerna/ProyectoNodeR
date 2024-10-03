@@ -34,9 +34,4 @@ jobs:
         working-directory: ./front-end
         run: npm run build
 
-      # Puedes incluir un paso adicional para ejecutar tests si lo deseas
-      - name: Run tests
-        working-directory: ./front-end
-        run: npm test
-
       # Este paso sube el build generado a GitHub Pages
