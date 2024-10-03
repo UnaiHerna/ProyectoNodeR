@@ -51,6 +51,6 @@ jobs:
 
       - name: Push Changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Usa el nuevo secreto aquí
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git push origin main
