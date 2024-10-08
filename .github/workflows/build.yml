@@ -20,7 +20,7 @@ jobs:
 
       # Este paso configura Node.js en el runner de GitHub
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '20'  # Puedes cambiar esta versión según tu proyecto
 
@@ -36,7 +36,7 @@ jobs:
 
       # Este paso sube el build generado a GitHub Actions
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: production-build
           path: front-end/dist
