@@ -12,6 +12,7 @@ function App() {
         <Route path="/Home" element={<Home />} />
         <Route path="/gestionar-planta/:title" element={<BodyDashBoard/>} />
       </Routes>
+      
     </BrowserRouter>
   );
 }
