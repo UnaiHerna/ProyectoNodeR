@@ -1,9 +1,10 @@
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import N_NH4TrainBody from "../N_NH4TrainBody";
-import DataDisplay from "../../DataDisplay";
 import HeatmapChart from "../HeatMap";
+import CardAi from "./CardAi";
 
-export default function TrainCrad() {
+const TrainCrad: React.FC = () => {
+
   return (
     <div className="flex w-full flex-col h-full">
       <Tabs aria-label="Options" className="flex-1 self-end">
@@ -33,12 +34,16 @@ export default function TrainCrad() {
         </Tab>
         <Tab key="AI" title="AI🌟">
           <Card className="bg-transparent shadow-none">
-            <CardBody className="bg-transparent p-0">
-              <DataDisplay />
+            <CardBody className="bg-transparent p-3 w-full h-5/6">
+              <section className="w-full h-full flex flex-row gap-4 justify-start">
+                <CardAi />
+              </section>
             </CardBody>
           </Card>
         </Tab>
       </Tabs>
     </div>
   );
-}
+};
+
+export default TrainCrad;

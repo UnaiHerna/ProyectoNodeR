@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import {
   fetchNH4Data,
   fetchNH4FiltData,
@@ -62,7 +62,12 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
   }, [variable]); // Vuelve a obtener datos si cambia la variable
 
   // Establecer el color de la línea basado en la variable
-  const lineColor = variable === "NH4" ? "#94CC78" : "#0000FF"; // Verde para NH4, azul para las demás
+  const lineColor = {
+    NH4: "#3BB143",     // Verde
+    NH4_FILT: "#0077B6", // Azul
+    DO_SP: "#FFBF00",   // Amarillo
+    DO: "#FF6F61"       // Naranja
+  }[variable];
 
   // Mapeo de nombres de las variables para mostrarlas en texto
   const variableLabels: { [key in VariableType]: string } = {
@@ -70,6 +75,21 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
     NH4_FILT: "NH4",
     DO_SP: "DO SP",
     DO: "DO SENS",
+  };
+
+  // Componente personalizado para el Tooltip
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: ChartData }[] }) => {
+    if (active && payload && payload.length) {
+      const { time, value } = payload[0].payload; // Usar el tipo ChartData
+      return (
+        <div className="bg-white border border-gray-300 p-2 rounded shadow">
+          <p>{`Hora: ${time}`}</p>
+          <p>{`Valor: ${value.toFixed(2)}`}</p> {/* Mostrar solo dos decimales */}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -80,6 +100,8 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
         <LineChart data={chartData}>
           {/* Línea para la variable seleccionada */}
           <Line type="monotone" dataKey="value" stroke={lineColor} dot={false} strokeWidth={2} />
+          {/* Agregar el Tooltip */}
+          <Tooltip content={<CustomTooltip />} />
         </LineChart>
       </ResponsiveContainer>
     </div>

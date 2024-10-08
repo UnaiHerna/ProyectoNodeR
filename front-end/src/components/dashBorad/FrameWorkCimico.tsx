@@ -10,7 +10,7 @@ import {
 
 // Tipos de datos de los puntos del gráfico
 interface DataPoint {
-  time: string;
+  time: string | number;  // El tiempo puede ser string o Unix timestamp
   value: number;
 }
 
@@ -73,17 +73,21 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
     'DO': fetchDOSensData
   };
 
+  const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  };
+
   useEffect(() => {
     const fetchDataForChart = async () => {
       try {
         const allData: ChartData[] = [];
         const dataset: DatasetDimension[] = [];
         const pieDataList: PieData[] = [];
-        
+
         const fetchPromises = variables.map(async (variable) => {
           const fetchFunction = fetchFunctions[variable];
           if (fetchFunction) {
-            // Convert 'line' to 'timeseries' and 'bar' to 'barchart'
             const convertedChartType = chartType === 'line' ? 'timeseries' : 'barchart';
 
             const data = await fetchFunction(startDate, endDate, convertedChartType);
@@ -92,7 +96,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
                 dataset.push({
                   product: variable,
                   ...data.reduce<Record<string, number>>((acc, item) => {
-                    acc[item.time] = item.value;
+                    acc[formatTimestamp(item.time as number)] = item.value;
                     return acc;
                   }, {}),
                 });
@@ -111,10 +115,10 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
                     yAxisIndex: yAxisLeft.includes(variable) ? 0 : (yAxisRight.includes(variable) ? 1 : 0),
                   });
 
-                  // Update categories only once
+                  // Actualiza las categorías con los timestamps formateados
                   setCategories((prevCategories) => {
                     if (prevCategories.length === 0) {
-                      return data.map((item) => item.time);
+                      return data.map((item) => formatTimestamp(item.time as number));
                     }
                     return prevCategories;
                   });
@@ -124,7 +128,6 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
           }
         });
 
-        // Wait for all fetch promises to resolve
         await Promise.all(fetchPromises);
 
         if (useDataset) {
@@ -140,7 +143,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
     };
 
     fetchDataForChart();
-  }, [startDate, endDate, useDataset]); // Dependencias del useEffect
+  }, [startDate, endDate, chartType, variables, useDataset, yAxisLeft, yAxisRight]);
 
   const getOption = () => {
     const baseLegend = {
@@ -201,7 +204,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
     return {
       xAxis: {
         type: 'category',
-        data: categories,
+        data: categories, // Asegurarse de que las categorías están actualizadas
       },
       yAxis: [
         { type: 'value', name: 'Axis Left', scale: true, position: 'left' },
@@ -217,7 +220,7 @@ const GeneralChartComponent: React.FC<ChartProps> = ({
   };
 
   return (
-    <ReactEcharts option={getOption()} style={{ height: '100%', width: '100%' }} />
+    <ReactEcharts key={categories.join(',')} option={getOption()} style={{ height: '100%', width: '100%' }} />
   );
 };
 

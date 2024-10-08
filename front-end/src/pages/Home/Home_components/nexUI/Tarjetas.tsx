@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader, CardFooter, Image, Button } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 
 // Define la interfaz para las props
@@ -10,8 +10,9 @@ interface TarjetasProps {
   buttonText: string;
   imageUrl: string;
   iconUrl: string;
-  handleButtonClick: ()=> void;
+  handleButtonClick: () => void; // Mantenemos handleButtonClick
 }
+
 const bas_url = "/gestionar-planta/";
 
 const Tarjetas: React.FC<TarjetasProps> = ({
@@ -21,38 +22,47 @@ const Tarjetas: React.FC<TarjetasProps> = ({
   buttonText,
   imageUrl,
   iconUrl,
+  handleButtonClick, // Asegúrate de recibirlo como prop
 }) => {
   return (
-    <div >
-      <Link to={bas_url + title.replace(" ", "_")}>
-      <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-7 relative shadow-md">
-        <CardHeader className="absolute z-10 top-1 flex-col items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">{title}</p>
-          <h4 className="text-white/90 font-medium text-xl">{subtitle}</h4>
-        </CardHeader>
-        <Image
-          alt="Card background"
-          className="z-0 w-full h-full object-cover"
-          src={imageUrl}
+    <Link to={bas_url + title.replace(" ", "_")}>
+      <Card shadow="sm" className="relative overflow-hidden h-full bg-gray-100">
+        <CardBody className="overflow-visible p-0">
+          <Image
+            shadow="sm"
+            radius="lg"
+            width="100%"
+            alt={title}
+            className="w-full object-cover h-[235px]"
+            src={imageUrl}
           />
-        <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100 flex items-center justify-between p-4">
-          <div className="flex gap-2 items-center">
+        </CardBody>
+        <CardFooter className="text-small justify-between">
+          <div className="flex items-center">
             <Image
               alt="Icon"
-              className="rounded-full w-15 h-6 bg-transparent"
               src={iconUrl}
-              />
-            <div className="flex flex-col">
-              <p className="text-tiny text-white/90 font-semibold">{title}</p>
-              <p className="text-tiny text-white/60">{address}</p>
+              className="rounded-full w-10 h-10 mr-2"
+            />
+            <div>
+              <b>{title}</b>
+              <p className="text-default-500">{subtitle}</p>
+              <p className="text-default-500">{address}</p>
             </div>
           </div>
-          <Button radius="full" className="bg-botonColor text-white" size="sm">{buttonText}</Button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Evita que el clic en el botón active el evento del enlace
+              handleButtonClick(); // Ahora puedes llamar a la función
+            }}
+            className="bg-botonColor text-white rounded-full py-1 px-3"
+          >
+            {buttonText}
+          </button>
         </CardFooter>
       </Card>
-      </Link>
-    </div>
+    </Link>
   );
-}
+};
 
 export default Tarjetas;

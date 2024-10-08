@@ -9,7 +9,7 @@ import ReactECharts from "echarts-for-react";
 // Define types for data points
 interface DataPoint {
   time: string;
-  value: number;
+  value: number | null; // Permitir que el valor sea null
 }
 
 interface DynamicChartProps {
@@ -48,12 +48,13 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
   // Configure ECharts options for combined datasets with secondary Y-axis for Qinf
   const getCombinedOption = () => {
     const timeLabels = doSensData.map((d) => d.time);
-
+  
     return {
       title: {},
       xAxis: {
         type: "category",
         data: timeLabels,
+        boundaryGap: true, // Esto ayudará a centrar los puntos
       },
       yAxis: [
         {
@@ -69,23 +70,30 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
       series: [
         {
           name: "DO Sensor",
-          data: doSensData.map((d) => d.value),
+          data: doSensData.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
           type: "bar",
-          color: "orange"
+          color: "#FF6F61", // Naranja
         },
         {
           name: "NH4 Sensor",
-          data: nh4Data.map((d) => d.value),
+          data: nh4Data.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
           type: "bar",
-          color: "#A4C975"
+          color: "#3BB143", // Verde
+          barCategoryGap: '30%', // Ajustar el espacio entre las barras
         },
         {
           name: "Qinf Data",
-          data: qinfData.map((d) => d.value),
+          data: qinfData.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
           type: "line",
           yAxisIndex: 1,
           smooth: true,
-          color: "blue"
+          color: "blue", // Mantener el color original
+          symbol: 'circle', // Mostrar puntos en la línea
+          symbolSize: 10, // Tamaño de los puntos
+          lineStyle: {
+            width: 2, // Grosor de la línea
+          },
+          z: 3, // Asegura que la línea esté por encima de las barras
         },
       ],
       legend: {
@@ -98,7 +106,7 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
   };
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div className="w-full h-full">
       <h2>Datos Combinados de Sensores (DO, NH4, Qinf)</h2>
       <ReactECharts option={getCombinedOption()} style={{ height: "100%", width: "100%" }} />
     </div>

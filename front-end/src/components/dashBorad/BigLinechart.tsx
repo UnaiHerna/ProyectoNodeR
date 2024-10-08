@@ -9,7 +9,6 @@ interface BigChartProps {
 const BigChart: React.FC<BigChartProps> = ({ startDate, endDate }) => {
   // Definir las variables que queremos graficar
   const variables = ['NH4', 'NH4_FILT', 'DO_SP', 'QW', 'DO'];
-
   // Definir los ejes Y para las variables
   const yAxisLeft = [variables[0], variables[1], variables[2], variables[4]]; // Eje Y izquierdo
   const yAxisRight = [variables[3]]; // Eje Y derecho (opcional)

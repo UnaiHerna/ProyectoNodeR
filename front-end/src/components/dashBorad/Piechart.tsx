@@ -24,7 +24,7 @@ const getOption = (data: PieChartData) => {
       formatter: '{b}: ({d}%)'
     },
     legend: {
-      top: '5%',
+      top: '10%',
       left: 'center',
       formatter: (name: string) => {
         if (name === 'Automatico') {
@@ -126,7 +126,7 @@ const PieChartComponent: React.FC<PropsP> = ({ startDate, endDate }) => {
   const option = data ? getOption(data) : defaultOption;
 
   return (
-    <div className='w-9/12 h-full p-0 m-0'>
+    <div className='w-full h-full p-0 mt-[-2rem]'>
       {loading && <p>Loading...</p>}
       {error && <p>Error fetching data: {error}</p>}
       {!loading && !error && (
