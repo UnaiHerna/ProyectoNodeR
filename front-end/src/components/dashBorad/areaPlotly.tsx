@@ -82,19 +82,13 @@ const SensorChartWithShadedAreas: React.FC<DynamicChartProps> = memo(
       if (event["xaxis.range[0]"] && event["xaxis.range[1]"]) {
         const newStartDate = new Date(event["xaxis.range[0]"]).toISOString();
         const newEndDate = new Date(event["xaxis.range[1]"]).toISOString();
-
-        const dateDiff =
-          new Date(newEndDate).getTime() - new Date(newStartDate).getTime();
-        const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000; // Aproximadamente 3 meses en milisegundos
-
-        // Solo actualiza el zoom si la diferencia entre fechas es menor a 3 meses
-        if (Math.abs(dateDiff) < threeMonthsInMs) {
-          setZoomStartDate(newStartDate);
-          setZoomEndDate(newEndDate);
-          fetchData(newStartDate, newEndDate); // Actualiza los datos cuando cambian las fechas
-        }
+    
+        setZoomStartDate(newStartDate);
+        setZoomEndDate(newEndDate);
+        fetchData(newStartDate, newEndDate); // Actualiza los datos cuando cambian las fechas
       }
     };
+    
 
     const modeArea = nh4SPData
       .filter((point) => point.mode === 1)
