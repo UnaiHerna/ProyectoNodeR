@@ -14,7 +14,7 @@ const SidebarAndNavbar: React.FC<Props> = ({ title}) => {
       {/* Navbar */}
       <nav className="flex justify-between items-center bg-cimico text-white p-3 shadow-md fixed z-30 w-full">
         <div className="flex items-center space-x-8 ml-4">
-          <Link to="/">
+          <Link to="/Home">
             <img
               src="/cimico-logotipo-blanco.png"
               className="h-9"
