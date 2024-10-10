@@ -36,7 +36,7 @@ jobs:
 
       # Este paso sube el build generado a GitHub Actions
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: production-build
           path: front-end/dist
