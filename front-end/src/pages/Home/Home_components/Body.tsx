@@ -34,7 +34,7 @@ const Body: React.FC = () => {
         <ul className="flex flex-row-reverse gap-4">
           <Input
             type="text"
-            label="Buscar..."
+            label="Search..."
             isClearable
             value={searchTerm}
             className="w-12/12 h-11"
@@ -57,7 +57,7 @@ const Body: React.FC = () => {
               address={tarjeta.address}
               buttonText={tarjeta.buttonText}
               imageUrl={tarjeta.imageUrl}
-              iconUrl={tarjeta.iconUrl}
+              iconType="MdSignalWifi3Bar"
               handleButtonClick={handleButtonClick} // Pasa la función aquí
             />
           ))

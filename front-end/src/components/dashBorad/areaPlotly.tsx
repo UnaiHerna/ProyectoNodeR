@@ -195,7 +195,7 @@ const SensorChartWithShadedAreas: React.FC<DynamicChartProps> = memo(
                 },
                 xaxis: { title: "Time" },
                 yaxis: {
-                  title: "NNH4_SP",
+                  title: "values (ppm)",
                   showgrid: true,
                   zeroline: true,
                   showline: true,

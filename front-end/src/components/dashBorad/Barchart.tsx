@@ -66,7 +66,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({ startDate, endDate }) => {
         data={traces}
         layout={{
           barmode: 'group',
-          title: 'Avg Modo',
+          title: 'Avg Mode',
           xaxis: {
             title: 'Consigna',
             type: 'category',

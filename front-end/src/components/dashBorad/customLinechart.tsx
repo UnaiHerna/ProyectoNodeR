@@ -83,8 +83,8 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
       const { time, value } = payload[0].payload; // Usar el tipo ChartData
       return (
         <div className="bg-white border border-gray-300 p-2 rounded shadow">
-          <p>{`Hora: ${time}`}</p>
-          <p>{`Valor: ${value.toFixed(2)}`}</p> {/* Mostrar solo dos decimales */}
+          <p>{`Date: ${time}`}</p>
+          <p>{`Value: ${value.toFixed(2)} ppm`}</p> {/* Mostrar solo dos decimales */}
         </div>
       );
     }

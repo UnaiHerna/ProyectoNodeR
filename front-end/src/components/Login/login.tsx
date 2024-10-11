@@ -2,7 +2,7 @@ import { useState, FormEvent } from "react";
 import { Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../helpers/apiHelper"; // Asegúrate de que esta ruta sea correcta
+import { login } from "../../helpers/apiHelper"; // Make sure this path is correct
 
 export default function Login() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -12,10 +12,10 @@ export default function Login() {
   const [usernameError, setUsernameError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState<boolean>(false); // Para el toggle de contraseña
+  const [isVisible, setIsVisible] = useState<boolean>(false); // For toggling password visibility
 
   const validateUsername = (value: string) => {
-    return value.length > 0; // Comprobación simple: el nombre de usuario no debe estar vacío
+    return value.length > 0; // Simple validation: username must not be empty
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -29,7 +29,7 @@ export default function Login() {
       setUsernameError(false);
     }
 
-    const isPasswordValid = password.length > 0; // Validación simple para la contraseña
+    const isPasswordValid = password.length > 0; // Simple password validation
     if (!isPasswordValid) {
       setPasswordError(true);
       return;
@@ -37,17 +37,17 @@ export default function Login() {
       setPasswordError(false);
     }
 
-    // Usa la función helper para el login
+    // Use helper function for login
     try {
       const data = await login(username, password);
       console.log(data);
-      onOpen(); // Abre el modal al iniciar sesión con éxito
+      onOpen(); // Open modal upon successful login
 
       setTimeout(() => {
-        navigate("/Home", { state: { username, token: data.access_token } }); // Navega después de que se muestre el modal
-      }, 2000); // Navega después de 2 segundos
+        navigate("/Home", { state: { username, token: data.access_token } }); // Navigate after showing the modal
+      }, 2000); // Navigate after 2 seconds
     } catch (error) {
-      setApiError("Error durante el inicio de sesión"); // Manejo simple del error
+      setApiError("Error during login"); // Simple error handling
     }
   };
 
@@ -62,27 +62,27 @@ export default function Login() {
         {apiError && <div className="text-red-500 mb-4">{apiError}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <Input
-            label="Nombre de Usuario"
+            label="Username"
             type="text"
-            placeholder="Introduce tu nombre de usuario"
+            placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
             isInvalid={usernameError}
-            color={usernameError ? "danger" : "default"} // Cambiado a "danger"
-            errorMessage={usernameError ? "Por favor, introduce un nombre de usuario válido" : ""}
+            color={usernameError ? "danger" : "default"} // Changed to "danger"
+            errorMessage={usernameError ? "Please enter a valid username" : ""}
             className="w-full"
           />
           <Input
-            label="Contraseña"
+            label="Password"
             variant="bordered"
-            placeholder="Introduce tu contraseña"
+            placeholder="Enter your password"
             endContent={
               <button
                 className="focus:outline-none"
                 type="button"
                 onClick={toggleVisibility}
-                aria-label="alternar visibilidad de la contraseña"
+                aria-label="toggle password visibility"
               >
                 {isVisible ? (
                   <EyeSlashIcon className="w-6 h-6 text-default-400" />
@@ -96,24 +96,24 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             isInvalid={passwordError}
-            color={passwordError ? "danger" : "default"} // Cambiado a "danger"
+            color={passwordError ? "danger" : "default"} // Changed to "danger"
             className="w-full"
           />
           <Button type="submit" className="w-full bg-botonColor text-white">
-            Iniciar Sesión
+            Log In
           </Button>
         </form>
 
-        {/* Modal de éxito */}
+        {/* Success Modal */}
         <Modal isOpen={isOpen} onOpenChange={onClose}>
           <ModalContent>
-            <ModalHeader className="flex flex-col gap-1">¡Inicio de Sesión Exitoso!</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Login Successful!</ModalHeader>
             <ModalBody>
-              <p>Has iniciado sesión correctamente. Redirigiendo a la página de inicio...</p>
+              <p>You have successfully logged in. Redirecting to the homepage...</p>
             </ModalBody>
             <ModalFooter>
               <Button color="primary" onPress={onClose}>
-                Cerrar
+                Close
               </Button>
             </ModalFooter>
           </ModalContent>

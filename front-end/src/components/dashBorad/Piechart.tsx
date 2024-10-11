@@ -27,11 +27,11 @@ const getOption = (data: PieChartData) => {
       top: '10%',
       left: 'center',
       formatter: (name: string) => {
-        if (name === 'Automatico') {
-          return `Automatico: ${automaticoPercentage.toFixed(2)}%`;
+        if (name === 'AUTO') {
+          return `AUTO: ${automaticoPercentage.toFixed(2)}%`;
         }
-        if (name === 'Manual') {
-          return `Manual: ${manualPercentage.toFixed(2)}%`;
+        if (name === 'MANUAL') {
+          return `MANUAL: ${manualPercentage.toFixed(2)}%`;
         }
         return name;
       }
@@ -57,8 +57,8 @@ const getOption = (data: PieChartData) => {
           show: false
         },
         data: [
-          { value: data.automatico, name: 'Automatico' },
-          { value: data.manual, name: 'Manual' }
+          { value: data.automatico, name: 'AUTO' },
+          { value: data.manual, name: 'MANUAL' }
         ],
         color: ['#072AC8', '#909DAD']
       }

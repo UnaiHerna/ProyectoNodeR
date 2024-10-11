@@ -48,7 +48,7 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
   // Configure ECharts options for combined datasets with secondary Y-axis for Qinf
   const getCombinedOption = () => {
     const timeLabels = doSensData.map((d) => d.time);
-  
+
     return {
       title: {},
       xAxis: {
@@ -70,25 +70,31 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
       series: [
         {
           name: "DO Sensor",
-          data: doSensData.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
+          data: doSensData.map((d) =>
+            d.value !== null ? parseFloat(d.value.toFixed(2)) : 0
+          ),
           type: "bar",
           color: "#FF6F61", // Naranja
         },
         {
           name: "NH4 Sensor",
-          data: nh4Data.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
+          data: nh4Data.map((d) =>
+            d.value !== null ? parseFloat(d.value.toFixed(2)) : 0
+          ),
           type: "bar",
           color: "#3BB143", // Verde
-          barCategoryGap: '30%', // Ajustar el espacio entre las barras
+          barCategoryGap: "30%", // Ajustar el espacio entre las barras
         },
         {
           name: "Qinf Data",
-          data: qinfData.map((d) => (d.value !== null ? parseFloat(d.value.toFixed(2)) : 0)),
+          data: qinfData.map((d) =>
+            d.value !== null ? parseFloat(d.value.toFixed(2)) : 0
+          ),
           type: "line",
           yAxisIndex: 1,
           smooth: true,
           color: "blue", // Mantener el color original
-          symbol: 'circle', // Mostrar puntos en la línea
+          symbol: "circle", // Mostrar puntos en la línea
           symbolSize: 10, // Tamaño de los puntos
           lineStyle: {
             width: 2, // Grosor de la línea
@@ -107,8 +113,12 @@ const DynamicChart: React.FC<DynamicChartProps> = ({ startDate, endDate }) => {
 
   return (
     <div className="w-full h-full">
-      <h2>Datos Combinados de Sensores (DO, NH4, Qinf)</h2>
-      <ReactECharts option={getCombinedOption()} style={{ height: "100%", width: "100%" }} />
+      <h2>Combined Sensor Data (DO, NH4, Qinf)</h2>
+
+      <ReactECharts
+        option={getCombinedOption()}
+        style={{ height: "100%", width: "100%" }}
+      />
     </div>
   );
 };

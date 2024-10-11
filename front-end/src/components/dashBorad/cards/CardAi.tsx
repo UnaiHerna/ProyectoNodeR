@@ -68,7 +68,7 @@ export default function CardAi() {
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
-                Cancelar
+              Cancel
               </Button>
             </ModalFooter>
           </ModalContent>

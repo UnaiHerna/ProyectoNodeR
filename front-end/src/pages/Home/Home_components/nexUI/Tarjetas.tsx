@@ -2,6 +2,12 @@ import React from "react";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 
+// Importa los íconos de react-icons
+import { PiWifiXBold } from "react-icons/pi";
+import { PiWifiSlashLight } from "react-icons/pi";
+import { MdSignalWifiStatusbarConnectedNoInternet2 } from "react-icons/md";
+import { FiWifi } from "react-icons/fi";
+
 // Define la interfaz para las props
 interface TarjetasProps {
   title: string;
@@ -9,7 +15,7 @@ interface TarjetasProps {
   address: string;
   buttonText: string;
   imageUrl: string;
-  iconUrl: string;
+  iconType: string;  // Cambiado de iconUrl a iconType para manejar íconos de react-icons
   handleButtonClick: () => void; // Mantenemos handleButtonClick
 }
 
@@ -21,9 +27,25 @@ const Tarjetas: React.FC<TarjetasProps> = ({
   address,
   buttonText,
   imageUrl,
-  iconUrl,
+  iconType, // Recibe el tipo de ícono
   handleButtonClick, // Asegúrate de recibirlo como prop
 }) => {
+  // Función para renderizar el ícono según el tipo recibido
+  const renderIcon = (type: string) => {
+    switch (type) {
+      case "PiWifiXBold":
+        return <PiWifiXBold className="w-10 h-10 mr-2" />;
+      case "PiWifiSlashLight":
+        return <PiWifiSlashLight className="w-10 h-10 mr-2" />;
+      case "MdSignalWifiStatusbarConnectedNoInternet2":
+        return <MdSignalWifiStatusbarConnectedNoInternet2 className="w-10 h-10 mr-2" />;
+      case "FiWifi":
+        return <FiWifi className="w-10 h-10 mr-2" />;
+      default:
+        return null; // Retorna null si no coincide
+    }
+  };
+
   return (
     <Link to={bas_url + title.replace(" ", "_")}>
       <Card shadow="sm" className="relative overflow-hidden h-full bg-gray-100">
@@ -39,11 +61,8 @@ const Tarjetas: React.FC<TarjetasProps> = ({
         </CardBody>
         <CardFooter className="text-small justify-between">
           <div className="flex items-center">
-            <Image
-              alt="Icon"
-              src={iconUrl}
-              className="rounded-full w-10 h-10 mr-2"
-            />
+            {/* Renderiza el ícono en lugar de la imagen */}
+            {renderIcon(iconType)}
             <div>
               <b>{title}</b>
               <p className="text-default-500">{subtitle}</p>
