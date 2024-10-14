@@ -19,10 +19,10 @@ interface DatePicker2Props {
   onDateChange: (startDate: string, endDate: string) => void;
 }
 
-// Rango de fechas predefinido, eliminando "Today" y "Yesterday"
+// Rango de fechas predefinido, colocando "Last 24 hours" primero
 const predefinedRanges = [
+  { label: "Last 24 hours", key: "last24hours" },  // Nueva opción en primer lugar
   { label: "Last 7 days", key: "last7days" },
-  { label: "This week", key: "thisweek" },
   { label: "Last 30 days", key: "last30days" },
   { label: "This month", key: "thismonth" },
   { label: "Last month", key: "lastmonth" },
@@ -33,12 +33,12 @@ const predefinedRanges = [
 const dateRanges: {
   [key: string]: { start: Date; end: Date } | null;
 } = {
-  last7days: {
-    start: new Date(Date.now() - 7 * 86400000),
+  last24hours: {  // Nuevo rango para las últimas 24 horas
+    start: new Date(Date.now() - 86400000),
     end: new Date(),
   },
-  thisweek: {
-    start: new Date(new Date().setDate(new Date().getDate() - new Date().getDay())),
+  last7days: {
+    start: new Date(Date.now() - 7 * 86400000),
     end: new Date(),
   },
   last30days: {
@@ -57,7 +57,7 @@ const dateRanges: {
 };
 
 const DatePicker2: React.FC<DatePicker2Props> = ({ onDateChange }) => {
-  const [selectedRange, setSelectedRange] = useState<string>("last7days"); // Cambia "today" a "last7days"
+  const [selectedRange, setSelectedRange] = useState<string>("last7days");
 
   // Función para formatear la fecha al formato requerido
   const formatDate = (date: DateType | null): string => {
