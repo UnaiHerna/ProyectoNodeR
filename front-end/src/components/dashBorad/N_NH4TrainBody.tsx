@@ -101,7 +101,7 @@ export default function N_NH4TrainBody() {
       </div>
 
       {/* DynamicChart with DatePicker */}
-      <div className="col-span-1 mt-32 mb-10 h-[30rem]">
+      <div className="col-span-1 mt-[7rem] mb-10 h-[30rem]">
         <div className="col-span-1 h-full">
           <section className="w-full mb-4 flex flex-col md:flex-row justify-between">
             <section className="w-full max-w-sm">
