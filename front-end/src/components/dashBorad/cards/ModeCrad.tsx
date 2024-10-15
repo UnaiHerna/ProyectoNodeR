@@ -66,7 +66,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
 
   if (loading) {
     return (
-      <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-full max-w-xs h-[87px]">
+      <div className="bg-white shadow-sm text-center  border border-gray-200 w-full max-w-xs h-[87px]">
         <h2 className="text-lg font-bold mb-2 text-gray-800">Loading...</h2>
         <div className="sp-mode text-3xl font-semibold text-center text-blue-600">...</div>
       </div>
@@ -75,7 +75,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
 
   if (error) {
     return (
-      <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-full max-w-xs h-[87px]">
+      <div className="bg-white shadow-sm text-center  border border-gray-200 w-full max-w-xs h-[87px]">
         <h2 className="text-lg font-bold mb-2 text-gray-800">Error</h2>
         <div className="sp-mode text-3xl font-semibold text-center text-red-600">{error}</div>
       </div>
@@ -83,7 +83,7 @@ const ModeComponent: React.FC<ModeComponentProps> = ({ nombre }) => {
   }
 
   return (
-    <div className="bg-white shadow-sm text-center rounded-lg border border-gray-200 w-full max-w-xs h-[87px]">
+    <div className="bg-white shadow-sm text-center p-2  border border-gray-200 w-full max-w-xs h-[100px]">
       <h2 className="text-lg font-bold mb-2 text-gray-800">
         {nombre === "DO_SP" ? "DO SP MODE" : "NNH4 SP VALUE"}
       </h2>
