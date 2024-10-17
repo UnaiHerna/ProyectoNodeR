@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { fetchHeatmapData } from '../../helpers/apiHelper';
 
-
-/*
-
-    n counter check failed
-*/
-// Define el tipo de datos que recibiremos del endpoint
+// Define the type of data we will receive from the endpoint
 interface HeatmapDataResponse {
   id: number;
   temp: number;
@@ -16,18 +11,18 @@ interface HeatmapDataResponse {
 }
 
 interface ContourData {
-  z: (number | null)[][];
-  x: number[];
-  y: number[];
-  type: 'contour';
-  colorscale: string;
-  showscale: boolean;
-  line: {
+  z: (number | null)[][]; // Z values representing the heatmap intensity
+  x: number[]; // X-axis values
+  y: number[]; // Y-axis values
+  type: 'contour'; // Type of plot
+  colorscale: string; // Color scale to apply to the heatmap
+  showscale: boolean; // Whether to show the color scale
+  line: { // Line properties for contour lines
     color: string;
     smoothing: number;
     width: number;
   };
-  contours: {
+  contours: { // Contour settings
     coloring: 'heatmap' | 'fill' | 'lines' | 'none';
     showlabels: boolean;
     start: number;
@@ -40,8 +35,9 @@ interface ContourData {
       color: string;
     };
   };
-  autocontour?: boolean;
-  ncontours?: number;
+  hovertemplate: string; // Custom hover template
+  autocontour?: boolean; // Auto-generate contours if true
+  ncontours?: number; // Number of contours
 }
 
 const HeatmapChart: React.FC = () => {
@@ -60,46 +56,50 @@ const HeatmapChart: React.FC = () => {
       });
   }, []);
 
+  // Function to create the Plotly plot data
   const createPlotData = (): ContourData | null => {
     if (!data) return null;
 
+    // Get unique values for temp (Y-axis) and mltss (X-axis)
     const temps = [...new Set(data.map(d => d.temp))];
     const mltss = [...new Set(data.map(d => d.mltss))];
 
+    // Generate the Z-values based on temp and mltss
     const z = temps.map(temp => {
       return mltss.map(mltssValue => {
         const entry = data.find(d => d.temp === temp && d.mltss === mltssValue);
-        return entry ? entry.sludge_prod : null;
+        return entry ? entry.sludge_prod : null; // If no data, return null
       });
     });
 
     return {
-      z: z,
-      x: mltss, // Valores en el eje X
-      y: temps, // Valores en el eje Y
-      type: 'contour',
-      colorscale: 'Jet',
-      showscale: false, // Ocultar la escala de colores
+      z: z, // Z-values representing heatmap intensity (sludge_prod)
+      x: mltss, // X-axis: MLTSS
+      y: temps, // Y-axis: Temperature
+      type: 'contour', // Contour plot
+      colorscale: 'Rainbow', // Color scale for the heatmap
+      showscale: false, // Hide the color scale
       line: {
-        color: 'white',
-        smoothing: 1.3,
-        width: 1.8
+        color: 'white', // Contour line color
+        smoothing: 1.3, // Line smoothing
+        width: 3.5 // Line thickness
       },
       contours: {
-        coloring: 'heatmap',
-        showlabels: true,
-        start: 1958, // Inicio del contorno
-        end: 2642, // Fin del contorno
-        size: 57, // Tamaño entre líneas de contorno
+        coloring: 'heatmap', // Fill the contours with color
+        showlabels: true, // Show contour labels
+        start: 1958, // Start value for contour lines
+        end: 2642, // End value for contour lines
+        size: 57, // Step size between contour lines
         labelfont: {
-          align: 'left',
-          family: 'Raleway',
-          size: 15,
-          color: 'white',
+          align: 'left', // Text alignment for labels
+          family: 'Raleway', // Font family for labels
+          size: 35, // Font size for labels
+          color: 'white', // Font color for labels
         }
       },
-      autocontour: false, // Si es false hace caso a start, end y size de los contornos
-      ncontours: 8 // Número máximo de líneas de contorno
+      hovertemplate: 'Temperature: %{y} ºC<br>MLTSS: %{x} gSS/m3<br>Sludge Production: %{z} kg SS/d<extra></extra>',
+      autocontour: false, // Manually set the contour lines
+      ncontours: 8 // Number of contour lines
     };
   };
 
@@ -110,7 +110,7 @@ const HeatmapChart: React.FC = () => {
       {loading ? (
         <div className='flex justify-center items-center h-screen'>
           <div className='loader'>
-            {/* Puedes usar un spinner o cualquier otro indicador de carga */}
+            {/* Loading spinner */}
             <svg className="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0115.8-4.7 1 1 0 011.4 1.4A10 10 0 003 12a1 1 0 011.8-1.4A8 8 0 014 12z"></path>
@@ -125,12 +125,17 @@ const HeatmapChart: React.FC = () => {
               title: 'Sludge Production [kg SS/d]',
               xaxis: { title: 'MLTSS [gSS/m3]' },
               yaxis: { title: 'Temperature ºC' },
+              hovermode: 'closest', // Enable closest point hover
+              hoverlabel: {
+                bgcolor: 'white', // Background color of hover box
+                font: { color: 'black', size: 16 }, // Text color and size in hover box
+              },
             }}
-            config={{ displayModeBar: false }}
-            style={{ width: '100%', height: '100vh' }}
+            config={{ displayModeBar: false }} // Disable mode bar
+            style={{ width: '100%', height: '100vh' }} // Full screen height
           />
         ) : (
-          <p>No data available.</p>
+          <p>No data available.</p> // Fallback if no data
         )
       )}
     </div>

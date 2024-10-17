@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   
   return (
     <>
-      <SidebarAndNavbar title="Machine List" /> {/* Pasa el correo a SidebarAndNavbar */}
+      <SidebarAndNavbar title="WWTP" /> {/* Pasa el correo a SidebarAndNavbar */}
       <Body />
     </>
   );

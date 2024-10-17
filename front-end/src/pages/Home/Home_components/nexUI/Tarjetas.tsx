@@ -51,6 +51,7 @@ const Tarjetas: React.FC<TarjetasProps> = ({
       <Card shadow="sm" className="relative overflow-hidden h-full bg-gray-100">
         <CardBody className="overflow-visible p-0">
           <Image
+           isBlurred
             shadow="sm"
             radius="lg"
             width="100%"
