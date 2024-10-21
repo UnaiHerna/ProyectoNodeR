@@ -8,6 +8,7 @@ import DatePicker2 from "./cards/DatePicker";
 import HeatmapComponent from "./HeatCalendar";
 import LineChartWithZoom from "./Last6H";
 import SensorChartWithShadedAreas from "./areaPlotly";
+import DragDrop from "../Drag_Drop/DD";
 
 export default function N_NH4TrainBody() {
  const currentDate = new Date();
@@ -133,6 +134,10 @@ export default function N_NH4TrainBody() {
       {/* CalendarHeatmap with DatePicker */}
       <div className="col-span-1 mt-16">
         <HeatmapComponent year="2024" variable="qw" equipo="INF_PIPE.FM" />
+      </div>
+      {/* CalendarHeatmap with DatePicker */}
+      <div className="col-span-1 mt-16">
+        <DragDrop/>
       </div>
     </div>
   );
