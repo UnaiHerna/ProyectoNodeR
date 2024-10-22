@@ -1,104 +1,73 @@
-import React, { useState } from 'react';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, RadioGroup, Radio } from "@nextui-org/react";
+import React from "react";
+import { HiAdjustmentsVertical } from "react-icons/hi2";
+import { Card, CardFooter, CardBody } from "@nextui-org/react";
+import { TbAxisY } from "react-icons/tb";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  Switch,
+} from "@nextui-org/react";
 
-interface Task {
-  id: string;
-  content: string;
-  status: 'pending' | 'in-progress' | 'completed';
+import CustomLineChart from "../dashBorad/customLinechart";
+
+type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
+interface Props {
+  sens: VariableType;
 }
 
-const initialTasks: Task[] = [
-  { id: '1', content: 'Tarea 1', status: 'pending' },
-  { id: '2', content: 'Tarea 2', status: 'pending' },
-  { id: '3', content: 'Tarea 3', status: 'in-progress' },
-  { id: '4', content: 'Tarea 4', status: 'completed' },
-];
-
-const DragDropBoard: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
-  
-  // Establece el color como 'primary'
-  const selectedColor = "primary";
-
-  const handleDragStart = (task: Task) => {
-    setDraggedTask(task);
-  };
-
-  const handleDrop = (status: 'pending' | 'in-progress' | 'completed') => {
-    if (draggedTask) {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === draggedTask.id ? { ...task, status } : task
-        )
-      );
-      setDraggedTask(null);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const filteredTasks = (status: 'pending' | 'in-progress' | 'completed') =>
-    tasks.filter((task) => task.status === status);
-
-  const DropdownContent = ({ task }: { task: Task }) => (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button
-          color={selectedColor}
-          variant="solid"
-          className="capitalize"
-          draggable
-          onDragStart={() => handleDragStart(task)}
-        >
-          {task.content}
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu aria-label="Task Actions" color={selectedColor} variant="solid">
-        <DropdownItem key="edit">Edit</DropdownItem>
-        <DropdownItem key="delete" className="text-danger" color="danger">
-          Delete
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-  );
-
+const DragDropBoard: React.FC<Props> = ({ sens = "DO" }) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
-    <div className="flex gap-8 mt-8">
-      <div
-        onDrop={() => handleDrop('pending')}
-        onDragOver={handleDragOver}
-        className="w-64 h-64 border-4 border-dashed border-gray-500 rounded-lg p-2"
-      >
-        <h4 className="text-center font-semibold">Pendiente</h4>
-        {filteredTasks('pending').map((task) => (
-          <DropdownContent key={task.id} task={task} />
-        ))}
-      </div>
+    <div className="title flex w-52">
+      <Card shadow="sm" className="cursor-pointer h-full w-full">
+        <CardBody className="overflow-visible p-0 scale-75 h-[5rem]">
+          <CustomLineChart variable={sens} />
+        </CardBody>
+        <CardFooter className="text-small justify-end h-[2rem] flex items-center space-x-2">
+          <b className="mr-auto">Do Sens</b>
+          <Button
+            className="bg-transparent w-6 h-6 p-0 flex items-center justify-center"
+            onPress={onOpen}
+          >
+            <HiAdjustmentsVertical size={16} />
+          </Button>
+        </CardFooter>
+      </Card>
 
-      <div
-        onDrop={() => handleDrop('in-progress')}
-        onDragOver={handleDragOver}
-        className="w-64 h-64 border-4 border-dashed border-gray-500 rounded-lg p-2"
-      >
-        <h4 className="text-center font-semibold">En Progreso</h4>
-        {filteredTasks('in-progress').map((task) => (
-          <DropdownContent key={task.id} task={task} />
-        ))}
-      </div>
-
-      <div
-        onDrop={() => handleDrop('completed')}
-        onDragOver={handleDragOver}
-        className="w-64 h-64 border-4 border-dashed border-gray-500 rounded-lg p-2"
-      >
-        <h4 className="text-center font-semibold">Completado</h4>
-        {filteredTasks('completed').map((task) => (
-          <DropdownContent key={task.id} task={task} />
-        ))}
-      </div>
+      {/* Modal */}
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalBody>
+              <Switch
+            defaultSelected
+            size="sm"
+            color="primary"
+            className="w-6 h-6"
+            thumbIcon={({ isSelected }) =>
+              isSelected ? <TbAxisY size={12} /> : <TbAxisY size={12} />
+            }
+          />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
