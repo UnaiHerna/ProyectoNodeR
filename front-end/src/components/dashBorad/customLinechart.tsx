@@ -5,35 +5,43 @@ import {
   fetchNH4FiltData,
   fetchDO_SPData,
   fetchDOSensData,
-} from "../../helpers/apiHelper"; // Ajusta la importación según sea necesario
+} from "../../helpers/apiHelper"; // Adjust the import as necessary
 
-// Define el tipo para los datos del gráfico
+// Define the type for the chart data
 interface ChartData {
   time: string;
   value: number;
 }
 
-// Define los tipos válidos de variables
+// Define valid variable types
 type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
 
 interface CustomLineChartProps {
-  variable: VariableType; // Prop para decidir qué variable de datos obtener
+  variable: VariableType; // Prop to decide which data variable to fetch
+  lineColor?: string; // Add lineColor property
+  lineWidth?: number; // Add lineWidth property
+  lineStyle?: "solid" | "dashed" | "dotted"; // Add lineStyle property
 }
 
-const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
+const CustomLineChart: React.FC<CustomLineChartProps> = ({
+  variable,
+  lineColor,
+  lineWidth,
+  lineStyle = "solid",
+}) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const now = new Date();
   const endDate = now.toISOString();
-  now.setHours(now.getHours() - 6); // Obtener datos de las últimas 6 horas
+  now.setHours(now.getHours() - 6); // Get data from the last 6 hours
   const startDate = now.toISOString();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         let data: ChartData[] = [];
-
-        // Determinar qué datos obtener en función de la prop `variable`
+        // Determine which data to fetch based on the `variable` prop
         switch (variable) {
           case "NH4":
             data = await fetchNH4Data(startDate, endDate);
@@ -48,28 +56,26 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
             data = await fetchDOSensData(startDate, endDate);
             break;
           default:
-            console.error(`Variable inválida: ${variable}`);
+            console.error(`Invalid variable: ${variable}`);
             return;
         }
 
-        setChartData(data);
+        if (data.length === 0) {
+          setError("No data found to display.");
+        } else {
+          setChartData(data);
+          setError(null); // Reset error if there is data
+        }
       } catch (error) {
-        console.error("Error obteniendo datos del gráfico:", error);
+        console.error("Error fetching chart data:", error);
+        setError("Error loading data.");
       }
     };
 
     fetchData();
-  }, [variable]); // Vuelve a obtener datos si cambia la variable
+  }, [variable]); // Refetch data if variable changes
 
-  // Establecer el color de la línea basado en la variable
-  const lineColor = {
-    NH4: "#3BB143",     // Verde
-    NH4_FILT: "#0077B6", // Azul
-    DO_SP: "#FFBF00",   // Amarillo
-    DO: "#FF6F61"       // Naranja
-  }[variable];
-
-  // Mapeo de nombres de las variables para mostrarlas en texto
+  // Mapping variable names for display
   const variableLabels: { [key in VariableType]: string } = {
     NH4: "NNH4 SENS",
     NH4_FILT: "NH4",
@@ -77,33 +83,46 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({ variable }) => {
     DO: "DO SENS",
   };
 
-  // Componente personalizado para el Tooltip
+  // Custom Tooltip component
   const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: ChartData }[] }) => {
     if (active && payload && payload.length) {
-      const { time, value } = payload[0].payload; // Usar el tipo ChartData
+      const { time, value } = payload[0].payload; // Use ChartData type
       return (
         <div className="bg-white border border-gray-300 p-2 rounded shadow">
           <p>{`Date: ${time}`}</p>
-          <p>{`Value: ${value.toFixed(2)} ppm`}</p> {/* Mostrar solo dos decimales */}
+          <p>{`Value: ${value.toFixed(2)} ppm`}</p> {/* Display only two decimals */}
         </div>
       );
     }
-
     return null;
   };
 
   return (
     <div className='h-[40%]'>
-      {/* Texto encima del gráfico para mostrar la variable seleccionada */}
-      <h3>{variableLabels[variable]}</h3>
-      <ResponsiveContainer width="100%" height={150}>
-        <LineChart data={chartData}>
-          {/* Línea para la variable seleccionada */}
-          <Line type="monotone" dataKey="value" stroke={lineColor} dot={false} strokeWidth={2} />
-          {/* Agregar el Tooltip */}
-          <Tooltip content={<CustomTooltip />} />
-        </LineChart>
-      </ResponsiveContainer>
+      {/* Text above the chart to show the selected variable */}
+      <h3 className='flex justify-between'>
+        {variableLabels[variable]}
+      </h3>
+      {error ? (
+        <p className="text-red-600">{error}</p> // Show error message if no data
+      ) : (
+        <ResponsiveContainer width="100%" height={100}>
+          <LineChart data={chartData}>
+            {/* Line for the selected variable */}
+            <Line 
+              type="monotone" 
+              dataKey="value" 
+              stroke={lineColor || "#000"} // Use lineColor if provided, otherwise black
+              dot={false} // Remove markers
+              strokeWidth={lineWidth || 2} // Use lineWidth if provided, otherwise width of 2
+              strokeDasharray={lineStyle === "dashed" ? "5 5" : lineStyle === "dotted" ? "2 2" : undefined} // Apply line style
+              animationDuration={500} // Optional: add animation
+            />
+            {/* Add the Tooltip */}
+            <Tooltip content={<CustomTooltip />} />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 };

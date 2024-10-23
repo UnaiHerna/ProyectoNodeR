@@ -11,35 +11,34 @@ import SensorChartWithShadedAreas from "./areaPlotly";
 import DragDrop from "../Drag_Drop/DD";
 
 export default function N_NH4TrainBody() {
- const currentDate = new Date();
-  const endDate = currentDate.toISOString(); // Fecha y hora actual en formato ISO
+  const currentDate = new Date();
+  const endDate = currentDate.toISOString(); // Current date and time in ISO format
   const startDate = new Date(currentDate);
-  startDate.setDate(currentDate.getDate() - 30); // Restar 30 días
+  startDate.setDate(currentDate.getDate() - 30); // Subtract 30 days
 
   const [barChartDateRange, setBarChartDateRange] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Fecha de inicio hace 30 días
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(), // Start date 30 days ago
+    endDate: endDate, // End date is today
   });
 
   const [dynamicChartDateRange, setDynamicChartDateRange] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Fecha de inicio hace 30 días
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(), // Start date 30 days ago
+    endDate: endDate, // End date is today
   });
 
-  const [dynamicMarkArea, setdynamicMarkArea] = useState<{
+  const [dynamicMarkArea, setDynamicMarkArea] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Puedes cambiar esto si deseas una lógica diferente
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(), // You can change this if you want different logic
+    endDate: endDate, // End date is today
   });
-
 
   const handleBarChartDateChange = (startDate: string, endDate: string) => {
     setBarChartDateRange({ startDate, endDate });
@@ -52,7 +51,7 @@ export default function N_NH4TrainBody() {
   };
 
   const handleDynamicMarkarea = (startDate: string, endDate: string) => {
-    setdynamicMarkArea({ startDate, endDate });
+    setDynamicMarkArea({ startDate, endDate });
     console.log("DynamicChart Date Range Changed:", { startDate, endDate });
   };
 
@@ -135,9 +134,10 @@ export default function N_NH4TrainBody() {
       <div className="col-span-1 mt-16">
         <HeatmapComponent year="2024" variable="qw" equipo="INF_PIPE.FM" />
       </div>
-      {/* CalendarHeatmap with DatePicker */}
+
+      {/* DragDrop components */}
       <div className="col-span-1 mt-16">
-        <DragDrop/>
+        <DragDrop />
       </div>
     </div>
   );
