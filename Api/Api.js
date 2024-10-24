@@ -1,16 +1,16 @@
-const express = require('express');
+const express = require('express')
+const { query, validationResult } = require('express-validator');
 const path = require('path');
-const executeRScript = require('./utils/executeRScript');
 const connection = require('./db/database'); // Importa la conexión a la base de datos
 const cors = require('cors');
 const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor'); 
 const userRoutes = require('./security/jwt');
+const executeRScript = require('./utils/executeRScript');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
-const { body, query, validationResult } = require('express-validator');
-const { ConectionError } = require('./utils/errors');
+const { ConectionError, ParameterError, InternalError, UnauthenticatedError, UnauthorizedError, ValidationError } = require('./utils/errors');
 
 const app = express();
 // Middleware para manejar JSON
@@ -111,8 +111,10 @@ app.get('/python', [
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
 // Middleware para manejar errores
 app.use((err, req, res, next) => {
+
     if(err instanceof ConectionError){
         console.error('Error: ', err.message); // Administrador ve el error completo
         return res.status(503).json({ error: 'Service temporarily unavailable' }); // Usuario ve un mensaje genérico
