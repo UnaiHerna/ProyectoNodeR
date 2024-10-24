@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const { ConectionError } = require('../utils/errors');
 
 // Configuración de la conexión a la base de datos
 const connection = mysql.createConnection({
@@ -11,12 +12,12 @@ const connection = mysql.createConnection({
 // Conectar a la base de datos
 connection.connect(err => {
     if (err) {
-        console.error('Error connecting to the database:', err);
-        process.exit(1);
+        throw new ConectionError('Error connecting to the database: ' + err.message);
     } else {
         console.log('Connected to the database');
     }
 });
+
 
 // Manejar el cierre de la conexión cuando el proceso se interrumpe
 process.on('SIGINT', () => {

@@ -10,6 +10,7 @@ const userRoutes = require('./security/jwt');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
 const { body, query, validationResult } = require('express-validator');
+const { ConectionError } = require('./utils/errors');
 
 const app = express();
 // Middleware para manejar JSON
@@ -110,6 +111,14 @@ app.get('/python', [
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+// Middleware para manejar errores
+app.use((err, req, res, next) => {
+    if(err instanceof ConectionError){
+        console.error('Error: ', err.message); // Administrador ve el error completo
+        return res.status(503).json({ error: 'Service temporarily unavailable' }); // Usuario ve un mensaje genérico
+    }
+});
+
 
 // Sirve la aplicación React desde la carpeta 'dist'
 app.use(express.static(path.join(__dirname, '../front-end/dist')));
