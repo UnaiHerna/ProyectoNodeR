@@ -9,6 +9,7 @@ const sensorRoutes = require('./routes/sensor');
 const userRoutes = require('./security/jwt');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
+const { body, query, validationResult } = require('express-validator');
 
 const app = express();
 // Middleware para manejar JSON
@@ -42,13 +43,21 @@ app.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no 
     });
 });
 
-app.get('/r', async (req, res) => {
-    const { mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp } = req.query;
+app.get('/r', [
+    query('mltss_sp').isNumeric().withMessage('mltss_sp debe ser numérico'),
+    query('so_aer_sp').isNumeric().withMessage('so_aer_sp debe ser numérico'),
+    query('q_int').isNumeric().withMessage('q_int debe ser numérico'),
+    query('tss_eff_sp').isNumeric().withMessage('tss_eff_sp debe ser numérico'),
+    query('temp').isNumeric().withMessage('temp debe ser numérico')
+], async (req, res) => {
 
-    // Validar que todos los parámetros requeridos están presentes
-    if (!mltss_sp || !so_aer_sp || !q_int || !tss_eff_sp || !temp) {
-        return res.status(400).send('Faltan parámetros requeridos');
+    // Verificar los errores de validación
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
+
+    const { mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp } = req.query;
 
     try {
         const result = await executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp);
