@@ -8,7 +8,6 @@ import DatePicker2 from "./cards/DatePicker";
 import HeatmapComponent from "./HeatCalendar";
 import LineChartWithZoom from "./Last6H";
 import SensorChartWithShadedAreas from "./areaPlotly";
-import DragDrop from "../Drag_Drop/DD";
 
 export default function N_NH4TrainBody() {
   const currentDate = new Date();
@@ -36,9 +35,10 @@ export default function N_NH4TrainBody() {
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // You can change this if you want different logic
-    endDate: endDate, // End date is today
+    startDate: startDate.toISOString(),
+    endDate: endDate,
   });
+
 
   const handleBarChartDateChange = (startDate: string, endDate: string) => {
     setBarChartDateRange({ startDate, endDate });
@@ -54,6 +54,7 @@ export default function N_NH4TrainBody() {
     setDynamicMarkArea({ startDate, endDate });
     console.log("DynamicChart Date Range Changed:", { startDate, endDate });
   };
+
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 h-full w-full">
@@ -137,7 +138,7 @@ export default function N_NH4TrainBody() {
 
       {/* DragDrop components */}
       <div className="col-span-1 mt-16">
-        <DragDrop />
+      <checkboxGroups
       </div>
     </div>
   );
