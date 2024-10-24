@@ -51,7 +51,6 @@ app.get('/r', [
     query('temp').isNumeric().withMessage('temp debe ser numérico')
 ], async (req, res) => {
 
-    // Verificar los errores de validación
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -68,13 +67,19 @@ app.get('/r', [
     }
 });
 
-app.get('/java', async (req, res) => {
-    const { age, race, psa, gleason } = req.query;
+app.get('/java', [
+    query('age').isNumeric().withMessage('age debe ser numérico'),
+    query('race').isNumeric().withMessage('race debe ser numérico'),
+    query('psa').isNumeric().withMessage('psa debe ser numérico'),
+    query('gleason').isNumeric().withMessage('gleason debe ser numérico')
+], async (req, res) => {
 
-    // Validar que todos los parámetros requeridos están presentes
-    if (!age || !race || !psa || !gleason) {
-        return res.status(400).send('Faltan parámetros requeridos');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
+
+    const { age, race, psa, gleason } = req.query;
 
     try {
         const result = await executeJava(age, race, psa, gleason);
@@ -85,18 +90,20 @@ app.get('/java', async (req, res) => {
     }
 });
 
-app.get('/python', async (req, res) => {
-    const { num1, num2 } = req.query;
+app.get('/python', [
+    query('num1').isNumeric().withMessage('num1 debe ser numérico'),
+    query('num2').isNumeric().withMessage('num2 debe ser numérico')
+],async (req, res) => {
 
-    // Validar que todos los parámetros requeridos están presentes
-    if (!num1 || !num2) {
-        return res.status(400).json({ error: 'Faltan parámetros requeridos' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
 
+    const { num1, num2 } = req.query;
+
     try {
-        // Espera el resultado de executePython
         const result = await executePython(num1, num2);
-        // Envía el resultado en formato JSON
         res.status(200).json(result);
     } catch (error) {
         console.error('Error ejecutando el script Python:', error);
