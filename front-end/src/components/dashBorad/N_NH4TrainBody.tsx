@@ -9,7 +9,7 @@ import HeatmapComponent from "./HeatCalendar";
 import LineChartWithZoom from "./Last6H";
 import SensorChartWithShadedAreas from "./areaPlotly";
 import CheckboxGroups from "../Drag_Drop/checkboxGroups";
-import ChartModal from "../Drag_Drop/ChartModal";
+import ChartCard from "../Drag_Drop/chartode";
 
 export default function N_NH4TrainBody() {
   type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
@@ -17,6 +17,7 @@ export default function N_NH4TrainBody() {
   const variables: VariableType[] = ["NH4", "NH4_FILT", "DO_SP", "DO"];
 
   const [variablesE, setVariablesE] = useState<string[]>([]);
+  const [Axis, setAxis] = useState<boolean>(false);
 
   const handleVariable=(variables:string[])=>{
     setVariablesE([... new Set(variables)]);
@@ -65,6 +66,11 @@ export default function N_NH4TrainBody() {
     setDynamicMarkArea({ startDate, endDate });
     console.log("DynamicChart Date Range Changed:", { startDate, endDate });
   };
+
+  const handleTogle = ()=>{
+    setAxis(!Axis);
+    console.log(Axis);
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 h-full w-full">
@@ -148,10 +154,10 @@ export default function N_NH4TrainBody() {
 
       {/* DragDrop components */}
       <div className="col-span-1 mt-16">
-        <CheckboxGroups variables={variables} onVariableChange={handleVariable}/>
+        <CheckboxGroups variables= {variables} onVariableChange={handleVariable}/>
         {variablesE.map((elemento)=>{
           console.log(elemento);
-          return <ChartModal/>})}        
+          return <ChartCard variable={elemento} key={elemento} onToggle={handleTogle} />})}        
       </div>
     </div>
   );
