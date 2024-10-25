@@ -7,30 +7,17 @@ import {
     Button,
     RadioGroup,
     Radio,
+    useDisclosure,
   } from "@nextui-org/react";
   
   interface ChartModalProps {
-    isOpen: boolean;
-    onOpenChange: () => void;
-    lineColor: string;
-    setLineColor: (color: string) => void;
-    lineWidth: number;
-    setLineWidth: (width: number) => void;
-    lineStyle: "solid" | "dashed" | "dotted";
-    setLineStyle: (style: "solid" | "dashed" | "dotted") => void;
   }
   
-  const ChartModal: React.FC<ChartModalProps> = ({
-    isOpen,
-    onOpenChange,
-    lineColor,
-    setLineColor,
-    lineWidth,
-    setLineWidth,
-    lineStyle,
-    setLineStyle,
-  }) => {
+  const ChartModal: React.FC<ChartModalProps> = () => {
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
     return (
+      <>
+      <Button onPress={onOpen}>Open Modal</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -47,8 +34,6 @@ import {
                   <input
                     type="color"
                     id="colorPicker"
-                    value={lineColor}
-                    onChange={(e) => setLineColor(e.target.value)}
                     className="w-full"
                   />
                 </div>
@@ -60,8 +45,6 @@ import {
                     type="range"
                     min={1}
                     max={10}
-                    value={lineWidth}
-                    onChange={(e) => setLineWidth(Number(e.target.value))}
                   />
                 </div>
   
@@ -69,8 +52,6 @@ import {
                 <div className="flex flex-row w-full justify-between">
                   <RadioGroup
                     label="Line Style"
-                    value={lineStyle}
-                    onChange={(event) => setLineStyle(event.target.value as "solid" | "dashed" | "dotted")}
                   >
                     <Radio value="solid">Solid</Radio>
                     <Radio value="dashed">Dashed</Radio>
@@ -88,6 +69,7 @@ import {
           )}
         </ModalContent>
       </Modal>
+      </>
     );
   };
   

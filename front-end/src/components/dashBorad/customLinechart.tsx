@@ -116,7 +116,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               dot={false} // Remove markers
               strokeWidth={lineWidth || 2} // Use lineWidth if provided, otherwise width of 2
               strokeDasharray={lineStyle === "dashed" ? "5 5" : lineStyle === "dotted" ? "2 2" : undefined} // Apply line style
-              animationDuration={500} // Optional: add animation
+              animationDuration={500} 
             />
             {/* Add the Tooltip */}
             <Tooltip content={<CustomTooltip />} />

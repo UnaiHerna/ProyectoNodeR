@@ -8,8 +8,20 @@ import DatePicker2 from "./cards/DatePicker";
 import HeatmapComponent from "./HeatCalendar";
 import LineChartWithZoom from "./Last6H";
 import SensorChartWithShadedAreas from "./areaPlotly";
+import CheckboxGroups from "../Drag_Drop/checkboxGroups";
+import ChartModal from "../Drag_Drop/ChartModal";
 
 export default function N_NH4TrainBody() {
+  type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
+
+  const variables: VariableType[] = ["NH4", "NH4_FILT", "DO_SP", "DO"];
+
+  const [variablesE, setVariablesE] = useState<string[]>([]);
+
+  const handleVariable=(variables:string[])=>{
+    setVariablesE([... new Set(variables)]);
+  };
+
   const currentDate = new Date();
   const endDate = currentDate.toISOString(); // Current date and time in ISO format
   const startDate = new Date(currentDate);
@@ -39,7 +51,6 @@ export default function N_NH4TrainBody() {
     endDate: endDate,
   });
 
-
   const handleBarChartDateChange = (startDate: string, endDate: string) => {
     setBarChartDateRange({ startDate, endDate });
     console.log("BarChart Date Range Changed:", { startDate, endDate });
@@ -54,7 +65,6 @@ export default function N_NH4TrainBody() {
     setDynamicMarkArea({ startDate, endDate });
     console.log("DynamicChart Date Range Changed:", { startDate, endDate });
   };
-
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 h-full w-full">
@@ -138,7 +148,10 @@ export default function N_NH4TrainBody() {
 
       {/* DragDrop components */}
       <div className="col-span-1 mt-16">
-      <checkboxGroups
+        <CheckboxGroups variables={variables} onVariableChange={handleVariable}/>
+        {variablesE.map((elemento)=>{
+          console.log(elemento);
+          return <ChartModal/>})}        
       </div>
     </div>
   );
