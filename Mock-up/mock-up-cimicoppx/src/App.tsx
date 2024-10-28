@@ -1,13 +1,11 @@
+import SummaryCard from "./components/Home/Organism/SumarryCard";
 
 function App() {
-
   return (
     <>
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+      <SummaryCard />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
