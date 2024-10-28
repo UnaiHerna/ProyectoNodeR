@@ -1,10 +1,9 @@
 import React from "react";
 import { Card as NextUICard, CardProps as NextUICardProps, CardHeader, CardBody, CardFooter } from "@nextui-org/card"; // Asegúrate de que este paquete está instalado
-import { CSSProperties, ReactNode } from "react";
+import { ReactNode } from "react";
 
 interface CustomCardProps extends NextUICardProps {
     className?: string;       // Clase adicional para la tarjeta
-    css?: CSSProperties;      // Estilos personalizados de CSS
     children: ReactNode;      // Contenido de la tarjeta
 }
 

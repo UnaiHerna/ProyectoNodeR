@@ -1,9 +1,8 @@
 import { Button as NextUIButton, ButtonProps } from "@nextui-org/button"; // Asegúrate de que este paquete está instalado
-import { CSSProperties, ReactNode } from "react";
+import {  ReactNode } from "react";
 
 interface CustomButtonProps extends ButtonProps {
     className?: string;         // Clase adicional para el botón
-    css?: CSSProperties;        // Estilos personalizados de CSS
     children: ReactNode;        // Contenido del botón
 }
 
