@@ -197,4 +197,13 @@ router.get('/avg_modo', async (req, res) => {
     }
 });
 
+// Middleware para manejar errores
+router.use((err, req, res, next) => {
+
+    if(err instanceof ConectionError){
+        console.error('Error: ', err.message);
+        return res.status(503).json({ error: 'Service temporarily unavailable' });
+    }
+});
+
 module.exports = router;

@@ -116,8 +116,8 @@ app.get('/python', [
 app.use((err, req, res, next) => {
 
     if(err instanceof ConectionError){
-        console.error('Error: ', err.message); // Administrador ve el error completo
-        return res.status(503).json({ error: 'Service temporarily unavailable' }); // Usuario ve un mensaje genérico
+        console.error('Error: ', err.message);
+        return res.status(503).json({ error: 'Service temporarily unavailable' });
     }
 });
 
