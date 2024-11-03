@@ -1,29 +1,17 @@
-import React from "react";
-import { Card as NextUICard, CardProps as NextUICardProps, CardHeader, CardBody, CardFooter } from "@nextui-org/card"; // Asegúrate de que este paquete está instalado
-import { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
-interface CustomCardProps extends NextUICardProps {
-    className?: string;       // Clase adicional para la tarjeta
-    children: ReactNode;      // Contenido de la tarjeta
+interface CardProps {
+  title: string;
+  children: ReactNode;
 }
 
-export function Card_(props: CustomCardProps) {
-    const { className, children, ...rest } = props; // Desestructuramos className y children de las props
-    return (
-        <NextUICard {...rest} className={className}>
-            {children}  {/* Usamos children para mostrar el contenido de la tarjeta */}
-        </NextUICard>
-    );
-}
+const Card: React.FC<CardProps> = ({ title, children }) => {
+  return (
+    <div className="border rounded-lg shadow-sm p-4 bg-white">
+      <h3 className="text-blue-800 font-semibold mb-2">{title}</h3>
+      <div>{children}</div>
+    </div>
+  );
+};
 
-export function CardHeader_(props: React.ComponentProps<typeof CardHeader>) {
-    return <CardHeader {...props} />;
-}
-
-export function CardBody_(props: React.ComponentProps<typeof CardBody>) {
-    return <CardBody {...props} />;
-}
-
-export function CardFooter_(props: React.ComponentProps<typeof CardFooter>) {
-    return <CardFooter {...props} />;
-}
+export default Card;

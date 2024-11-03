@@ -11,6 +11,7 @@ export default {
     extend: {
       backgroundColor: { // Cambié a backgroundColor
         cimico: "#132568", // Asegúrate de que esté dentro de `backgroundColor`
+        cimicoLine: "#0c78ac", // Asegúrate de que esté dentro de `backgroundColor`
       },
       textColor:{
         cimicoText: "#0c78ac",
