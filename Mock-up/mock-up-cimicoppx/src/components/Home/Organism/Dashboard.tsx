@@ -1,35 +1,29 @@
 import React from 'react';
 import Card from '../Atoms/Card';
-import { FaArrowLeft } from 'react-icons/fa';
+import FlowRateChart from '../Moleculs/FlowRateChart';
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="grid grid-cols-2 gap-4 p-4 bg-gray-100 min-h-screen">
+    <div className="grid grid-rows-4 grid-cols-4 gap-4 p-4 bg-gray-100 min-h-screen">
       {/* Tarjeta con gráfico de caudal */}
-      <Card title="Influent flow rate – m³/h">
-        <div className="flex items-center">
-          <FaArrowLeft className="text-blue-600 w-6 h-6 mr-2" />
-          {/* Simulación de gráfico */}
-          <div className="flex items-center space-x-1">
-            {[...Array(24)].map((_, i) => (
-              <span key={i} className="inline-block h-2 w-2 bg-gray-400 rounded-full"></span>
-            ))}
-          </div>
+      <Card title="Influent flow rate – m³/h" className="row-span-2 col-span-3">
+        <div className="w-full h-full"> {/* Utilizar altura completa */}
+          <FlowRateChart />
         </div>
       </Card>
 
       {/* Tarjeta de calidad */}
-      <Card title="Quality">
+      <Card title="Quality" className="row-span-2 col-span-1">
         <p>Quality data or visualization goes here.</p>
       </Card>
 
       {/* Tarjeta del clima */}
-      <Card title="Weather">
+      <Card title="Weather" className="row-span-2 col-span-3">
         <p>Weather data or forecast details here.</p>
       </Card>
 
       {/* Tarjeta de notificaciones */}
-      <Card title="Notifications">
+      <Card title="Notifications" className="row-span-2 col-span-1">
         <p>No new notifications.</p>
       </Card>
     </div>
