@@ -5,7 +5,7 @@ import TitleSelection from "../Moleculs/TittleSelect";
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="grid grid-rows-4 grid-cols-4 gap-4 p-4 bg-gray-100 h-[46rem]">
+    <div className="grid grid-rows-4 grid-cols-4 gap-4 p-4 bg-gray-100 h-[46rem] scale-[0.99]">
       {/* Tarjeta con gráfico de caudal */}
       <Card
         title={

@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaArrowLeft } from 'react-icons/fa';
+import React from "react";
+import { FaArrowLeft } from "react-icons/fa";
 
 type ArrowButtonProps = {
   onClick?: () => void;
@@ -7,22 +7,14 @@ type ArrowButtonProps = {
 
 const ArrowButton: React.FC<ArrowButtonProps> = ({ onClick }) => {
   return (
-    <button 
-      onClick={onClick} 
-      style={{
-        backgroundColor: '#4da6ff', // Color azul claro
-        border: 'none',
-        borderRadius: '50%',
-        width: '40px',
-        height: '40px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-      }}
-    >
-      <FaArrowLeft color="#ffffff" size={16} />
-    </button>
+    <section className="p-[2px] bg-blue-500 rounded-full flex items-center justify-center">
+      <button
+        onClick={onClick}
+        className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer border-2 border-white"
+      >
+        <FaArrowLeft size={16} />
+      </button>
+    </section>
   );
 };
 

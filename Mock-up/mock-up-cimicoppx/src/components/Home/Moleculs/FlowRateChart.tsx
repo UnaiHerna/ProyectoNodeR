@@ -18,7 +18,7 @@ const ForecastChart = () => {
           <span key={number}>{number}</span> // Renderiza cada número en un <span>
         ))}
       </section>
-        <section className="absolute top-72 left-2 z-10">
+        <section className="absolute top-44 left-0 z-10">
         <ArrowButton />
         </section>
       <Plot
