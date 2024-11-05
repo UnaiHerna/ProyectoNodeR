@@ -113,7 +113,7 @@
   
   
   // Base URL for API
-  const BASE_URL = "http://13.60.40.198:8000";
+  const BASE_URL = "http://16.171.160.101";
 
   // Build URL with query parameters
   const buildUrl = (endpoint: string, params: FetchOptions): string => {
