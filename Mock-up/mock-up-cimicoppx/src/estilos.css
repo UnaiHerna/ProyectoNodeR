@@ -1,0 +1,10 @@
+
+div.ant-select-selector{
+    border-radius: 2rem !important; /* Asegúrate de usar !important si es necesario */
+    background-color: transparent !important;
+    border: 2px white solid;
+}
+span.ant-select-selection-item, span.ant-select-selection-placeholder
+{
+    color: white;
+}

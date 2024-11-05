@@ -1,0 +1,25 @@
+import React from 'react';
+
+interface TitleSectionProps {
+  title: string;
+  additionalLabels: string[];
+}
+
+const TitleSelection: React.FC<TitleSectionProps> = ({ title, additionalLabels }) => {
+  return (
+    <div className="w-full flex flex-row justify-between">
+      <section className="self-end w-full flex flex-row justify-between">
+        <h3 className="text-blue-800 font-normal mb-2 text-[11pt] font-raleway">{title}</h3>
+      </section>
+      <section className="flex flex-row gap-4 self-end">
+        {additionalLabels.map((label, index) => (
+          <h3 key={index} className="text-blue-800 font-normal mb-2 text-[11pt] font-raleway">
+            {label}
+          </h3>
+        ))}
+      </section>
+    </div>
+  );
+};
+
+export default TitleSelection;

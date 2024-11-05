@@ -1,31 +1,33 @@
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, Space } from 'antd';
 import { FaLocationDot } from "react-icons/fa6";
-
-// Sample data for EDARS
+import '../../../estilos.css';
 const EDARS = ["Ranilla WWTP"];
+
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`);
+};
 
 export default function LocationSelector() {
   return (
-    <section className="flex items-center space-x-2 text-white bg-cimico p-2 gap-4">
+    <section className="flex items-center text-white bg-cimico p-2 gap-4 ml-[0.5rem]">
       {/* Icono de localización con tamaño y color ajustados */}
-      <FaLocationDot className="text-white w-5 h-5 ml-8" />
-      
-      {/* Componente Select */}
-      <Select
-        label="Favorite EDAR"
-        placeholder="Select an EDAR"
-        color="primary"
-        size="sm"
-        variant="bordered"
-        className="w-48 text-white rounded-lg border-none text-sm p-2"
-      >
-        {/* Mapear EDARS para crear opciones de selección */}
-        {EDARS.map((edar, index) => (
-          <SelectItem key={index} value={edar} className="text-black">
-            {edar}
-          </SelectItem>
-        ))}
-      </Select>
+      <FaLocationDot className="text-white w-5 h-5" />
+
+      {/* Selector de EDARS usando Ant Design */}
+      <Space wrap>
+        <Select
+        className="bg-transparent"
+          defaultValue={EDARS[0]}
+          style={{ width: 180, borderRadius: '1.5rem' }} // Adjust the borderRadius here
+          onChange={handleChange}
+          options={EDARS.map((edar) => ({
+            value: edar,
+            label: edar,
+          }))}
+          placeholder="Select an EDAR"
+          allowClear
+        />
+      </Space>
     </section>
   );
 }
