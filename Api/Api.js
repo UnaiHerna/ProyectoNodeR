@@ -7,6 +7,7 @@ const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor'); 
 const userRoutes = require('./security/jwt');
+const docRoutes = require('./routes/swagger');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
 const { body, query, validationResult } = require('express-validator');
@@ -30,6 +31,7 @@ app.use('/datos/senal', senalRoutes);
 app.use('/datos/sensorvacio', sensorRoutes); 
 app.use('/datos/sensor', sensorRoutes);
 app.use('/user', userRoutes);
+app.use('/api-docs', docRoutes);
 
 
 app.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no funciona
