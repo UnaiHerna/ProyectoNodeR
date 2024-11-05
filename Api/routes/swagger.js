@@ -3,16 +3,24 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const express = require('express');
 const router = express.Router();
 
-//Documentación de la API
-const opciones= {
+const opciones = {
     definition: {
         openapi: '3.0.0',
         info: {
             title: 'API de Cimico',
             version: '1.0.0',
-        }
+            description: 'Documentación de la API de Cimico',
+            contact: {
+                name: 'Equipo de desarrollo',
+                // email: 'contacto@ejemplo.com'
+            }
+        },
+        servers: [{
+            url: 'http://localhost',
+            description: 'Servidor de desarrollo'
+        }]
     },
-    apis: ['./*.js'],
+    apis: ['./routes/*.js'],
 };
 
 //Inicialización de Swagger
@@ -22,3 +30,5 @@ const swaggerSpec = swaggerJSDoc(opciones);
 router.get('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = router;
+
+
