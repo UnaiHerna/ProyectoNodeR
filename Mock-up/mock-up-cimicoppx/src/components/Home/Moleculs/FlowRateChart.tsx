@@ -23,7 +23,7 @@ const ForecastChart = () => {
 
   // Calculate forecast start index (set to 40% of the total data points to start at 40%)
   const forecastStartIndex = Math.floor(xData.length * 0.40);  // Forecast starts at 40%
-  const numbers = Array.from({ length: 25 }, (_, i) => i);  // Updated number range to match xData length
+  const numbers = Array.from({ length: 24 }, (_, i) => i);  // Updated number range to match xData length
 
   return (
     <div className="w-full h-full">
