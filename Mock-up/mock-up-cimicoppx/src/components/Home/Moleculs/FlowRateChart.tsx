@@ -1,68 +1,112 @@
+import { useState } from "react";
 import Plot from "react-plotly.js";
 import ArrowButton from "./ArrowButton";
 
 const ForecastChart = () => {
-  // Updated xData to have 25 time periods
-  const xData = Array.from({ length: 25 }, (_, i) => i); 
+  const [xOffset, setXOffset] = useState(0); // Tracks the x-axis scroll offset for Plot
+  const [xDataOffset, setXDataOffset] = useState(0); // Tracks the offset for displayed hours
 
-  // Generate a sine wave for the model average (signal-like pattern)
-  const modelAverage = xData.map((x) => Math.sin(x * 0.5) * 10);  // Increase the amplitude by multiplying by 10
-
-  // Calculate upper and lower bounds based on the model average (growing uncertainty over time)
-  const upperBound = modelAverage.map((val, index) => {
-    // Use an exponential growth factor to simulate increasing uncertainty
-    const uncertaintyFactor = Math.exp(index / 10); // Increase uncertainty exponentially
-    return val + 0.5 * uncertaintyFactor;  // Increased upper bound with a bigger factor
+  // Generating structured data for 72 hours (3 days)
+  const data = Array.from({ length: 72 }, (_, hour) => {
+    const modelValue = Math.sin(hour * 0.5) * 10;
+    const uncertaintyFactor = Math.exp(hour / 10);
+    return {
+      hour,
+      modelAverage: modelValue,
+      upperBound: modelValue + 0.5 * uncertaintyFactor,
+      lowerBound: modelValue - 0.5 * uncertaintyFactor,
+    };
   });
 
-  const lowerBound = modelAverage.map((val, index) => {
-    // Apply the same uncertainty factor for lower bounds
-    const uncertaintyFactor = Math.exp(index / 10); // Increase uncertainty exponentially
-    return val - 0.5 * uncertaintyFactor;  // Decreased lower bound with a bigger factor
-  });
+  const forecastStartIndex = Math.floor(data.length * 0.4);
 
-  // Calculate forecast start index (set to 40% of the total data points to start at 40%)
-  const forecastStartIndex = Math.floor(xData.length * 0.40);  // Forecast starts at 40%
-  const numbers = Array.from({ length: 24 }, (_, i) => i);  // Updated number range to match xData length
+  // Generate the 10-hour display based on the current xDataOffset
+  const numbers = Array.from({ length: 23 }, (_, i) => (i + xDataOffset) % 72);
+
+  // Scroll functions to adjust both xOffset and xDataOffset
+  const handleScrollLeft = () => {
+    if (xOffset > 0) {
+      setXOffset(xOffset - 5); // Move x-axis left
+      setXDataOffset((xDataOffset - 1 + 72) % 72); // Decrement hour, wrap within 0–71
+    } else {
+      // Log when you've reached the leftmost limit
+      console.log("Reached the leftmost limit");
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (xOffset < data.length - 10) {
+      setXOffset(xOffset + 5); // Move x-axis right
+      setXDataOffset((xDataOffset + 1) % 72); // Increment hour, wrap within 0–71
+    } else {
+      // Log when you've reached the rightmost limit
+      console.log("Reached the rightmost limit");
+    }
+  };
+
+  // Extract the data for plotting based on the current offset
+  const modelAverage = data.map((d) => d.modelAverage);
+  const upperBound = data.map((d) => d.upperBound);
+  const lowerBound = data.map((d) => d.lowerBound);
+
+  // Determine whether the buttons should be visible
+  const canScrollLeft = xOffset > 0;
+  const canScrollRight = xOffset < data.length - 10;
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {/* Display numbers with updated xDataOffset for hours */}
       <section className="w-full font-lato flex space-x-11 mt-2 ml-4 font-normal">
-        {numbers.map((number) => (
-          <span key={number}>{number}</span>
+        {numbers.map((hour, idx) => (
+          <span key={idx}>{hour}</span>
         ))}
       </section>
-      <section className="absolute top-44 left-0 z-10">
-        <ArrowButton />
-      </section>
+
+      {/* Arrow buttons positioned on the left and right */}
+      <div className="absolute top-24 left-0 ml-[-2rem] w-[90rem] flex justify-between px-[-5rem] z-10">
+  {/* Conditionally render the left button based on whether scrolling left is possible */}
+  {canScrollLeft && (
+    <ArrowButton direction="left" onClick={handleScrollLeft} />
+  )}
+
+  {/* Conditionally render the right button based on whether scrolling right is possible */}
+  {canScrollRight && (
+    <ArrowButton direction="right" onClick={handleScrollRight} className={canScrollLeft ? '' : 'self-end ml-[86.9rem]'} />
+  )}
+</div>
+
+
       <Plot
         data={[
-          // Shaded area for forecast uncertainty bounds (growing exponentially)
           {
             x: [
-              ...xData.slice(forecastStartIndex),
-              ...xData.slice(forecastStartIndex).reverse(),
+              ...data.slice(forecastStartIndex).map((d) => d.hour),
+              ...data
+                .slice(forecastStartIndex)
+                .map((d) => d.hour)
+                .reverse(),
             ],
             y: [
               ...upperBound.slice(forecastStartIndex),
               ...lowerBound.slice(forecastStartIndex).reverse(),
             ],
-            fill: "toself", // This property fills the area between the upper and lower bounds
-            fillcolor: "rgba(128, 128, 128, 0.2)", // Gray color with transparency
+            fill: "toself",
+            fillcolor: "rgba(128, 128, 128, 0.2)",
             line: { color: "transparent", width: 0 },
             showlegend: false,
             type: "scatter",
           },
-          // Actual Data Line (Black smooth line with last marker yellow)
           {
-            x: xData.slice(0, forecastStartIndex + 1),  // Black line spans the first 40% of the chart
+            x: data.slice(0, forecastStartIndex + 1).map((d) => d.hour),
             y: modelAverage.slice(0, forecastStartIndex + 1),
             mode: "lines+markers",
-            line: { color: "black", width: 3, shape: "spline" }, // Smooth line
+            line: { color: "black", width: 3, shape: "spline" },
             marker: {
-              color: xData.slice(0, forecastStartIndex + 1).map((_, i) =>
-                i === forecastStartIndex ? "#FFD700" : "#1f77b4" // Last point yellow, others blue
-              ),
+              color: data
+                .slice(0, forecastStartIndex + 1)
+                .map((_, i) =>
+                  i === forecastStartIndex ? "#FFD700" : "#1f77b4"
+                ),
               size: 15,
               line: {
                 color: "white",
@@ -71,22 +115,23 @@ const ForecastChart = () => {
             },
             name: "Actual Data",
           },
-          // Forecast Line (Gray smooth line with first marker yellow)
           {
             x: [
-              ...xData.slice(forecastStartIndex - 1, forecastStartIndex), // Add the last point from the actual data (yellow dot)
-              ...xData.slice(forecastStartIndex), // Start forecast from the next index
+              ...data
+                .slice(forecastStartIndex - 1, forecastStartIndex)
+                .map((d) => d.hour),
+              ...data.slice(forecastStartIndex).map((d) => d.hour),
             ],
             y: [
-              ...modelAverage.slice(forecastStartIndex - 1, forecastStartIndex), // Include the yellow dot for continuity
-              ...modelAverage.slice(forecastStartIndex), // Forecast data
+              ...modelAverage.slice(forecastStartIndex - 1, forecastStartIndex),
+              ...modelAverage.slice(forecastStartIndex),
             ],
             mode: "lines+markers",
-            line: { color: "gray", width: 3, shape: "spline", dash: "dot" }, // Smooth dotted line
+            line: { color: "gray", width: 3, shape: "spline", dash: "dot" },
             marker: {
               color: [
-                "#FFD700", // First yellow dot after actual data line
-                ...xData.slice(forecastStartIndex).map(() => "gray") // Subsequent points gray
+                "#FFD700",
+                ...data.slice(forecastStartIndex).map(() => "gray"),
               ],
               size: 15,
               line: {
@@ -98,8 +143,12 @@ const ForecastChart = () => {
           },
         ]}
         layout={{
-          xaxis: { visible: false },
-          yaxis: { visible: false },
+          xaxis: {
+            range: [xOffset, xOffset + 10],
+            visible: true,
+            showgrid: false,
+          },
+          yaxis: { visible: false, showgrid: false },
           showlegend: false,
           margin: { t: 40, l: 0, r: 0, b: 0 },
         }}
