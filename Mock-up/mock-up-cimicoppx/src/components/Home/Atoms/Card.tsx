@@ -11,7 +11,7 @@ const Card: React.FC<CardProps> = ({ title, children, className }) => {
     <div className={`border rounded-sm shadow-lg p-4 bg-white ${className}`}>
       {title}
       <hr></hr>
-      <section>{children}</section>
+      <>{children}</>
     </div>
   );
 };

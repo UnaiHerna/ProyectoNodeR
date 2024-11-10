@@ -9,13 +9,19 @@ export default {
   ],
   theme: {
     extend: {
-      backgroundColor: { // Cambié a backgroundColor
-        cimico: "#132568", // Asegúrate de que esté dentro de `backgroundColor`
-        cimicoLine: "#0c78ac", // Asegúrate de que esté dentro de `backgroundColor`
+      backgroundColor: {
+        cimico: "#132568",
+        cimicoLine: "#98e4fc", 
       },
       textColor:{
         cimicoText: "#0c78ac",
-      }
+      },
+      fontFamily:{
+        raleway: "Raleway",
+        lato: "Lato",
+        roboto: "Roboto",
+        aptos: ['Aptos', 'sans-serif'],
+      },
     },
   },
   plugins: [nextui()],

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 interface TitleSectionProps {
   title: string;
-  additionalLabels: string[];
+  additionalLabels: ReactNode;
 }
 
 const TitleSelection: React.FC<TitleSectionProps> = ({ title, additionalLabels }) => {
@@ -12,11 +12,7 @@ const TitleSelection: React.FC<TitleSectionProps> = ({ title, additionalLabels }
         <h3 className="text-blue-800 font-normal mb-2 text-[11pt] font-raleway">{title}</h3>
       </section>
       <section className="flex flex-row gap-4 self-end">
-        {additionalLabels.map((label, index) => (
-          <h3 key={index} className="text-blue-800 font-normal mb-2 text-[11pt] font-raleway">
-            {label}
-          </h3>
-        ))}
+        {additionalLabels}
       </section>
     </div>
   );

@@ -1,9 +1,9 @@
 import Footer from "../Moleculs/Footer";
 import LocationSelector from "../Moleculs/location";
-import Dashboard from "../Organism/Dashboard";
 import NavBar_ from "../Organism/navbar";
+import OptimizationSpecifications from "../Organism/RecommenderBody";
 
-export default function Body() {
+export default function Recommender() {
   // Obtenemos la fecha actual y la formateamos
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -20,10 +20,11 @@ export default function Body() {
         <h2 className="font-roboto font-bold text-[12pt] text-center self-center text-white mr-[8rem]">
           {currentDate}
         </h2>
+
       </section>
-      <section>
-        <Dashboard />
-      </section>
+<section>
+<OptimizationSpecifications/>
+</section>
       <Footer />
     </>
   );

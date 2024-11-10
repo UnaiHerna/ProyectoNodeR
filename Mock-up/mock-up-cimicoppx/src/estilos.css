@@ -4,7 +4,7 @@ div.ant-select-selector{
     background-color: transparent !important;
     border: 2px white solid;
 }
-span.ant-select-selection-item, span.ant-select-selection-placeholder
+span.ant-select-selection-item, span.ant-select-selection-placeholder,span.ant-select-arrow
 {
-    color: white;
+    color: white !important;
 }

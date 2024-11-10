@@ -1,6 +1,6 @@
-import { Select, Space } from 'antd';
+import { Select, Space } from "antd";
 import { FaLocationDot } from "react-icons/fa6";
-import '../../../estilos.css';
+import "../../../estilos.css";
 const EDARS = ["Ranilla WWTP"];
 
 const handleChange = (value: string) => {
@@ -14,20 +14,19 @@ export default function LocationSelector() {
       <FaLocationDot className="text-white w-5 h-5" />
 
       {/* Selector de EDARS usando Ant Design */}
-      <Space wrap>
-        <Select
-        className="bg-transparent"
-          defaultValue={EDARS[0]}
-          style={{ width: 180, borderRadius: '1.5rem' }} // Adjust the borderRadius here
-          onChange={handleChange}
-          options={EDARS.map((edar) => ({
-            value: edar,
-            label: edar,
-          }))}
-          placeholder="Select an EDAR"
-          allowClear
-        />
-      </Space>
+        <Space wrap>
+          <Select
+            className="bg-transparent text-white font-raleway text-[11pt]"
+            defaultValue={EDARS[0]}
+            style={{ width: 180, borderRadius: "1.5rem", color: "white" }} // Adjust the borderRadius here
+            onChange={handleChange}
+            options={EDARS.map((edar) => ({
+              value: edar,
+              label: edar,
+            }))}
+            placeholder="Select an EDAR"
+          />
+        </Space>
     </section>
   );
 }
