@@ -7,7 +7,7 @@ import WeatherForecast from "../Moleculs/WehaterForecats";
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="grid grid-rows-4 grid-cols-4 gap-4 p-4 bg-gray-100 h-[46rem] scale-[0.99]">
+    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
       {/* Tarjeta con gráfico de caudal */}
       <Card
         title={
@@ -23,7 +23,6 @@ const Dashboard: React.FC = () => {
         className="row-span-2 col-span-3 bg-white"
       >
         <div className="w-full h-full">
-          {/* Utilizar altura completa */}
           <FlowRateChart />
         </div>
       </Card>

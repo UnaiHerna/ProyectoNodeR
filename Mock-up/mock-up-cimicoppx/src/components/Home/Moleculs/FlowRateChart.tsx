@@ -9,7 +9,7 @@ const ForecastChart = () => {
   const frequency = 0.2; // Frecuencia de la onda seno
   const initialAmplitude = 5; // Amplitud inicial
   const growthFactor = 0.1; // Factor de crecimiento para aumentar la amplitud con el tiempo
-  const dataLength = 42; // Número total de puntos de datos de pronóstico
+  const dataLength = 43; // Número total de puntos de datos de pronóstico
 
   const minValue = -1000; // Valor mínimo para los datos
   const maxValue = 3500; // Valor máximo para los datos
@@ -39,7 +39,7 @@ const ForecastChart = () => {
   const forecastStartIndex = Math.floor(data.length * 0.4);
 
   // Calcular los números (horas) dinámicamente basado en xOffset
-  const numbers = Array.from({ length: 26 }, (_, i) => {
+  const numbers = Array.from({ length: 24 }, (_, i) => {
     const hour = (i + xOffset) % 24; // Calcular la hora tomando en cuenta el desplazamiento
     return hour;
   });
@@ -71,27 +71,26 @@ const ForecastChart = () => {
     <div className="w-full h-full relative">
       {/* Mostrar las horas en la parte superior */}
       <section className="w-full font-lato flex space-x-10 mt-2 ml-4 font-normal">
-  {numbers.map((hour, idx) => {
-    // Verificar si el índice anterior es "Now" o si el índice es después de "Now"
-    const isAfterNow = idx > numbers.indexOf(10); // Determina si es después de la hora "Now"
+        {numbers.map((hour, idx) => {
+          // Verificar si el índice anterior es "Now" o si el índice es después de "Now"
+          const isAfterNow = idx > numbers.indexOf(10); // Determina si es después de la hora "Now"
 
-    return (
-      <span
-        key={idx}
-        className={`${
-          hour === 10
-            ? "text-lg font-lato text-[11pt] text-[#3B7D23] font-bold" // Si es la hora 10, aplica el estilo "Now"
-            : isAfterNow || hour === 23 // Si es después de la hora "Now" o es la hora 0, aplica color gris
-            ? "text-gray-400 text-[11pt]" // Para todas las horas después de "Now" o el 23, color gris
-            : "text-black text-[11pt]" // Para las horas antes de la hora "Now", color negro
-        }`}
-      >
-        {hour === 10 ? "Now" : hour}
-      </span>
-    );
-  })}
-</section>
-
+          return (
+            <span
+              key={idx}
+              className={`${
+                hour === 10
+                  ? "text-lg font-lato text-[11pt] text-[#3B7D23] font-bold" // Si es la hora 10, aplica el estilo "Now"
+                  : isAfterNow || hour === 23 // Si es después de la hora "Now" o es la hora 0, aplica color gris
+                  ? "text-gray-400 text-[11pt]" // Para todas las horas después de "Now" o el 23, color gris
+                  : "text-black text-[11pt]" // Para las horas antes de la hora "Now", color negro
+              }`}
+            >
+              {hour === 10 ? "Now" : hour}
+            </span>
+          );
+        })}
+      </section>
 
       {/* Botones de desplazamiento (izquierda/derecha) */}
       <div className="absolute top-24 left-0 w-full flex justify-between z-10">
@@ -106,7 +105,7 @@ const ForecastChart = () => {
           <ArrowButton
             direction="right"
             onClick={handleScrollRight}
-            className={canScrollLeft ? "" : "ml-[84.8rem]"}
+            className={canScrollLeft ? "" : "ml-[80rem]"}
           />
         )}
       </div>
