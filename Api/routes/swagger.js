@@ -9,25 +9,16 @@ const opciones = {
         info: {
             title: 'API de Cimico',
             version: '1.0.0',
-            description: 'Documentación de la API de Cimico',
-            contact: {
-                name: 'Equipo de desarrollo',
-                // email: 'contacto@ejemplo.com'
-            }
         },
-        servers: [{
-            url: 'http://localhost',
-            description: 'Servidor de desarrollo'
-        }]
     },
-    apis: ['./routes/*.js'],
+    apis: ['consigna.js'], // Asegúrate de que esta ruta sea correcta
 };
 
 //Inicialización de Swagger
 const swaggerSpec = swaggerJSDoc(opciones);
 
 //Set up
-router.get('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = router;
 

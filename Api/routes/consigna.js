@@ -4,6 +4,26 @@ const knex = require('../db/knex'); // Importa la configuración de Knex
 const redisClient = require('../db/redisClient');
 const moment = require('moment-timezone');
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DatosConsigna:
+ *       type: object
+ *       properties:
+ *         time:
+ *           type: string
+ *           description: El timestamp de los datos
+ *         value:
+ *           type: number
+ *           description: El valor de la consigna
+ *         mode:
+ *           type: string
+ *           description: El modo (Manual o Automático)
+ *         consigna:
+ *           type: string
+ *           description: El nombre de la consigna
+ */
 async function readDatosConsignaByNombre(consigna, startDate, endDate) {
     const cacheKey = `datos_consigna_${consigna}_${startDate}_${endDate}`;
     let cachedData = await redisClient.getCachedResponse(cacheKey);
@@ -36,7 +56,14 @@ async function readDatosConsignaByNombre(consigna, startDate, endDate) {
     return datos;
 }
 
-// Función para leer datos por equipo
+/**
+ * Lee los datos de consigna por equipo desde la base de datos o la caché de Redis
+ * 
+ * @param {string} equipo - Nombre del equipo para filtrar
+ * @param {string} startDate - Fecha de inicio para filtrar
+ * @param {string} endDate - Fecha de fin para filtrar
+ * @returns {Promise<Array>} - Una lista de datos de consigna
+ */
 async function readDatosConsignaByEquipo(equipo, startDate, endDate) {
     const cacheKey = `datos_consigna_${equipo}_${startDate}_${endDate}`;
     let cachedData = await redisClient.getCachedResponse(cacheKey);
@@ -70,7 +97,53 @@ async function readDatosConsignaByEquipo(equipo, startDate, endDate) {
     return datos;
 }
 
-// Ruta para obtener datos condicionales por nombre, equipo, etc.
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Obtiene los datos de consigna filtrados por nombre o equipo
+ *     description: Filtra los datos de consigna según los parámetros proporcionados (nombre o equipo).
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Nombre de la consigna
+ *       - in: query
+ *         name: equipo
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Nombre del equipo
+ *       - in: query
+ *         name: start_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de inicio del rango
+ *       - in: query
+ *         name: end_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de fin del rango
+ *     responses:
+ *       200:
+ *         description: Lista de datos de consigna filtrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/DatosConsigna'
+ *       400:
+ *         description: Parámetros incorrectos
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/', async (req, res) => {
     const { nombre, nombres, equipo, equipos, start_date, end_date } = req.query;
 
@@ -97,7 +170,52 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Ruta para obtener porcentaje de modo
+/**
+ * @swagger
+ * /porcentaje:
+ *   get:
+ *     summary: Obtiene el porcentaje de modo de una consigna
+ *     description: Calcula el porcentaje de modos (Automático y Manual) para una consigna dentro de un rango de fechas
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nombre de la consigna
+ *       - in: query
+ *         name: start_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de inicio del rango
+ *       - in: query
+ *         name: end_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de fin del rango
+ *     responses:
+ *       200:
+ *         description: Porcentaje de modos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 consigna:
+ *                   type: string
+ *                 Automatico:
+ *                   type: string
+ *                 Manual:
+ *                   type: string
+ *       400:
+ *         description: Parámetros incorrectos
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/porcentaje', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
     const cacheKey = `porcentaje_${nombre}_${start_date}_${end_date}`;
@@ -139,7 +257,6 @@ router.get('/porcentaje', async (req, res) => {
         };
 
         await redisClient.setCachedResponse(cacheKey, datos);
-        // Enviar la respuesta y finalizar la ejecución
         return res.json(datos);
 
     } catch (error) {
@@ -148,15 +265,23 @@ router.get('/porcentaje', async (req, res) => {
 });
 
 // Ruta para obtener promedio del modo
+/**
+ * @swagger
+ * /ruta:
+ *   get:
+ *     summary: Devuelve un ejemplo
+ *     responses:
+ *       200:
+ *         description: Respuesta exitosa
+ */
 router.get('/avg_modo', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
     const cacheKey = `avg_modo_${nombre}_${start_date}_${end_date}`;
 
     try {
-        // Intentar obtener datos de la caché
         let cachedData = await redisClient.getCachedResponse(cacheKey);
         if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta y termina la ejecución
+            return res.json(cachedData);
         }
 
         let query = knex('valores_consigna')
@@ -175,7 +300,6 @@ router.get('/avg_modo', async (req, res) => {
 
         const results = await query;
 
-        // Procesar los resultados
         const modosPresentes = results.reduce((acc, r) => {
             acc[r.mode] = r.avg;
             return acc;
@@ -186,10 +310,7 @@ router.get('/avg_modo', async (req, res) => {
             { avg: modosPresentes[1] || null, consigna: nombre, mode: "AUTO" }
         ];
 
-        // Cachear la respuesta
         await redisClient.setCachedResponse(cacheKey, datos);
-
-        // Enviar la respuesta y finalizar la ejecución
         return res.json(datos);
 
     } catch (error) {

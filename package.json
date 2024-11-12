@@ -8,10 +8,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "express": "^4.21.1",
-    "express-rate-limit": "^7.4.0",
-    "express-validator": "^7.2.0",
-    "java": "^0.14.0",
-    "jsonwebtoken": "^9.0.2"
+    "java": "^0.14.0"
   }
 }
