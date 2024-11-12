@@ -4,6 +4,7 @@ import FlowRateChart from "../Moleculs/FlowRateChart";
 import TitleSelection from "../Moleculs/TittleSelect";
 import DotsCircle from "../Moleculs/DotsCircle";
 import WeatherForecast from "../Moleculs/WehaterForecats";
+import PerformanceBody from "./PerformanceBody";
 
 const Dashboard: React.FC = () => {
   return (
@@ -29,10 +30,19 @@ const Dashboard: React.FC = () => {
 
       {/* Tarjeta de calidad */}
       <Card
-        title={<TitleSelection title="Water Quality" additionalLabels={[]} />} // No additional labels for this card
+        title={
+          <TitleSelection
+            title="Performance"
+            additionalLabels={
+              <section className="mb-[8px]">
+                <DotsCircle />
+              </section>
+            }
+          />
+        } // No additional labels for this card
         className="row-span-2 col-span-1 bg-white"
       >
-        <p>Quality data or visualization goes here.</p>
+        <PerformanceBody/>
       </Card>
 
       {/* Tarjeta del clima */}
@@ -49,7 +59,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-2"
       >
-          <WeatherForecast />
+        <WeatherForecast />
       </Card>
 
       {/* Tarjeta de notificaciones */}
@@ -58,7 +68,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Operational settings"
             additionalLabels={
-              <h3 className="text-blue-800 w-[4rem] font-normal mb-2 text-[11pt] font-raleway bg-white">
+              <h3 className="text-blue-800 w-[4rem] mb-2 text-[11pt] font-raleway bg-white">
                 Line #1
               </h3>
             }
