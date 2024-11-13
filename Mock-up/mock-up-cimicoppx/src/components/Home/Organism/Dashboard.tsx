@@ -5,6 +5,8 @@ import TitleSelection from "../Moleculs/TittleSelect";
 import DotsCircle from "../Moleculs/DotsCircle";
 import WeatherForecast from "../Moleculs/WehaterForecats";
 import PerformanceBody from "./PerformanceBody";
+import DataGrid from "./DataGrid";
+import IconButton from "./IconButton";
 
 const Dashboard: React.FC = () => {
   return (
@@ -66,17 +68,17 @@ const Dashboard: React.FC = () => {
       <Card
         title={
           <TitleSelection
-            title="Operational settings"
+            title="Online sensors"
             additionalLabels={
-              <h3 className="text-blue-800 w-[4rem] mb-2 text-[11pt] font-raleway bg-white">
-                Line #1
+              <h3 className="text-blue-800 w-[5rem] text-center mb-2 text-[11pt] gap-1 font-raleway bg-white flex flex-row">
+                Line #1 <IconButton direction="forward" />
               </h3>
             }
           />
         } // No additional labels for notifications
         className="row-span-2 col-span-2 bg-white"
       >
-        <p>No new operations.</p>
+        <DataGrid />
       </Card>
     </div>
   );

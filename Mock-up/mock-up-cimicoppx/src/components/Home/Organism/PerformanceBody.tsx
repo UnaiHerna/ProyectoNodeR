@@ -95,7 +95,7 @@ const PerformanceBody: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0); // Track which StatsCard is active
 
   const handleNext = () => {
-    setDataIndex(prev => {
+    setDataIndex((prev) => {
       const newIndex = prev + 1;
       setActiveIndex((prevIndex) => (prevIndex + 1) % 6); // Cycle through 0 to 5
       return newIndex;
@@ -103,7 +103,7 @@ const PerformanceBody: React.FC = () => {
   };
 
   const handleBack = () => {
-    setDataIndex(prev => {
+    setDataIndex((prev) => {
       const newIndex = prev - 1;
       setActiveIndex((prevIndex) => (prevIndex - 1 + 6) % 6); // Cycle through 0 to 5
       return newIndex;
@@ -159,7 +159,8 @@ const PerformanceBody: React.FC = () => {
               activeIndex === 1
                 ? "block bg-cimicoLine h-[7px] w-[7rem]"
                 : "hidden"
-            }`}></span>
+            }`}
+          ></span>
         </div>
 
         <div className="relative flex flex-col items-center">
@@ -169,7 +170,8 @@ const PerformanceBody: React.FC = () => {
               activeIndex === 2
                 ? "block bg-cimicoLine h-[7px] w-[7rem]"
                 : "hidden"
-            }`}></span>
+            }`}
+          ></span>
         </div>
 
         <div className="relative flex flex-col items-center">
@@ -179,19 +181,62 @@ const PerformanceBody: React.FC = () => {
               activeIndex === 0
                 ? "block bg-cimicoLine h-[7px] w-[7rem]"
                 : "hidden"
-            }`}></span>
+            }`}
+          ></span>
         </div>
 
         <IconButton direction="forward" onClick={handleNext} />
       </section>
 
-      <div className="w-52 h-32">
+      <div className="w-52 h-32 ml-3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={currentData}>
-            <Tooltip formatter={(value) => `${value} ppm`} />
-            <Bar dataKey="value" fill="rgba(34, 197, 94, 0.6)" />
+            <Tooltip
+              cursor={false} // Desactiva el cursor (el <path> alrededor de la barra)
+              content={({ label, payload, coordinate }) => {
+                if (payload && payload.length > 0 && coordinate) {
+                  return (
+                    <div
+                      style={{
+                        backgroundColor: "#ffecb4",
+                        border: "none",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "start",
+                        paddingLeft: "1rem",
+                        width: "8rem",
+                        height: "4rem",
+                        fontFamily: "Roboto",
+                        fontSize: "16pt",
+                        color: "#002060",
+                        position: "absolute",
+                        left: coordinate.x !== undefined ? coordinate.x + 8 : 0, // Verificar si 'coordinate.x' está definido
+                        top: coordinate.y !== undefined ? coordinate.y - 30 : 0, // Verificar si 'coordinate.y' está definido
+                        transform: "translateX(10px)", // Ajustar para que esté siempre a la derecha
+                      }}
+                    >
+                      <p style={{ margin: 0 }}>{label}:00</p>
+                      <p style={{ margin: 0 }}>{`${payload[0].value} ppm`}</p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Bar
+              dataKey="value"
+              fill="#e0f4d4"
+              barSize={13}
+              activeBar={{
+                fill: "#407c24", // Color de la barra activa
+                stroke: "#407c24",
+                strokeWidth: 1,
+              }}
+              background={{ fill: "transparent" }}
+            />
           </BarChart>
         </ResponsiveContainer>
+        <hr className="w-[22rem] bg-[#f8f4f4] h-[2px]" />
       </div>
     </div>
   );
