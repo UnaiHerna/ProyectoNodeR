@@ -41,12 +41,6 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({ data, row
     );
   };
 
-
-
-
-
-
-  
   return (
     <div className="w-full h-80"> {/* Adjusted height and padding */}
       <ResponsiveContainer width="100%" height="100%">
