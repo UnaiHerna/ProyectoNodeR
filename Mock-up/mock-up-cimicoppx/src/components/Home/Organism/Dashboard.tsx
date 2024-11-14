@@ -6,7 +6,10 @@ import DotsCircle from "../Moleculs/DotsCircle";
 import WeatherForecast from "../Moleculs/WehaterForecats";
 import PerformanceBody from "./PerformanceBody";
 import DataGrid from "./DataGrid";
-import IconButton from "./IconButton";
+import MapAndChart from "../Atoms/MapAndChart";
+import CylinderAndLine from "../Atoms/CylinderAndLine";
+import NavigationControls from "../Atoms/NavigationsControl";
+// Import NavigationControls
 
 const Dashboard: React.FC = () => {
   return (
@@ -41,10 +44,10 @@ const Dashboard: React.FC = () => {
               </section>
             }
           />
-        } // No additional labels for this card
+        }
         className="row-span-2 col-span-1 bg-white"
       >
-        <PerformanceBody/>
+        <PerformanceBody />
       </Card>
 
       {/* Tarjeta del clima */}
@@ -70,13 +73,18 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Online sensors"
             additionalLabels={
-              <h3 className="text-blue-800 w-[5rem] text-center mb-2 text-[11pt] gap-1 font-raleway bg-white flex flex-row">
-                Line #1 <IconButton direction="forward" />
-              </h3>
+              <section className="w-full p-1 flex flex-row gap-48 align-middle justify-center items-center">
+                <MapAndChart />
+                <CylinderAndLine />
+                <div className="flex flex-col space-y-4">
+                  {/* Call each part here */}
+                  <NavigationControls lineLabel="Line #1" />
+                </div>
+              </section>
             }
           />
-        } // No additional labels for notifications
-        className="row-span-2 col-span-2 bg-white"
+        }
+        className="row-span-2 col-span-2 bg-white p-0 m-00"
       >
         <DataGrid />
       </Card>

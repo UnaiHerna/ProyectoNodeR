@@ -1,16 +1,16 @@
 import React from "react";
 import ScatterChartComponent from "./ScatterChart";
 
-const rowLabels = ["DO", "N-NH4", "N-NO3", "ORP", "TSS"];
+const rowLabels = ["TSS", "ORP", "N-NO3", "N-NH4", "DO"];
 const headers = ["INF", "AN", "AX", "AX", "AE", "AE", "AE", "AE", "ST"];
 
 // Mapa de índices para las etiquetas de filas
 const rowIndexMap = {
-  "DO": 0,
-  "N-NH4": 1,
+  "DO": 4,
+  "N-NH4": 3,
   "N-NO3": 2,
-  "ORP": 3,
-  "TSS": 4
+  "ORP": 1,
+  "TSS": 0
 };
 
 // Datos con los puntos en las posiciones exactas como en la imagen

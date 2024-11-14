@@ -18,7 +18,11 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({ data, row
       <g transform={`translate(${x},${y})`}>
         <foreignObject x={-40} y={-25} width={80} height={30}> {/* Adjusted y to -25 */}
           <div className="flex justify-center items-center w-full h-full">
-            <SensorButton label={label} />
+            {label==="INF"?
+            <SensorButton label={label} className='rounded-full w-10'/>
+            :<SensorButton label={label} className='rounded-md w-16'/>
+            }
+            
           </div>
         </foreignObject>
       </g>
@@ -34,7 +38,7 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({ data, row
       <g transform={`translate(${x},${y})`}>
         <foreignObject x={-65} y={-15} width={80} height={30}> {/* Adjusted x to -65 */}
           <div className="flex text-start items-center w-full h-full">
-            <SensorButton label={label} />
+            <SensorButton label={label} className='rounded-md self-start text-start  w-16'/>
           </div>
         </foreignObject>
       </g>
@@ -42,9 +46,9 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({ data, row
   };
 
   return (
-    <div className="w-full h-80"> {/* Adjusted height and padding */}
+    <div className="w-full h-72"> {/* Adjusted height and padding */}
       <ResponsiveContainer width="100%" height="100%">
-        <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 50 }}> {/* Moved margin here */}
+        <ScatterChart margin={{ top: 10, right: 30, left: 25, bottom: 20 }}> {/* Moved margin here */}
           <CartesianGrid strokeDasharray="3 3" />
 
           {/* X-axis with category type (headers for X-axis) */}
@@ -62,10 +66,10 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({ data, row
           <YAxis
             dataKey="y"
             type="number"
-            domain={[0, rowLabels.length - 1]}
+            domain={[4,0]}
             axisLine={false}
             tickLine={true}
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) =>{return <CustomYAxisTick {...props} />}}
           />
 
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
