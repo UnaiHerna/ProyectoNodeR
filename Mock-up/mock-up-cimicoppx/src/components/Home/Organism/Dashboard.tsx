@@ -9,9 +9,40 @@ import DataGrid from "./DataGrid";
 import MapAndChart from "../Atoms/MapAndChart";
 import CylinderAndLine from "../Atoms/CylinderAndLine";
 import NavigationControls from "../Atoms/NavigationsControl";
-// Import NavigationControls
 
 const Dashboard: React.FC = () => {
+  // Define click handlers for each interactive component
+  const handleMapClick = () => {
+    console.log("Map marker clicked in MapAndChart");
+    // Additional actions can go here
+  };
+
+  const handleChartClick = () => {
+    console.log("Chart icon clicked in MapAndChart");
+    // Additional actions can go here
+  };
+
+  const handleSpanClick = () => {
+    console.log("Span clicked in MapAndChart");
+    // Additional actions can go here
+  };
+
+  const handleWWIconClick = () => {
+    console.log("WWIcon clicked in CylinderAndLine");
+    // Additional actions can go here
+  };
+
+  const handleTubeIconClick = () => {
+    console.log("TubeIcon clicked in CylinderAndLine");
+    // Additional actions can go here
+  };
+
+  const handleBackNavigationClick = () => {
+    console.log("Back navigation clicked in NavigationControls");
+    // Additional actions can go here
+  };
+
+
   return (
     <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
       {/* Tarjeta con gráfico de caudal */}
@@ -74,17 +105,26 @@ const Dashboard: React.FC = () => {
             title="Online sensors"
             additionalLabels={
               <section className="w-full p-1 flex flex-row gap-48 align-middle justify-center items-center">
-                <MapAndChart />
-                <CylinderAndLine />
+                <MapAndChart 
+                  handleMapClick={handleMapClick}
+                  handleChartClick={handleChartClick}
+                  handleSpanClick={handleSpanClick}
+                />
+                <CylinderAndLine 
+                  handleWWIconClick={handleWWIconClick} 
+                  handleTubeIconClick={handleTubeIconClick} 
+                />
                 <div className="flex flex-col space-y-4">
-                  {/* Call each part here */}
-                  <NavigationControls lineLabel="Line #1" />
+                  <NavigationControls 
+                    lineLabel="Line #1" 
+                    handleClick={handleBackNavigationClick}
+                  />
                 </div>
               </section>
             }
           />
         }
-        className="row-span-2 col-span-2 bg-white p-0 m-00"
+        className="row-span-2 col-span-2 bg-white p-0 m-0"
       >
         <DataGrid />
       </Card>

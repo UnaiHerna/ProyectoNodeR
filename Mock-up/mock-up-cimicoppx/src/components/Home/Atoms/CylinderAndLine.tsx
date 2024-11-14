@@ -2,18 +2,12 @@ import React from "react";
 import WWIcon from "./WWIcon";
 import TubeIcon from "./TubeIcon";
 
-const CylinderAndLine: React.FC = () => {
-  // Define click handlers for each icon
-  const handleWWIconClick = () => {
-    console.log("WWIcon clicked");
-    // Add additional actions here if needed
-  };
+interface CylinderAndLineProps {
+  handleWWIconClick: () => void;
+  handleTubeIconClick: () => void;
+}
 
-  const handleTubeIconClick = () => {
-    console.log("TubeIcon clicked");
-    // Add additional actions here if needed
-  };
-
+const CylinderAndLine: React.FC<CylinderAndLineProps> = ({ handleWWIconClick, handleTubeIconClick }) => {
   return (
     <div className="flex items-center flex-row gap-2 justify-center">
       {/* Clickable WWIcon */}
