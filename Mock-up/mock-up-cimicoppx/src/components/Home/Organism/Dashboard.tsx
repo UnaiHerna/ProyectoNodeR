@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "../Atoms/Card";
 import FlowRateChart from "../Moleculs/FlowRateChart";
 import TitleSelection from "../Moleculs/TittleSelect";
@@ -11,37 +11,40 @@ import CylinderAndLine from "../Atoms/CylinderAndLine";
 import NavigationControls from "../Atoms/NavigationsControl";
 
 const Dashboard: React.FC = () => {
-  // Define click handlers for each interactive component
+  // State to control whether to show points or numbers in DataGrid
+  const [showPoints, setShowPoints] = useState(true);
+
+  // State to control which button is active (set to "span" by default)
+  const [activeButton, setActiveButton] = useState<string>("map");
+
   const handleMapClick = () => {
     console.log("Map marker clicked in MapAndChart");
-    // Additional actions can go here
-  };
-
-  const handleChartClick = () => {
-    console.log("Chart icon clicked in MapAndChart");
-    // Additional actions can go here
+    setShowPoints(true); // Set to show points
+    setActiveButton("map"); // Set active button to "map"
   };
 
   const handleSpanClick = () => {
     console.log("Span clicked in MapAndChart");
-    // Additional actions can go here
+    setShowPoints(false); // Set to show numbers
+    setActiveButton("span"); // Set active button to "span"
+  };
+
+  const handleChartClick = () => {
+    console.log("Chart icon clicked in MapAndChart");
+    setActiveButton("chart"); // Set active button to "chart"
   };
 
   const handleWWIconClick = () => {
     console.log("WWIcon clicked in CylinderAndLine");
-    // Additional actions can go here
   };
 
   const handleTubeIconClick = () => {
     console.log("TubeIcon clicked in CylinderAndLine");
-    // Additional actions can go here
   };
 
   const handleBackNavigationClick = () => {
     console.log("Back navigation clicked in NavigationControls");
-    // Additional actions can go here
   };
-
 
   return (
     <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
@@ -109,6 +112,7 @@ const Dashboard: React.FC = () => {
                   handleMapClick={handleMapClick}
                   handleChartClick={handleChartClick}
                   handleSpanClick={handleSpanClick}
+                  activeButton={activeButton} // Pass activeButton to MapAndChart
                 />
                 <CylinderAndLine 
                   handleWWIconClick={handleWWIconClick} 
@@ -126,7 +130,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-2 bg-white p-0 m-0"
       >
-        <DataGrid />
+        <DataGrid showPoints={showPoints} /> {/* Pass showPoints as prop */}
       </Card>
     </div>
   );
