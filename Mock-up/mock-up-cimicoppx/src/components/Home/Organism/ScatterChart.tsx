@@ -34,9 +34,9 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({
   }) => {
     const { x, y, payload } = props;
     const label = headers[payload.value]; // Use headers for X-axis ticks
-
+  
     return (
-      <g transform={`translate(${x},${y})`}>
+      <g transform={`translate(${x},${y - 15})`}> {/* Adjust the y position here */}
         <foreignObject x={-40} y={-25} width={88} height={30}>
           <div className="flex justify-center items-center w-full h-full">
             {label === "INF" ? (
@@ -49,6 +49,7 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({
       </g>
     );
   };
+  
 
   // Custom tick for Y-axis (using rowLabels)
   const CustomYAxisTick = (props: {
@@ -99,8 +100,8 @@ const ScatterChartComponent: React.FC<ScatterChartComponentProps> = ({
   return (
     <div className="w-full h-72">
       <ResponsiveContainer width="100%" height="100%">
-        <ScatterChart margin={{ top: 10, right: 30, left: 25, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" />
+        <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
+        <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
           <XAxis
             dataKey="x"
             type="category"
