@@ -1,5 +1,5 @@
 import React from "react";
-import ScatterChartComponent from "./ScatterChart";
+import ScatterChartComponent from "./ScatterChart_";
 
 const rowLabels = ["TSS", "ORP", "N-NO3", "N-NH4", "DO"];
 const headers = ["INF", "AN", "AX", "AX", "AE", "AE", "AE", "AE", "ST"];
@@ -21,9 +21,9 @@ const scatterData = [
   { x: 3, y: rowIndexMap["N-NO3"], value: 10, metric: "ppm" },
   { x: 4, y: rowIndexMap["N-NO3"], value: 6, metric: "ppm" },
   { x: 5, y: rowIndexMap["N-NO3"], value: 12, metric: "ppm" },
-  { x: 6, y: rowIndexMap["DO"], value: 9, metric: "ppm" },
-  { x: 7, y: rowIndexMap["DO"], value: 4, metric: "ppm" },
-  { x: 8, y: rowIndexMap["TSS"], value: 3, metric: "mg/L" },
+  { x: 6, y: rowIndexMap["DO"], value: null, metric: "ppm" },
+  { x: 7, y: rowIndexMap["DO"], value: null, metric: "ppm" },
+  { x: 8, y: rowIndexMap["TSS"], value: null, metric: "mg/L" },
 ];
 
 const DataGrid: React.FC<{ showPoints: boolean }> = ({ showPoints }) => {
