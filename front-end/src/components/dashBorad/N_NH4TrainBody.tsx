@@ -8,37 +8,49 @@ import DatePicker2 from "./cards/DatePicker";
 import HeatmapComponent from "./HeatCalendar";
 import LineChartWithZoom from "./Last6H";
 import SensorChartWithShadedAreas from "./areaPlotly";
+import CheckboxGroups from "../Drag_Drop/checkboxGroups";
+import ChartCard from "../Drag_Drop/chartode";
 
 export default function N_NH4TrainBody() {
- const currentDate = new Date();
-  const endDate = currentDate.toISOString(); // Fecha y hora actual en formato ISO
+  type VariableType = "NH4" | "NH4_FILT" | "DO_SP" | "DO";
+
+  const variables: VariableType[] = ["NH4", "NH4_FILT", "DO_SP", "DO"];
+
+  const [variablesE, setVariablesE] = useState<string[]>([]);
+  const [Axis, setAxis] = useState<boolean>(false);
+
+  const handleVariable=(variables:string[])=>{
+    setVariablesE([... new Set(variables)]);
+  };
+
+  const currentDate = new Date();
+  const endDate = currentDate.toISOString(); // Current date and time in ISO format
   const startDate = new Date(currentDate);
-  startDate.setDate(currentDate.getDate() - 30); // Restar 30 días
+  startDate.setDate(currentDate.getDate() - 30); // Subtract 30 days
 
   const [barChartDateRange, setBarChartDateRange] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Fecha de inicio hace 30 días
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(), // Start date 30 days ago
+    endDate: endDate, // End date is today
   });
 
   const [dynamicChartDateRange, setDynamicChartDateRange] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Fecha de inicio hace 30 días
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(), // Start date 30 days ago
+    endDate: endDate, // End date is today
   });
 
-  const [dynamicMarkArea, setdynamicMarkArea] = useState<{
+  const [dynamicMarkArea, setDynamicMarkArea] = useState<{
     startDate: string;
     endDate: string;
   }>({
-    startDate: startDate.toISOString(), // Puedes cambiar esto si deseas una lógica diferente
-    endDate: endDate, // Fecha de fin es hoy
+    startDate: startDate.toISOString(),
+    endDate: endDate,
   });
-
 
   const handleBarChartDateChange = (startDate: string, endDate: string) => {
     setBarChartDateRange({ startDate, endDate });
@@ -51,9 +63,14 @@ export default function N_NH4TrainBody() {
   };
 
   const handleDynamicMarkarea = (startDate: string, endDate: string) => {
-    setdynamicMarkArea({ startDate, endDate });
+    setDynamicMarkArea({ startDate, endDate });
     console.log("DynamicChart Date Range Changed:", { startDate, endDate });
   };
+
+  const handleTogle = ()=>{
+    setAxis(!Axis);
+    console.log(Axis);
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 h-full w-full">
@@ -133,6 +150,14 @@ export default function N_NH4TrainBody() {
       {/* CalendarHeatmap with DatePicker */}
       <div className="col-span-1 mt-16">
         <HeatmapComponent year="2024" variable="qw" equipo="INF_PIPE.FM" />
+      </div>
+
+      {/* DragDrop components */}
+      <div className="col-span-1 mt-16">
+        <CheckboxGroups variables= {variables} onVariableChange={handleVariable}/>
+        {variablesE.map((elemento)=>{
+          console.log(elemento);
+          return <ChartCard variable={elemento} key={elemento} onToggle={handleTogle} />})}        
       </div>
     </div>
   );
