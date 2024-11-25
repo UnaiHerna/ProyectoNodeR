@@ -10,8 +10,9 @@ export default {
   theme: {
     extend: {
       backgroundColor: {
-        cimico: "#132568",
+        cimico: "#002060",
         cimicoLine: "#98e4fc", 
+        cimicoNoteColor: "#fee8b4", 
       },
       textColor:{
         cimicoText: "#0c78ac",

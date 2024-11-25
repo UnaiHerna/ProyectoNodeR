@@ -6,8 +6,9 @@ interface SensorButtonProps {
 }
 
 const SensorButton: React.FC<SensorButtonProps> = ({ label,className }) => {
+  
   return (
-    <button className={`py-0.5 bg-gray-100 text-[#002060] font-raleway text-[11pt] shadow-xl hover:bg-gray-200 ${className}`}>
+    <button className={`py-0.5  text-[#002060] font-raleway text-[11pt] shadow-xl hover:bg-cimico hover:text-white ${className}`}>
       {label}
     </button>
   );

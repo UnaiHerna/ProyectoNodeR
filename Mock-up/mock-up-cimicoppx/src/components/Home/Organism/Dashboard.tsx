@@ -13,6 +13,7 @@ import NavigationControls from "../Atoms/NavigationsControl";
 const Dashboard: React.FC = () => {
   // State to control whether to show points or numbers in DataGrid
   const [showPoints, setShowPoints] = useState(false);
+  const [showLine, setShowLine] = useState(false);
 
   // State to control which button is active (set to "span" by default)
   const [activeButton, setActiveButton] = useState<string>("map");
@@ -20,18 +21,22 @@ const Dashboard: React.FC = () => {
   const handleMapClick = () => {
     console.log("Map marker clicked in MapAndChart");
     setShowPoints(false); // Set to show points
+    setShowLine(false);
     setActiveButton("map"); // Set active button to "map"
   };
-
+  
   const handleSpanClick = () => {
     console.log("Span clicked in MapAndChart");
     setShowPoints(true); // Set to show numbers
+    setShowLine(false);
     setActiveButton("span"); // Set active button to "span"
   };
 
   const handleChartClick = () => {
     console.log("Chart icon clicked in MapAndChart");
     setActiveButton("chart"); // Set active button to "chart"
+    setShowPoints(false);
+    setShowLine(true);
   };
 
   const handleWWIconClick = () => {
@@ -130,7 +135,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-2 bg-white p-0 m-0"
       >
-        <DataGrid showPoints={showPoints} /> {/* Pass showPoints as prop */}
+        <DataGrid showPoints={showPoints} showLine={showLine}/> {/* Pass showPoints as prop */}
       </Card>
     </div>
   );

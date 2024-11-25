@@ -98,14 +98,14 @@ const ForecastChart = () => {
           <ArrowButton
             direction="left"
             onClick={handleScrollLeft}
-            className="ml-[-2rem]"
+            className="ml-[-2.5rem]"
           />
         )}
         {canScrollRight && (
           <ArrowButton
             direction="right"
             onClick={handleScrollRight}
-            className={canScrollLeft ? "" : "ml-[80rem]"}
+            className={canScrollLeft ? "ml-[80rem]" : "ml-[80.2rem]"}
           />
         )}
       </div>
