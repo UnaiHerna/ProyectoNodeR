@@ -35,7 +35,7 @@ const WeatherForecast: React.FC = () => {
   };
 
   return (
-    <div className="w-[45.95%] ml-[-1rem] mt-[1px] absolute h-[18.3rem] p-1 flex items-center justify-center bg-[#f5f6f9]">
+    <div className="w-[45.95%] ml-[-1rem] mt-[1px] absolute h-[18.9rem] p-1 flex items-center justify-center bg-[#f5f6f9]">
       {/* Contenedor interno para el contenido */}
       <div className="w-full h-full justify-between mt-24 z-20">
         <img

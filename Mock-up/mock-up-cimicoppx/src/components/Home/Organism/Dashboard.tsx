@@ -14,6 +14,7 @@ const Dashboard: React.FC = () => {
   // State to control whether to show points or numbers in DataGrid
   const [showPoints, setShowPoints] = useState(false);
   const [showLine, setShowLine] = useState(false);
+  const [activeDataType, setActiveDataType] = useState("ww");
 
   // State to control which button is active (set to "span" by default)
   const [activeButton, setActiveButton] = useState<string>("map");
@@ -40,10 +41,12 @@ const Dashboard: React.FC = () => {
   };
 
   const handleWWIconClick = () => {
+    setActiveDataType("ww");
     console.log("WWIcon clicked in CylinderAndLine");
   };
 
   const handleTubeIconClick = () => {
+    setActiveDataType("tube");
     console.log("TubeIcon clicked in CylinderAndLine");
   };
 
@@ -118,10 +121,12 @@ const Dashboard: React.FC = () => {
                   handleChartClick={handleChartClick}
                   handleSpanClick={handleSpanClick}
                   activeButton={activeButton} // Pass activeButton to MapAndChart
+                  activeDataType={activeDataType}
                 />
                 <CylinderAndLine 
                   handleWWIconClick={handleWWIconClick} 
                   handleTubeIconClick={handleTubeIconClick} 
+                  activeDataType={activeDataType}
                 />
                 <div className="flex flex-col space-y-4">
                   <NavigationControls 
@@ -135,7 +140,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-2 bg-white p-0 m-0"
       >
-        <DataGrid showPoints={showPoints} showLine={showLine}/> {/* Pass showPoints as prop */}
+        <DataGrid showPoints={showPoints} showLine={showLine} activeDataType={activeDataType}/> {/* Pass showPoints as prop */}
       </Card>
     </div>
   );
