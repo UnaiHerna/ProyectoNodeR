@@ -12,8 +12,29 @@ const swaggerRoutes = require('./routes/swagger');
 const executeJava = require('./utils/executeJava');
 const executePython = require('./utils/executePython');
 const { body, query, validationResult } = require('express-validator');
+const { Server } = require('socket.io');
+const { createServer } = require('node:http');
+const { Configuration, OpenAIApi } = require('openai');
+const prompts = require('./utils/prompts.js');
+const fetch = require('node-fetch');
+
+require('dotenv').config();
+console.log('Clave API:', process.env.OPENAI_API_KEY); // Esto debería imprimir la clave
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+    console.log('a user has connected');
+    socket.on('chat message', (msg) => {
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
+    });
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+});
 
 app.use(logger('dev'));
 
@@ -110,6 +131,61 @@ app.get('/python', async (req, res) => {
     }
 });
 
+app.get('/chat', (req, res) => {
+    res.sendFile(path.join(__dirname, '../front-end/chat-prueba', 'index.html'));
+});
+
+app.get('/ia', async (req, res) => {
+    const { text } = req.query;
+
+    if (!text) {
+        return res.status(400).json({ error: 'El parámetro "text" es requerido' });
+    }
+    
+    const prompt = prompts.sqlConversion.replace('${text}', text);
+
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                prompt: prompt,
+                max_tokens: 200, 
+                temperature: 0.3,
+            }),
+        });
+
+        // Verifica que la respuesta fue exitosa
+        if (!response.ok) {
+            throw new Error(`Error en la respuesta de OpenAI: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Agregar un log para ver la respuesta completa
+        console.log('Respuesta de OpenAI:', data);
+
+        // Verifica si 'choices' y 'choices[0]' están presentes en la respuesta
+        if (!data.choices || data.choices.length === 0 || !data.choices[0].text) {
+            return res.status(500).json({ error: 'No se pudo generar una consulta SQL válida', details: data });
+        }
+
+        const sqlQuery = data.choices[0].text.trim();
+
+        console.log('Consulta SQL generada:', sqlQuery);
+
+        res.status(200).json({ sql: sqlQuery });
+    } catch (error) {
+        console.error('Error generando consulta SQL:', error.message);
+        res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
+    }
+});
+
+
 // Sirve la aplicación React desde la carpeta 'dist'
 app.use(express.static(path.join(__dirname, '../front-end/dist')));
 
@@ -118,8 +194,9 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../front-end/dist', 'index.html'));
 });
 
+
 // Configuración del puerto
 const desiredPort = process.env.PORT ?? 8000;
-app.listen(desiredPort, () => {
+server.listen(desiredPort, () => {
     console.log(`Server listening on port http://localhost:${desiredPort}`);
 });
