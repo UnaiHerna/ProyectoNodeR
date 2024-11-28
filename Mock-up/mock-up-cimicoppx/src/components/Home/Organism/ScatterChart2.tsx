@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import SensorButton from "../Atoms/SensorButton";
 import { ScatterPointItem } from "recharts/types/cartesian/Scatter";
+
 interface LineChartComponentProps {
   data: { x: number; y: number }[]; // Data for both scatter and line charts
   rowLabels: string[]; // Labels for Y-axis (row labels)
@@ -39,7 +40,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
   }) => {
     const { x, y, payload } = props;
     const label = headers[payload.value];
-console.log(activeDataType);
+    console.log(activeDataType);
 
     return (
       <g transform={`translate(${x},${y - 15})`}>
@@ -171,105 +172,99 @@ console.log(activeDataType);
     <div className="w-full h-72">
       <ResponsiveContainer width="100%" height="100%">
         {/* Conditionally render either ScatterChart or LineChart */}
-        {showLine ? (
-          <LineChart
-            data={data}
-            margin={{ top: 30, right: 0, left: 15, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
-            <XAxis
-              dataKey="x"
-              type="category"
-              axisLine={false}
-              tickLine={false}
-              tickCount={headers.length}
-              tick={(props) => <CustomXAxisTick {...props} />}
-              orientation="top"
-            />
-            <XAxis
-              dataKey="x"
-              type="category"
-              axisLine={false}
-              tickLine={false}
-              tickCount={headers.length}
-              tick={(props) => <CustomXAxisTick2 {...props} />}
-              orientation="bottom"
-              xAxisId="bottom"
-            />
-            <YAxis
-              dataKey="y"
-              type="number"
-              domain={[4, 0]}
-              orientation="left"
-              axisLine={false}
-              tickLine={true}
-              tick={(props) => <CustomYAxisTick {...props} />}
-            />
-            {/* <YAxis
-              dataKey="y"
-              type="number"
-              domain={[4, 0]}
-              yAxisId="right"
-              orientation="right"
-              axisLine={false}
-              tickLine={true}
-              tick={(props) => <CustomYAxisTick2 {...props} metrics={metrics} />}
-            /> */}
-            <Tooltip
-              cursor={{ strokeDasharray: "3 3" }}
-              content={<CustomTooltip />}
-            />
-            <Line
-              type="monotone"
-              dataKey="y"
-              stroke="#1e3a8a"
-              activeDot={showPoints ? { r: 5 } : undefined}
-              dot={showPoints}
-            />
-          </LineChart>
-        ) : (
-          <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
-            <XAxis
-              dataKey="x"
-              type="category"
-              axisLine={false}
-              tickLine={false}
-              tickCount={headers.length}
-              tick={(props) => <CustomXAxisTick {...props} />}
-              orientation="top"
-            />
-            <YAxis
-              dataKey="y"
-              type="number"
-              domain={[4, 0]}
-              orientation="left"
-              axisLine={false}
-              tickLine={true}
-              tick={(props) => <CustomYAxisTick {...props} />}
-            />
-            {showPoints && (
+        {activeDataType !== "tube" ? (
+          showLine ? (
+            <LineChart
+              data={data}
+              margin={{ top: 30, right: 0, left: 15, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
+              <XAxis
+                dataKey="x"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                tickCount={headers.length}
+                tick={(props) => <CustomXAxisTick {...props} />}
+                orientation="top"
+              />
+              <XAxis
+                dataKey="x"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                tickCount={headers.length}
+                tick={(props) => <CustomXAxisTick2 {...props} />}
+                orientation="bottom"
+                xAxisId="bottom"
+              />
               <YAxis
                 dataKey="y"
                 type="number"
                 domain={[4, 0]}
-                yAxisId="right"
-                orientation="right"
+                orientation="left"
                 axisLine={false}
                 tickLine={true}
-                tick={(props) => (
-                  <CustomYAxisTick2 {...props} metrics={metrics} />
-                )}
+                tick={(props) => <CustomYAxisTick {...props} />}
               />
-            )}
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter
-              name="Data Points"
-              data={data}
-              fill="#1e3a8a"
-              shape={showPoints ? CustomScatterShape : "circle"} // Show cross shape when showPoints is true
-            />
-          </ScatterChart>
+              <Tooltip
+                cursor={{ strokeDasharray: "3 3" }}
+                content={<CustomTooltip />}
+              />
+              <Line
+                type="monotone"
+                dataKey="y"
+                stroke="#1e3a8a"
+                activeDot={showPoints ? { r: 5 } : undefined}
+                dot={showPoints}
+              />
+            </LineChart>
+          ) : (
+            <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
+              <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
+              <XAxis
+                dataKey="x"
+                type="category"
+                axisLine={false}
+                tickLine={false}
+                tickCount={headers.length}
+                tick={(props) => <CustomXAxisTick {...props} />}
+                orientation="top"
+              />
+              <YAxis
+                dataKey="y"
+                type="number"
+                domain={[4, 0]}
+                orientation="left"
+                axisLine={false}
+                tickLine={true}
+                tick={(props) => <CustomYAxisTick {...props} />}
+              />
+              {showPoints && (
+                <YAxis
+                  dataKey="y"
+                  type="number"
+                  domain={[4, 0]}
+                  yAxisId="right"
+                  orientation="right"
+                  axisLine={false}
+                  tickLine={true}
+                  tick={(props) => (
+                    <CustomYAxisTick2 {...props} metrics={metrics} />
+                  )}
+                />
+              )}
+              <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+              <Scatter
+                name="Data Points"
+                data={data}
+                fill="#1e3a8a"
+                shape={showPoints ? CustomScatterShape : "circle"} // Show cross shape when showPoints is true
+              />
+            </ScatterChart>
+          )
+        ) : (
+          <div>gg</div>
         )}
       </ResponsiveContainer>
     </div>
