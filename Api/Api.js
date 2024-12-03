@@ -131,6 +131,49 @@ app.get('/python', async (req, res) => {
     }
 });
 
+app.get('/clima', async (req, res) => {
+    const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
+    const apiKey = process.env.AEMET_API_KEY;
+    const municipioId = '41091'; // Código de municipio para Ranilla
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
+    }
+
+    try {
+        // Obtener la URL con los datos de predicción
+        const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/diaria/${municipioId}/?api_key=${apiKey}`);
+        if (!response.ok) {
+            throw new Error(`Error al obtener la URL de predicción: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Obtener los datos reales desde la URL proporcionada
+        const forecastResponse = await fetch(data.datos);
+        if (!forecastResponse.ok) {
+            throw new Error(`Error al obtener los datos de predicción: ${forecastResponse.statusText}`);
+        }
+
+        const forecastData = await forecastResponse.json();
+        console.log('Datos de predicción:', forecastData);
+
+        // Procesar los datos correctamente
+        const forecastForSevenDays = forecastData[0]?.prediccion?.dia.map(day => ({
+            fecha: day.fecha,
+            estadoCielo: day.estadoCielo[0]?.descripcion || 'Desconocido',
+            temperaturaMaxima: day.temperatura?.maxima || 'No disponible',
+            temperaturaMinima: day.temperatura?.minima || 'No disponible',
+            probabilidadPrecipitacion: day.probPrecipitacion[0]?.value || 0,
+        }));
+
+        res.status(200).json(forecastForSevenDays);
+    } catch (error) {
+        console.error('Error obteniendo el clima:', error.message);
+        res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
+    }
+});
+
 app.get('/chat', (req, res) => {
     res.sendFile(path.join(__dirname, '../front-end/chat-prueba', 'index.html'));
 });
