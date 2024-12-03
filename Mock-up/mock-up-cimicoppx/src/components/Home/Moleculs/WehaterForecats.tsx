@@ -61,10 +61,11 @@ const WeatherForecast: React.FC = () => {
         {/* Barra de tiempo con navegación */}
         <div className="relative flex justify-center items-center w-[103%] gap-4 -ml-2 z-20">
           <ArrowButton
-            direction="left"
+            direction="back"
             onClick={() => handleArrowClick("prev")}
             className="absolute left-0 text-[#002060] -mt-24 -ml-4"
           />
+          {/* cambios aqui */}
 
           {weatherData.map((data, idx) => (
             <WeatherCard
@@ -76,7 +77,7 @@ const WeatherForecast: React.FC = () => {
           ))}
 
           <ArrowButton
-            direction="right"
+            direction="forward"
             onClick={() => handleArrowClick("next")}
             className="absolute right-0 text-[#002060] -mt-28 -mr-2"
           />

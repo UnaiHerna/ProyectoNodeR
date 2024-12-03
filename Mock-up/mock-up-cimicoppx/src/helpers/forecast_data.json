@@ -1,0 +1,290 @@
+[
+    {
+        "hour": 0,
+        "modelAverage": 1250.0,
+        "upperBound": 1250.0,
+        "lowerBound": 1250.0
+    },
+    {
+        "hour": 1,
+        "modelAverage": 1251.34,
+        "upperBound": 1251.59,
+        "lowerBound": 1251.09
+    },
+    {
+        "hour": 2,
+        "modelAverage": 1252.63,
+        "upperBound": 1253.13,
+        "lowerBound": 1252.13
+    },
+    {
+        "hour": 3,
+        "modelAverage": 1253.84,
+        "upperBound": 1254.59,
+        "lowerBound": 1253.09
+    },
+    {
+        "hour": 4,
+        "modelAverage": 1254.9,
+        "upperBound": 1255.9,
+        "lowerBound": 1253.9
+    },
+    {
+        "hour": 5,
+        "modelAverage": 1255.78,
+        "upperBound": 1257.03,
+        "lowerBound": 1254.53
+    },
+    {
+        "hour": 6,
+        "modelAverage": 1256.43,
+        "upperBound": 1257.93,
+        "lowerBound": 1254.93
+    },
+    {
+        "hour": 7,
+        "modelAverage": 1256.83,
+        "upperBound": 1258.58,
+        "lowerBound": 1255.08
+    },
+    {
+        "hour": 8,
+        "modelAverage": 1256.96,
+        "upperBound": 1258.96,
+        "lowerBound": 1254.96
+    },
+    {
+        "hour": 9,
+        "modelAverage": 1256.82,
+        "upperBound": 1259.07,
+        "lowerBound": 1254.57
+    },
+    {
+        "hour": 10,
+        "modelAverage": 1256.4,
+        "upperBound": 1258.9,
+        "lowerBound": 1253.9
+    },
+    {
+        "hour": 11,
+        "modelAverage": 1255.72,
+        "upperBound": 1258.47,
+        "lowerBound": 1252.97
+    },
+    {
+        "hour": 12,
+        "modelAverage": 1254.8,
+        "upperBound": 1257.8,
+        "lowerBound": 1251.8
+    },
+    {
+        "hour": 13,
+        "modelAverage": 1253.68,
+        "upperBound": 1256.93,
+        "lowerBound": 1250.43
+    },
+    {
+        "hour": 14,
+        "modelAverage": 1252.4,
+        "upperBound": 1255.9,
+        "lowerBound": 1248.9
+    },
+    {
+        "hour": 15,
+        "modelAverage": 1251.02,
+        "upperBound": 1254.77,
+        "lowerBound": 1247.27
+    },
+    {
+        "hour": 16,
+        "modelAverage": 1249.58,
+        "upperBound": 1253.58,
+        "lowerBound": 1245.58
+    },
+    {
+        "hour": 17,
+        "modelAverage": 1248.14,
+        "upperBound": 1252.39,
+        "lowerBound": 1243.89
+    },
+    {
+        "hour": 18,
+        "modelAverage": 1246.76,
+        "upperBound": 1251.26,
+        "lowerBound": 1242.26
+    },
+    {
+        "hour": 19,
+        "modelAverage": 1245.5,
+        "upperBound": 1250.25,
+        "lowerBound": 1240.75
+    },
+    {
+        "hour": 20,
+        "modelAverage": 1244.41,
+        "upperBound": 1249.41,
+        "lowerBound": 1239.41
+    },
+    {
+        "hour": 21,
+        "modelAverage": 1243.53,
+        "upperBound": 1248.78,
+        "lowerBound": 1238.28
+    },
+    {
+        "hour": 22,
+        "modelAverage": 1242.9,
+        "upperBound": 1248.4,
+        "lowerBound": 1237.4
+    },
+    {
+        "hour": 23,
+        "modelAverage": 1242.55,
+        "upperBound": 1248.3,
+        "lowerBound": 1236.8
+    },
+    {
+        "hour": 24,
+        "modelAverage": 1242.5,
+        "upperBound": 1248.5,
+        "lowerBound": 1236.5
+    },
+    {
+        "hour": 25,
+        "modelAverage": 1242.74,
+        "upperBound": 1248.99,
+        "lowerBound": 1236.49
+    },
+    {
+        "hour": 26,
+        "modelAverage": 1243.28,
+        "upperBound": 1249.78,
+        "lowerBound": 1236.78
+    },
+    {
+        "hour": 27,
+        "modelAverage": 1244.09,
+        "upperBound": 1250.84,
+        "lowerBound": 1237.34
+    },
+    {
+        "hour": 28,
+        "modelAverage": 1245.15,
+        "upperBound": 1252.15,
+        "lowerBound": 1238.15
+    },
+    {
+        "hour": 29,
+        "modelAverage": 1246.41,
+        "upperBound": 1253.66,
+        "lowerBound": 1239.16
+    },
+    {
+        "hour": 30,
+        "modelAverage": 1247.83,
+        "upperBound": 1255.33,
+        "lowerBound": 1240.33
+    },
+    {
+        "hour": 31,
+        "modelAverage": 1249.35,
+        "upperBound": 1257.1,
+        "lowerBound": 1241.6
+    },
+    {
+        "hour": 32,
+        "modelAverage": 1250.91,
+        "upperBound": 1258.91,
+        "lowerBound": 1242.91
+    },
+    {
+        "hour": 33,
+        "modelAverage": 1252.45,
+        "upperBound": 1260.7,
+        "lowerBound": 1244.2
+    },
+    {
+        "hour": 34,
+        "modelAverage": 1253.91,
+        "upperBound": 1262.41,
+        "lowerBound": 1245.41
+    },
+    {
+        "hour": 35,
+        "modelAverage": 1255.22,
+        "upperBound": 1263.97,
+        "lowerBound": 1246.47
+    },
+    {
+        "hour": 36,
+        "modelAverage": 1256.34,
+        "upperBound": 1265.34,
+        "lowerBound": 1247.34
+    },
+    {
+        "hour": 37,
+        "modelAverage": 1257.21,
+        "upperBound": 1266.46,
+        "lowerBound": 1247.96
+    },
+    {
+        "hour": 38,
+        "modelAverage": 1257.81,
+        "upperBound": 1267.31,
+        "lowerBound": 1248.31
+    },
+    {
+        "hour": 39,
+        "modelAverage": 1258.09,
+        "upperBound": 1267.84,
+        "lowerBound": 1248.34
+    },
+    {
+        "hour": 40,
+        "modelAverage": 1258.06,
+        "upperBound": 1268.06,
+        "lowerBound": 1248.06
+    },
+    {
+        "hour": 41,
+        "modelAverage": 1257.7,
+        "upperBound": 1267.95,
+        "lowerBound": 1247.45
+    },
+    {
+        "hour": 42,
+        "modelAverage": 1257.03,
+        "upperBound": 1267.53,
+        "lowerBound": 1246.53
+    },
+    {
+        "hour": 43,
+        "modelAverage": 1256.07,
+        "upperBound": 1266.82,
+        "lowerBound": 1245.32
+    },
+    {
+        "hour": 44,
+        "modelAverage": 1254.86,
+        "upperBound": 1265.86,
+        "lowerBound": 1243.86
+    },
+    {
+        "hour": 45,
+        "modelAverage": 1253.44,
+        "upperBound": 1264.69,
+        "lowerBound": 1242.19
+    },
+    {
+        "hour": 46,
+        "modelAverage": 1251.87,
+        "upperBound": 1263.37,
+        "lowerBound": 1240.37
+    },
+    {
+        "hour": 47,
+        "modelAverage": 1250.21,
+        "upperBound": 1261.96,
+        "lowerBound": 1238.46
+    }
+]

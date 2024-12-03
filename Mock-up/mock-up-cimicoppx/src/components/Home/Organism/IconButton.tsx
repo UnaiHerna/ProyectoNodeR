@@ -13,9 +13,10 @@ const IconButton: React.FC<IconButtonProps> = ({ onClick, direction = "forward",
     <button
       onClick={onClick}
       className={`flexitems-center rounded transition ${className}`}
-    >
-      {direction === "back" && <IoIosArrowBack className="text-[1rem] p-0 m-0"/>}
-      {direction === "forward" && <IoIosArrowForward className="text-[1rem] p-0 m-0"/>}
+    > 
+    {/* cambios aqui */}
+      {direction === "back" && <IoIosArrowBack className="text-[2rem] p-0 m-0"/>}
+      {direction === "forward" && <IoIosArrowForward className="text-[2rem] p-0 m-0"/>}
     </button>
   );
 };

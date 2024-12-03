@@ -39,12 +39,11 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
     payload: { value: number };
   }) => {
     const { x, y, payload } = props;
-    const label = headers[payload.value];
-    console.log(activeDataType);
+    const label = headers[payload.value]; 
 
     return (
       <g transform={`translate(${x},${y - 15})`}>
-        <foreignObject x={-40} y={-25} width={88} height={30}>
+        <foreignObject x={-40} y={-25} width={88} height={30} stroke="red">
           <div className="flex justify-center items-center w-full h-full">
             {payload.value == 4 && showLine ? (
               <SensorButton
@@ -97,7 +96,40 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
       </g>
     );
   };
+{/*
+   estoe s del nuevo axis del cuando es tube chart optin  
+*/}
+const CustomYAxisTick3 = (props: {
+  x: number;
+  y: number;
+  payload: { value: number };
+}) => {
+  const { x, y, payload } = props;
+  const label = rowLabels[payload.value];
 
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <foreignObject x={-65} y={-15} width={80} height={30}>
+        <div className="flex text-start items-center w-full h-full">
+          {showLine && label == "DO" ? (
+            <SensorButton
+              label={label}
+              className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
+            />
+          ) : (
+            <SensorButton
+              label={label}
+              className="rounded-md self-start text-start w-16 bg-gray-100"
+            />
+          )}
+        </div>
+      </foreignObject>
+    </g>
+  );
+};
+{/*
+   estoe s del nuevo axis del cuando es tube chart optin  
+*/}
   // Custom tick for Y-axis (using metrics)
   const CustomYAxisTick2 = (props: {
     x: number;
@@ -167,6 +199,16 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
 
     return null;
   };
+  const dataArray = [
+    { "x": 0, "y": 0, "value": 5, "metric": "mV" },
+    { "x": 1, "y": 1, "value": 7, "metric": "ppm" },
+    { "x": 2, "y": 2, "value": 8, "metric": "ppm" },
+    { "x": 3, "y": 2, "value": 10, "metric": "ppm" },
+    { "x": 4, "y": 2, "value": 6, "metric": "ppm" },
+    { "x": 5, "y": 2, "value": 12, "metric": "ppm" }
+  ]; 
+
+  const tubeRawLabels = ["RINT", "RAS", "SURP", "FeCl3"];
 
   return (
     <div className="w-full h-72">
@@ -204,7 +246,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
                 domain={[4, 0]}
                 orientation="left"
                 axisLine={false}
-                tickLine={true}
+                tickLine={false}
                 tick={(props) => <CustomYAxisTick {...props} />}
               />
               <Tooltip
@@ -231,13 +273,14 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
                 tick={(props) => <CustomXAxisTick {...props} />}
                 orientation="top"
               />
+              {/* linea de los axis de do,nh4 */}
               <YAxis
                 dataKey="y"
                 type="number"
                 domain={[4, 0]}
                 orientation="left"
                 axisLine={false}
-                tickLine={true}
+                tickLine={false}
                 tick={(props) => <CustomYAxisTick {...props} />}
               />
               {showPoints && (
@@ -248,7 +291,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
                   yAxisId="right"
                   orientation="right"
                   axisLine={false}
-                  tickLine={true}
+                  tickLine={false}
                   tick={(props) => (
                     <CustomYAxisTick2 {...props} metrics={metrics} />
                   )}
@@ -264,10 +307,107 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
             </ScatterChart>
           )
         ) : (
-          <div>gg</div>
+          <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
+            <XAxis
+              dataKey="x"
+              type="category"
+              axisLine={false}
+              tickLine={false}
+              tickCount={headers.length}
+              tick={(props) => <CustomXAxisTick {...props} />}
+              orientation="top"
+            />
+            <YAxis
+              dataKey="y"
+              type="number"
+              domain={[0, 4]}
+              orientation="left"
+              axisLine={false}
+              tickLine={false}
+              tick={(tubeRawLabels) => <CustomYAxisTick3 {...tubeRawLabels} />}
+            />
+            {/* {showPoints && (
+            <YAxis
+              dataKey="y"
+              type="number"
+              domain={[4, 0]}
+              yAxisId="right"
+              orientation="right"
+              axisLine={false}
+              tickLine={true}
+              tick={(props) => (
+                <CustomYAxisTick2 {...props} metrics={metrics} />
+              )}
+            />
+          )} */}
+            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+            <Scatter
+              name="Data Points"
+              data={dataArray}
+              fill="#1e3a8a"
+              shape={showPoints ? CustomScatterShape2 : CustomScatterShape2} // Show cross shape when showPoints is true
+            />
+          </ScatterChart>
         )}
       </ResponsiveContainer>
     </div>
+  );
+};
+
+const CustomScatterShape2 = (props: ScatterPointItem) => {
+  const { cx, cy, payload } = props;
+
+  // Ensure cx, cy, and payload value are valid
+  if (cx === undefined || cy === undefined || payload?.value === undefined) {
+    return <></>; // Return nothing if invalid data
+  }
+
+  return (
+    <>
+      {/* Fondo blanco detrás del texto (draw circle) */}
+      <circle
+        cx={cx} // X position of the circle
+        cy={cy} // Y position of the circle
+        r={5} // Radius of the circle
+        fill="red" // Fill color of the circle
+        stroke="red" // Stroke color of the circle
+        strokeWidth={1} // Stroke width of the circle
+        width={50} // Ancho del fondo
+        height={20}
+      />
+      <line
+        x1={cx} // Starting X position
+        y1={cy} // Starting Y position
+        x2={cx + 80} // Ending X position (you can adjust this to set line length)
+        y2={cy} // Ending Y position (this keeps the line horizontal)
+        stroke="navy" // Line color
+        strokeWidth={2} // Line thickness
+      />
+      <circle
+        cx={cx + 85} // X position of the circle
+        cy={cy} // Y position of the circle
+        r={5} // Radius of the circle
+        fill="red" // Fill color of the circle
+        stroke="red" // Stroke color of the circle
+        strokeWidth={1} // Stroke width of the circle
+        width={50} // Ancho del fondo
+        height={20}
+      />
+      <circle
+        cx={cx} // X position of the circle
+        cy={cy} // Y position of the circle
+        r={4} // Radius of the circle
+        fill="navy" // Fill color of the circle
+        stroke="navy" // Stroke color of the circle
+        strokeWidth={1} // Stroke width of the circle
+      />
+
+      {/* Optional: Draw any text or other shapes over the circle */}
+      <text x={cx} y={cy} fontSize="12" fill="black" textAnchor="middle">
+        {payload?.value}
+      </text>
+    </>
   );
 };
 

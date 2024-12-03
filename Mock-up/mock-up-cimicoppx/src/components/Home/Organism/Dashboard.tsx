@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-3 bg-white"
       >
-        <div className="w-full h-full">
+        <div className="w-full h-full -ml-3">
           <FlowRateChart />
         </div>
       </Card>
