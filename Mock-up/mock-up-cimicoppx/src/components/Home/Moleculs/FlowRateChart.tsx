@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Plot from "react-plotly.js";
-import ArrowButton from "./ArrowButton";
 import forecast_json from "../../../helpers/forecast_data.json";
 
 // Define el tipo de los datos
@@ -23,51 +22,11 @@ const ForecastChart = () => {
   const limiteInferior: number[] = datosPronostico.map((d) => d.lowerBound);
   const horas: number[] = datosPronostico.map((d) => d.hour);
 
-  // Funciones para manejar el desplazamiento
-  const manejarDesplazamientoIzquierda = () => {
-    if (xOffset > 0) {
-      setXOffset(xOffset - 2);
-    }
-  };
-
-  const manejarDesplazamientoDerecha = () => {
-    if (xOffset < datosPronostico.length - 40) {
-      setXOffset(xOffset + 1);
-    }
-  };
-
   // Definir el índice de inicio del pronóstico
   const indiceInicioPronostico = Math.floor(datosPronostico.length * 0.4);
 
-  // Crear un arreglo con los números de las horas para mostrar
-  const numeros: number[] = horas;
-
-  const puedeDesplazarIzquierda = xOffset > 0;
-  const puedeDesplazarDerecha = xOffset < datosPronostico.length - 40;
-
   return (
     <div className="w-full h-full relative">
-      {/* Mostrar las horas en la parte superior */}
-
-      {/* Botones de desplazamiento (izquierda/derecha) */}
-      {/* <div className="absolute top-24 left-0 w-full flex justify-between z-10">
-        {puedeDesplazarIzquierda && (
-          <ArrowButton
-            direction="back"
-            onClick={manejarDesplazamientoIzquierda}
-            className="ml-[-2.5rem]"
-          />
-        )}
-        {puedeDesplazarDerecha && (
-          <ArrowButton
-            direction="forward"
-            onClick={manejarDesplazamientoDerecha}
-            className={puedeDesplazarIzquierda ? "ml-[80rem]" : "ml-[80.2rem]"}
-          />
-        )}
-      </div> */}
-
-      {/* Gráfico utilizando Plotly */}
       <Plot
         data={[
           // Trazado 0: Área sombreada (límites superior e inferior)
@@ -102,9 +61,6 @@ const ForecastChart = () => {
               line: { color: "white", width: 5 },
             },
             name: "Datos Reales",
-            text: datosPronostico
-              .slice(0, indiceInicioPronostico + 1)
-              .map((d) => d.modelAverage.toFixed(2)),
             hoverinfo: "text",
             showlegend: false,
           },
@@ -129,10 +85,6 @@ const ForecastChart = () => {
               line: { color: "white", width: 5 },
             },
             name: "Pronóstico",
-            text: [
-              ...datosPronostico.slice(indiceInicioPronostico - 1, indiceInicioPronostico).map((d) => d.modelAverage.toFixed(2)),
-              ...datosPronostico.slice(indiceInicioPronostico).map((d) => d.modelAverage.toFixed(2)),
-            ],
             hoverinfo: "text",
             showlegend: false,
           },
@@ -143,15 +95,22 @@ const ForecastChart = () => {
             dtick: 1,
             visible: true,
             showgrid: true,
-            tickmode: 'array', // Usar valores personalizados para los ticks
-            tickvals: horas,   // Especificar las horas como los valores de los ticks
-            ticktext: horas.map(hour => hour.toString()), // Convertir los valores a cadenas para mostrarlos
-            tickangle: 90, // Opcional: Rota los números si son demasiado largos
+            tickmode: "array",
+            tickvals: horas,
+            ticktext: horas.map((hour) => ` ${hour.toString()}`),
+            side: "top", // Mostrar el eje X en la parte superior
+            tickangle: 0,
+            tickfont: {
+              color: "blue", // Cambia el color del texto
+              size: 11, // Tamaño de la fuente
+              family: "Lato", // Tipo de fuente
+            },
           },
           yaxis: { visible: false, showgrid: false },
           showlegend: false,
-          margin: { t: 0, l: 0, r: 0, b: 0 },
+          margin: { t: 19, l: 0, r: 0, b: 0 }, // Espacio para el eje X superior
         }}
+        
         config={{ displayModeBar: false }}
         style={{ width: "102.2%", height: "14rem" }}
       />
