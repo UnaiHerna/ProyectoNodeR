@@ -1,4 +1,3 @@
-  import { useState } from "react";
   import Plot from "react-plotly.js";
   import forecast_json from "../../../helpers/forecast_data.json";
 
@@ -91,6 +90,7 @@
           ]}
           layout={{
             xaxis: {
+              // range:[0,4],
               dtick: 1,
               visible: true,
               showgrid: true,
@@ -102,9 +102,9 @@
                   return "<span style='color:green;'>Now</span>"; // Cambiar el texto por "Now" y darle color verde
                 } else if (index > indiceInicioPronostico-1){
                 return `<span style='color:grey;'>${hour.toString()}</span>`; // Para los demás puntos, mostrar la hora
-                }else{
-                return `<span style='color:black;'>${hour.toString()}</span>`; // Para los demás puntos, mostrar la hora
                 }
+                return `<span style='color:black;'>${hour.toString()}</span>`; // Para los demás puntos, mostrar la hora
+                
               }),
               tickangle: 0,
               tickfont: {
@@ -117,8 +117,6 @@
             showlegend: false,
             margin: { t: 19, l: 0, r: 0, b: 0 }, // Espacio para el eje X superior
           }}
-          
-          
           
           config={{ displayModeBar: false }}
           style={{ width: "102.2%", height: "14rem" }}

@@ -142,17 +142,5 @@
         "modelAverage": 1242.55,
         "upperBound": 1248.3,
         "lowerBound": 1236.8
-    },
-    {
-        "hour": 24,
-        "modelAverage": 1242.5,
-        "upperBound": 1248.5,
-        "lowerBound": 1236.5
-    },
-    {
-        "hour": 25,
-        "modelAverage": 1242.74,
-        "upperBound": 1248.99,
-        "lowerBound": 1236.49
     }
 ]
