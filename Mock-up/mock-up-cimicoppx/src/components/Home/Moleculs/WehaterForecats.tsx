@@ -35,9 +35,9 @@ const WeatherForecast: React.FC = () => {
   };
 
   return (
-    <div className=" relative w-full h-auto flex items-center justify-center bg-[#f5f6f9]">
+    <div className=" relative lg:w-[100.9%] lg:h-[89%] flex items-center justify-center bg-[#f5f6f9] -ml-1 ">
       {/* Contenedor interno para el contenido */}
-      <div className="w-full h-full justify-between mt-12 md:mt-24 z-20">
+      <div className="w-full h-full justify-between z-20 lg:mt-32 ">
         <img
           src="/sunny.jpg"
           alt="sun"
@@ -53,19 +53,26 @@ const WeatherForecast: React.FC = () => {
             </span>
             <span className="font-roboto text-[18pt] sm:text-[20pt] text-[#002060] flex ">
               0%
-              <WiRain className="text-center self-center ml-2"/>
+              <WiRain className="text-center self-center ml-2" />
             </span>
           </div>
         </div>
 
         {/* Barra de tiempo con navegación */}
-        <div className="relative flex justify-center items-center w-[103%] gap-4 -ml-2 z-20">
-          <ArrowButton
-            direction="back"
-            onClick={() => handleArrowClick("prev")}
-            className="absolute left-0 text-[#002060] -mt-24 -ml-4"
-          />
-          
+        <div className="relative flex justify-center items-center w-full gap-5 z-20">
+          <section className="flex flex-row justify-between w-full absolute">
+            <ArrowButton
+              direction="back"
+              onClick={() => handleArrowClick("prev")}
+              className="text-[#002060] p-[10px]"
+            />
+            <ArrowButton
+              direction="forward"
+              onClick={() => handleArrowClick("next")}
+              className="text-[#002060] p-[10px]"
+            />
+          </section>
+
           {weatherData.map((data, idx) => (
             <WeatherCard
               key={idx}
@@ -74,12 +81,6 @@ const WeatherForecast: React.FC = () => {
               isSelected={idx === selectedIndex}
             />
           ))}
-
-          <ArrowButton
-            direction="forward"
-            onClick={() => handleArrowClick("next")}
-            className="absolute right-0 text-[#002060] -mt-28 -mr-2"
-          />
         </div>
       </div>
     </div>

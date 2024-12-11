@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
         }
         className="row-span-2 col-span-3  bg-white"
       >
-        <div className="w-full h-full -ml-3">
+        <div className="w-full h-[80%]">
           <FlowRateChart />
         </div>
       </Card>

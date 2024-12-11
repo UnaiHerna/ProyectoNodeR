@@ -10,7 +10,7 @@ type ArrowButtonProps = {
 const ArrowButton: React.FC<ArrowButtonProps> = ({ onClick, direction, className }) => {
 
   return (
-    <section className={`p-[2px] bg-blue-500 rounded-full flex items-center justify-center text-white ${className}`}>
+    <section className={`bg-blue-500 rounded-full flex items-center justify-center text-white ${className}`}>
       <IconButton direction={direction} className="text-large" onClick={onClick}/>
     </section>
   );
