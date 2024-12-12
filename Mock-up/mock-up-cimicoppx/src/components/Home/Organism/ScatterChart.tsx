@@ -42,53 +42,57 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
       <g transform={`translate(${x},${y - 15})`}>
         <foreignObject x={-40} y={-25} width={88} height={30}>
           <div className="flex justify-center items-center w-full h-full">
-            {
-            payload.value==4 && showLine?            <SensorButton
-            label={label}
-            className="rounded-md self-start w-16 bg-cimico text-white" // Color cambiado aquí
-          />:
-            label === "INF" ? (
-              <SensorButton label={label} className="rounded-full w-10 bg-gray-100" />
+            {payload.value == 4 && showLine ? (
+              <SensorButton
+                label={label}
+                className="rounded-md self-start w-16 bg-cimico text-white" // Color cambiado aquí
+              />
+            ) : label === "INF" ? (
+              <SensorButton
+                label={label}
+                className="rounded-full w-10 bg-gray-100"
+              />
             ) : (
-              <SensorButton label={label} className="rounded-md w-16 bg-gray-100" />
+              <SensorButton
+                label={label}
+                className="rounded-md w-16 bg-gray-100"
+              />
             )}
-
-
           </div>
         </foreignObject>
       </g>
     );
   };
 
-// Custom tick for Y-axis (using rowLabels)
-const CustomYAxisTick = (props: {
-  x: number;
-  y: number;
-  payload: { value: number };
-}) => {
-  const { x, y, payload } = props;
-  const label = rowLabels[payload.value];
+  // Custom tick for Y-axis (using rowLabels)
+  const CustomYAxisTick = (props: {
+    x: number;
+    y: number;
+    payload: { value: number };
+  }) => {
+    const { x, y, payload } = props;
+    const label = rowLabels[payload.value];
 
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <foreignObject x={-65} y={-15} width={80} height={30}>
-        <div className="flex text-start items-center w-full h-full">
-          {showLine && label=="DO" ? (
-            <SensorButton
-              label={label}
-              className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
-            />
-          ) : (
-            <SensorButton
-              label={label}
-              className="rounded-md self-start text-start w-16 bg-gray-100"
-            />
-          )}
-        </div>
-      </foreignObject>
-    </g>
-  );
-};
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <foreignObject x={-65} y={-15} width={80} height={30}>
+          <div className="flex text-start items-center w-full h-full">
+            {showLine && label == "DO" ? (
+              <SensorButton
+                label={label}
+                className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
+              />
+            ) : (
+              <SensorButton
+                label={label}
+                className="rounded-md self-start text-start w-16 bg-gray-100"
+              />
+            )}
+          </div>
+        </foreignObject>
+      </g>
+    );
+  };
 
   // Custom tick for Y-axis (using metrics)
   const CustomYAxisTick2 = (props: {
@@ -104,14 +108,16 @@ const CustomYAxisTick = (props: {
       <g transform={`translate(${x},${y})`}>
         <foreignObject x={-1} y={-17} width={80} height={30}>
           <div className="flex text-start items-center w-full h-full">
-            <span className="text-[#002060] font-lato text-[11pt]">{label}</span>
+            <span className="text-[#002060] font-lato text-[11pt]">
+              {label}
+            </span>
           </div>
         </foreignObject>
       </g>
     );
   };
 
-// Custom tick for Y-axis (using metrics)
+  // Custom tick for Y-axis (using metrics)
   const CustomXAxisTick2 = (props: {
     x: number;
     y: number;
@@ -125,11 +131,12 @@ const CustomYAxisTick = (props: {
       <g transform={`translate(${x},${y - 15})`}>
         <foreignObject x={-40} y={0} width={88} height={30}>
           <div className="flex justify-center items-center w-full h-full">
-          <span className="text-black font-lato text-[11pt]">{label}</span>
+            <span className="text-black font-lato text-[11pt]">{label}</span>
           </div>
         </foreignObject>
       </g>
-    );}
+    );
+  };
 
   // Tooltip personalizado
   const CustomTooltip = ({
@@ -205,7 +212,10 @@ const CustomYAxisTick = (props: {
               tickLine={true}
               tick={(props) => <CustomYAxisTick2 {...props} metrics={metrics} />}
             /> */}
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} content={<CustomTooltip />} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              content={<CustomTooltip />}
+            />
             <Line
               type="monotone"
               dataKey="y"
@@ -244,7 +254,9 @@ const CustomYAxisTick = (props: {
                 orientation="right"
                 axisLine={false}
                 tickLine={true}
-                tick={(props) => <CustomYAxisTick2 {...props} metrics={metrics} />}
+                tick={(props) => (
+                  <CustomYAxisTick2 {...props} metrics={metrics} />
+                )}
               />
             )}
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />

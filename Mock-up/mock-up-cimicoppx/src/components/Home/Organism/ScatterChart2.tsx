@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -105,23 +105,16 @@ const CustomYAxisTick3 = (props: {
   payload: { value: number };
 }) => {
   const { x, y, payload } = props;
-  const label = rowLabels[payload.value];
+  const label = tubeRawLabels[payload.value];
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <foreignObject x={-65} y={-15} width={80} height={30}>
+      <foreignObject x={-65} y={-60} width={80} height={30}>
         <div className="flex text-start items-center w-full h-full">
-          {showLine && label == "DO" ? (
-            <SensorButton
-              label={label}
-              className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
-            />
-          ) : (
             <SensorButton
               label={label}
               className="rounded-md self-start text-start w-16 bg-gray-100"
             />
-          )}
         </div>
       </foreignObject>
     </g>
@@ -199,17 +192,28 @@ const CustomYAxisTick3 = (props: {
 
     return null;
   };
-  const dataArray = [
-    { "x": 0, "y": 0, "value": 5, "metric": "mV" },
-    { "x": 1, "y": 1, "value": 7, "metric": "ppm" },
-    { "x": 2, "y": 2, "value": 8, "metric": "ppm" },
-    { "x": 3, "y": 2, "value": 10, "metric": "ppm" },
-    { "x": 4, "y": 2, "value": 6, "metric": "ppm" },
-    { "x": 5, "y": 2, "value": 12, "metric": "ppm" }
+
+  const tubeRawLabels = ["FeCl3", "SURP", "RAS", "RINT"];
+  const rowIndexMap = {
+    "FeCl3": 3,
+    "SURP": 3,
+    "RAS": 2,
+    "RINT": 1,
+  };
+
+  const tubeArray = [
+    { x: 0, y: rowIndexMap["FeCl3"], value: 5, metric: "mV" },
+    { x: 1, y: rowIndexMap["SURP"], value: 7, metric: "ppm" },
+    { x: 2, y: rowIndexMap["RAS"], value: 5, metric: "ppm" },
+    { x: 3, y: rowIndexMap["RINT"], value: 10, metric: "ppm" },
+    { x: 4, y: rowIndexMap["SURP"], value: 6, metric: "ppm" },
+    { x: 5, y: rowIndexMap["FeCl3"], value: 12, metric: "ppm" },
+    { x: 6, y: rowIndexMap["RAS"], value: 12, metric: "ppm" },
+    { x: 7, y: rowIndexMap["RINT"], value: 8, metric: "ppm" },
+    { x: 8, y: rowIndexMap["FeCl3"], value: 1, metric: "mg/L" },
+    
   ]; 
-
-  const tubeRawLabels = ["RINT", "RAS", "SURP", "FeCl3"];
-
+  
   return (
     <div className="w-full h-72">
       <ResponsiveContainer width="100%" height="100%">
@@ -307,6 +311,7 @@ const CustomYAxisTick3 = (props: {
             </ScatterChart>
           )
         ) : (
+          //esto es si es tube chart
           <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
             <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
             <XAxis
@@ -344,9 +349,9 @@ const CustomYAxisTick3 = (props: {
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Scatter
               name="Data Points"
-              data={dataArray}
+              data={tubeArray}
               fill="#1e3a8a"
-              shape={showPoints ? CustomScatterShape2 : CustomScatterShape2} // Show cross shape when showPoints is true
+              shape={showPoints ? CustomScatterShape2 : CustomScatterShape2} // Show cross shape when showPoints is true to show number upon the line chart
             />
           </ScatterChart>
         )}
@@ -354,64 +359,60 @@ const CustomYAxisTick3 = (props: {
     </div>
   );
 };
+let anterior_valor: ScatterPointItem | null = null; // Inicializamos en null para el primer render
 
 const CustomScatterShape2 = (props: ScatterPointItem) => {
   const { cx, cy, payload } = props;
 
-  // Ensure cx, cy, and payload value are valid
+  console.log(
+    "valor cx anterior:",
+    anterior_valor?.cx,
+    "valor cy anterior:",
+    anterior_valor?.cy,
+    "valor cx actual:",
+    cx,
+    "valor cy actual:",
+    cy
+  );
+
+  // Validación de datos
   if (cx === undefined || cy === undefined || payload?.value === undefined) {
-    return <></>; // Return nothing if invalid data
+    return <></>; // No renderiza nada si los datos son inválidos
   }
 
+  // Dibujar línea solo si existe un valor anterior
+  const linea = anterior_valor ? (
+    <line
+      x1={cx}
+      y1={cy}
+      x2={anterior_valor.cx * cx}
+      y2={anterior_valor.cy}
+      stroke="#1e3a8a"
+      strokeWidth={2}
+    />
+  ) : null;
+
+  // Actualizamos el valor anterior después de usarlo
+  anterior_valor = { cx, cy, payload };
+
+  // Renderizar el círculo y la línea
   return (
     <>
-      {/* Fondo blanco detrás del texto (draw circle) */}
+      {linea}
       <circle
-        cx={cx} // X position of the circle
-        cy={cy} // Y position of the circle
-        r={5} // Radius of the circle
-        fill="red" // Fill color of the circle
-        stroke="red" // Stroke color of the circle
-        strokeWidth={1} // Stroke width of the circle
-        width={50} // Ancho del fondo
-        height={20}
+        cx={cx}
+        cy={cy}
+        r={5}
+        fill="#1e3a8a"
+        stroke="navy"
+        strokeWidth={1}
       />
-      <line
-        x1={cx} // Starting X position
-        y1={cy} // Starting Y position
-        x2={cx + 80} // Ending X position (you can adjust this to set line length)
-        y2={cy} // Ending Y position (this keeps the line horizontal)
-        stroke="navy" // Line color
-        strokeWidth={2} // Line thickness
-      />
-      <circle
-        cx={cx + 85} // X position of the circle
-        cy={cy} // Y position of the circle
-        r={5} // Radius of the circle
-        fill="red" // Fill color of the circle
-        stroke="red" // Stroke color of the circle
-        strokeWidth={1} // Stroke width of the circle
-        width={50} // Ancho del fondo
-        height={20}
-      />
-      <circle
-        cx={cx} // X position of the circle
-        cy={cy} // Y position of the circle
-        r={4} // Radius of the circle
-        fill="navy" // Fill color of the circle
-        stroke="navy" // Stroke color of the circle
-        strokeWidth={1} // Stroke width of the circle
-      />
-
-      {/* Optional: Draw any text or other shapes over the circle */}
-      <text x={cx} y={cy} fontSize="12" fill="black" textAnchor="middle">
-        {payload?.value}
-      </text>
     </>
   );
 };
 
-// Custom scatter shape function
+
+// Custom scatter shape function para el primer grafico
 const CustomScatterShape = (props: ScatterPointItem) => {
   const { cx, cy, payload } = props;
 
@@ -424,8 +425,8 @@ const CustomScatterShape = (props: ScatterPointItem) => {
     <>
       {/* Fondo blanco detrás del texto */}
       <rect
-        x={cx - 15} // Ajusta la posición horizontal
-        y={cy - 10} // Ajusta la posición vertical
+        x={cx} // Ajusta la posición horizontal
+        y={cy} // Ajusta la posición vertical
         width={30} // Ancho del fondo
         height={20} // Alto del fondo
         fill="white" // Color del fondo

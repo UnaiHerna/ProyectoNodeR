@@ -9,12 +9,12 @@ interface StatsCardProps {
 
 const StatsCard: React.FC<StatsCardProps> = ({ title, value }) => {
   return (
-    <section className="flex flex-col text-white font-lato py-2 text-[10pt] text-start">
-      <div className="bg-[#156082] text-white font-lato py-2 text-[13pt] shadow-xl p-1">
+    <section className="flex flex-col text-white font-lato lg:py-2 lg:text-[10pt] text-start w-full">
+      <div className="bg-[#156082] text-white font-lato lg:py-2 lg:text-[13pt] shadow-xl p-1">
         {title}
       </div>
-      <div className="bg-white shadow-xl  md:w-28 text-center flex flex-col h-auto mt-[4px]">
-        <div className="text-[#3B7D23] font-lato text-[24pt] text-center font-bold">
+      <div className="bg-white shadow-xl  lg:w-28 text-center flex flex-col h-auto lg:mt-[4px]">
+        <div className="text-[#3B7D23] font-lato lg:text-[24pt] text-center font-bold">
           {value}
         </div>
       </div>
@@ -95,7 +95,7 @@ const PerformanceBody: React.FC = () => {
         <IconButton direction="forward" onClick={handleNext} />
       </section>
 
-      <div className="w-52 h-32 ml-6 -top-2 relative">
+      <div className="lg:w-52 lg:h-32 lg:ml-6 lg:-top-2 w-full h-full relative">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={currentData}>
             <Tooltip

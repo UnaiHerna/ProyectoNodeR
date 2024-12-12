@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Performance"
             additionalLabels={
-              <section className="mb-[8px] w-full h-full">
+              <section className="lg:mb-[8px] w-full h-full">
                 <DotsCircle />
               </section>
             }

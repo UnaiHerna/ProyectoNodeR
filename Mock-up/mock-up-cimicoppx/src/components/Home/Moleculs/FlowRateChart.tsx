@@ -11,9 +11,7 @@ interface ForecastData {
 }
 
 const ForecastChart = () => {
-  // const [xOffset, setXOffset] = useState<number>(0); // Desplazamiento del eje X
-
-  // tipar el json de forecast_json
+  // Tipar el json de forecast_json
   const datosPronostico: ForecastData[] = forecast_json;
 
   // Mapeo de los datos necesarios para los gráficos
@@ -53,6 +51,7 @@ const ForecastChart = () => {
             line: { color: "transparent", width: 0 },
             showlegend: false,
             type: "scatter",
+            hoverinfo: "skip", // Omitir tooltip para esta área sombreada
           },
           // Trazado 1: Datos reales (promedioModelo)
           {
@@ -72,7 +71,15 @@ const ForecastChart = () => {
               line: { color: "white", width: 5 },
             },
             name: "Datos Reales",
-            hoverinfo: "text",
+            hoverinfo: "y", // Mostrar información en el tooltip
+            hoverlabel: {
+              bgcolor: "#ffecb4", // Fondo del tooltip
+              font: {
+                size: 20,
+                color: "#002060", // Color del texto
+              },
+              bordercolor: "#ffecb4", // Sin borde visible
+            },
             showlegend: false,
           },
           // Trazado 2: Datos de pronóstico (promedioModelo después de indiceInicioPronostico)
@@ -105,7 +112,15 @@ const ForecastChart = () => {
               line: { color: "white", width: 3 },
             },
             name: "Pronostico",
-            hoverinfo: "text",
+            hoverinfo: "y", // Mostrar información en el tooltip
+            hoverlabel: {
+              bgcolor: "#ffecb4",
+              font: {
+                size: 20,
+                color: "#002060",
+              },
+              bordercolor: "#ffecb4",
+            },
             showlegend: false,
           },
         ]}
@@ -120,13 +135,12 @@ const ForecastChart = () => {
             tickmode: "array",
             tickvals: horas,
             ticktext: horas.map((hour, index) => {
-              // Reemplazar el texto con "Now" para el primer punto de pronóstico
               if (index === indiceInicioPronostico - 1) {
-                return "<span style='color:green;'>Now</span>"; // Cambiar el texto por "Now" y darle color verde
+                return "<span style='color:green;'>Now</span>";
               } else if (index > indiceInicioPronostico - 1) {
-                return `<span style='color:grey;'>${hour}</span>`; // Para los demás puntos, mostrar la hora
+                return `<span style='color:grey;'>${hour}</span>`;
               }
-              return `<span style='color:black;'>${hour}</span>`; // Para los demás puntos, mostrar la hora
+              return `<span style='color:black;'>${hour}</span>`;
             }),
             tickangle: 0,
             tickfont: {
@@ -140,11 +154,9 @@ const ForecastChart = () => {
             showgrid: false,
             fixedrange: true,
             zeroline: false,
-            zerolinecolor: "red",
           },
           showlegend: false,
-
-          margin: { t: 25, l: 8, r: 0, b: 0 }, // Espacio para el eje X superior
+          margin: { t: 25, l: 8, r: 0, b: 0 },
         }}
         config={{ displayModeBar: false }}
         className="w-full -ml-1 h-full"
