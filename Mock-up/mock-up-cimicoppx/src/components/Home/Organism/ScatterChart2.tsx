@@ -359,54 +359,21 @@ const CustomYAxisTick3 = (props: {
     </div>
   );
 };
-let anterior_valor: ScatterPointItem | null = null; // Inicializamos en null para el primer render
 
 const CustomScatterShape2 = (props: ScatterPointItem) => {
   const { cx, cy, payload } = props;
-
-  console.log(
-    "valor cx anterior:",
-    anterior_valor?.cx,
-    "valor cy anterior:",
-    anterior_valor?.cy,
-    "valor cx actual:",
-    cx,
-    "valor cy actual:",
-    cy
-  );
-
-  // Validación de datos
-  if (cx === undefined || cy === undefined || payload?.value === undefined) {
-    return <></>; // No renderiza nada si los datos son inválidos
+  // Validación de datos para evitar errores
+  if (cx === undefined || cy === undefined || payload.value === undefined) {
+    return <></>; // No renderizar nada si los datos son inválidos
   }
-
-  // Dibujar línea solo si existe un valor anterior
-  const linea = anterior_valor ? (
-    <line
-      x1={cx}
-      y1={cy}
-      x2={anterior_valor.cx * cx}
-      y2={anterior_valor.cy}
-      stroke="#1e3a8a"
-      strokeWidth={2}
-    />
-  ) : null;
-
-  // Actualizamos el valor anterior después de usarlo
-  anterior_valor = { cx, cy, payload };
 
   // Renderizar el círculo y la línea
   return (
     <>
-      {linea}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill="#1e3a8a"
-        stroke="navy"
-        strokeWidth={1}
-      />
+//crea un circulo
+  <circle cx={cx} cy={cy} r={5} fill="#1e3a8a" />
+  //crea una linea
+  <line x1={cx} y1={cy} x2={cx -  payload.cx} y2={cy} stroke="#1e3a8a" strokeWidth={2} />
     </>
   );
 };

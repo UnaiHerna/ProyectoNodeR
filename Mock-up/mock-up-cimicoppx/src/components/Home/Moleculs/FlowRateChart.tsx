@@ -159,7 +159,7 @@ const ForecastChart = () => {
           margin: { t: 25, l: 8, r: 0, b: 0 },
         }}
         config={{ displayModeBar: false }}
-        className="w-full -ml-1 h-full"
+        className="w-full ml-1 h-full"
       />
     </div>
   );
