@@ -109,17 +109,25 @@ const CustomYAxisTick3 = (props: {
 
   return (
     <g transform={`translate(${x},${y})`}>
-      <foreignObject x={-65} y={-60} width={80} height={30}>
+      <foreignObject x={-65} y={-15} width={80} height={30}>
         <div className="flex text-start items-center w-full h-full">
+          {showLine && label == "DO" ? (
+            <SensorButton
+              label={label}
+              className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
+            />
+          ) : (
             <SensorButton
               label={label}
               className="rounded-md self-start text-start w-16 bg-gray-100"
             />
+          )}
         </div>
       </foreignObject>
     </g>
   );
 };
+
 {/*
    estoe s del nuevo axis del cuando es tube chart optin  
 */}
@@ -192,27 +200,37 @@ const CustomYAxisTick3 = (props: {
 
     return null;
   };
-
+  //no se va usar
   const tubeRawLabels = ["FeCl3", "SURP", "RAS", "RINT"];
   const rowIndexMap = {
     "FeCl3": 3,
-    "SURP": 3,
-    "RAS": 2,
-    "RINT": 1,
+    "SURP": 2,
+    "RAS": 1,
+    "RINT": 0,
   };
-
-  const tubeArray = [
-    { x: 0, y: rowIndexMap["FeCl3"], value: 5, metric: "mV" },
-    { x: 1, y: rowIndexMap["SURP"], value: 7, metric: "ppm" },
-    { x: 2, y: rowIndexMap["RAS"], value: 5, metric: "ppm" },
-    { x: 3, y: rowIndexMap["RINT"], value: 10, metric: "ppm" },
-    { x: 4, y: rowIndexMap["SURP"], value: 6, metric: "ppm" },
-    { x: 5, y: rowIndexMap["FeCl3"], value: 12, metric: "ppm" },
-    { x: 6, y: rowIndexMap["RAS"], value: 12, metric: "ppm" },
-    { x: 7, y: rowIndexMap["RINT"], value: 8, metric: "ppm" },
-    { x: 8, y: rowIndexMap["FeCl3"], value: 1, metric: "mg/L" },
+  const colIndexMap = {"INF": 1, "AN": 2, "AX1": 3, "AX2": 4, "AE1": 5, "AE2": 6, "AE3": 7, "AE4": 8, "ST": 9};
+  
+  const data_dumbbell = [
+    {"var":rowIndexMap["RINT"],
+      "P1":colIndexMap["AX1"],
+      "P2":colIndexMap["AE3"],
+    },
+    {"var":rowIndexMap["RAS"],
+      "P1":colIndexMap["AN"],
+      "P2":colIndexMap["ST"],
+    },
+    {"var":rowIndexMap["SURP"],
+      "P1":colIndexMap["ST"],
+      "P2":null,
+    },
     
-  ]; 
+    {"var":rowIndexMap["FeCl3"],
+      "P1":colIndexMap["AE3"],
+      "P2":null,
+    }
+  ];
+
+  console.log(data_dumbbell);
   
   return (
     <div className="w-full h-72">
@@ -317,21 +335,21 @@ const CustomYAxisTick3 = (props: {
             <XAxis
               dataKey="x"
               type="category"
-              axisLine={false}
-              tickLine={false}
+              axisLine={true}
+              tickLine={true}
               tickCount={headers.length}
               tick={(props) => <CustomXAxisTick {...props} />}
               orientation="top"
             />
-            <YAxis
-              dataKey="y"
-              type="number"
-              domain={[0, 4]}
-              orientation="left"
-              axisLine={false}
-              tickLine={false}
-              tick={(tubeRawLabels) => <CustomYAxisTick3 {...tubeRawLabels} />}
-            />
+              <YAxis
+                dataKey="y"
+                type="number"
+                ticks={[0, 1, 2, 3]}
+                orientation="left"
+                axisLine={false}
+                tickLine={false}
+                tick={(props) => <CustomYAxisTick3 {...props} />}
+              />
             {/* {showPoints && (
             <YAxis
               dataKey="y"
@@ -349,11 +367,11 @@ const CustomYAxisTick3 = (props: {
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Scatter
               name="Data Points"
-              data={tubeArray}
+              data={data_dumbbell}
               fill="#1e3a8a"
-              shape={showPoints ? CustomScatterShape2 : CustomScatterShape2} // Show cross shape when showPoints is true to show number upon the line chart
             />
           </ScatterChart>
+          //crea una linea
         )}
       </ResponsiveContainer>
     </div>
@@ -366,14 +384,10 @@ const CustomScatterShape2 = (props: ScatterPointItem) => {
   if (cx === undefined || cy === undefined || payload.value === undefined) {
     return <></>; // No renderizar nada si los datos son inválidos
   }
-
   // Renderizar el círculo y la línea
   return (
     <>
-//crea un circulo
   <circle cx={cx} cy={cy} r={5} fill="#1e3a8a" />
-  //crea una linea
-  <line x1={cx} y1={cy} x2={cx -  payload.cx} y2={cy} stroke="#1e3a8a" strokeWidth={2} />
     </>
   );
 };
