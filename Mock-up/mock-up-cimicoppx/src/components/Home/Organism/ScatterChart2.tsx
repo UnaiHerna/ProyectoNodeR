@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  ComposedChart,
 } from "recharts";
 import SensorButton from "../Atoms/SensorButton";
 import { ScatterPointItem } from "recharts/types/cartesian/Scatter";
@@ -39,13 +40,13 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
     payload: { value: number };
   }) => {
     const { x, y, payload } = props;
-    const label = headers[payload.value]; 
+    const label = headers[payload.value];
 
     return (
       <g transform={`translate(${x},${y - 15})`}>
         <foreignObject x={-40} y={-25} width={88} height={30} stroke="red">
           <div className="flex justify-center items-center w-full h-full">
-            {payload.value == 4 && showLine ? (
+            {payload.value == 4 && showLine && activeDataType!=="tube" ? (
               <SensorButton
                 label={label}
                 className="rounded-md self-start w-16 bg-cimico text-white" // Color cambiado aquí
@@ -96,41 +97,45 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
       </g>
     );
   };
-{/*
+  {
+    /*
    estoe s del nuevo axis del cuando es tube chart optin  
-*/}
-const CustomYAxisTick3 = (props: {
-  x: number;
-  y: number;
-  payload: { value: number };
-}) => {
-  const { x, y, payload } = props;
-  const label = tubeRawLabels[payload.value];
+*/
+  }
+  const CustomYAxisTick3 = (props: {
+    x: number;
+    y: number;
+    payload: { value: number };
+  }) => {
+    const { x, y, payload } = props;
+    const label = tubeRawLabels[payload.value];
 
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <foreignObject x={-65} y={-15} width={80} height={30}>
-        <div className="flex text-start items-center w-full h-full">
-          {showLine && label == "DO" ? (
-            <SensorButton
-              label={label}
-              className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
-            />
-          ) : (
-            <SensorButton
-              label={label}
-              className="rounded-md self-start text-start w-16 bg-gray-100"
-            />
-          )}
-        </div>
-      </foreignObject>
-    </g>
-  );
-};
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <foreignObject x={-65} y={-15} width={80} height={30}>
+          <div className="flex text-start items-center w-full h-full">
+            {showLine && label == "DO" ? (
+              <SensorButton
+                label={label}
+                className="rounded-md self-start text-start w-16 bg-cimico text-white" // Color cambiado aquí
+              />
+            ) : (
+              <SensorButton
+                label={label}
+                className="rounded-md self-start text-start w-16 bg-gray-100"
+              />
+            )}
+          </div>
+        </foreignObject>
+      </g>
+    );
+  };
 
-{/*
+  {
+    /*
    estoe s del nuevo axis del cuando es tube chart optin  
-*/}
+*/
+  }
   // Custom tick for Y-axis (using metrics)
   const CustomYAxisTick2 = (props: {
     x: number;
@@ -166,7 +171,7 @@ const CustomYAxisTick3 = (props: {
 
     return (
       <g transform={`translate(${x},${y - 15})`}>
-        <foreignObject x={-40} y={0} width={88} height={30}>
+        <foreignObject x={-40} y={0} width={80} height={30}>
           <div className="flex justify-center items-center w-full h-full">
             <span className="text-black font-lato text-[11pt]">{label}</span>
           </div>
@@ -203,35 +208,33 @@ const CustomYAxisTick3 = (props: {
   //no se va usar
   const tubeRawLabels = ["FeCl3", "SURP", "RAS", "RINT"];
   const rowIndexMap = {
-    "FeCl3": 3,
-    "SURP": 2,
-    "RAS": 1,
-    "RINT": 0,
+    FeCl3: 3,
+    SURP: 2,
+    RAS: 1,
+    RINT: 0,
   };
-  const colIndexMap = {"INF": 1, "AN": 2, "AX1": 3, "AX2": 4, "AE1": 5, "AE2": 6, "AE3": 7, "AE4": 8, "ST": 9};
-  
+
   const data_dumbbell = [
-    {"var":rowIndexMap["RINT"],
-      "P1":colIndexMap["AX1"],
-      "P2":colIndexMap["AE3"],
-    },
-    {"var":rowIndexMap["RAS"],
-      "P1":colIndexMap["AN"],
-      "P2":colIndexMap["ST"],
-    },
-    {"var":rowIndexMap["SURP"],
-      "P1":colIndexMap["ST"],
-      "P2":null,
-    },
-    
-    {"var":rowIndexMap["FeCl3"],
-      "P1":colIndexMap["AE3"],
-      "P2":null,
-    }
+    { var: tubeRawLabels[rowIndexMap["RINT"]], y: 3, x: 2 },
+    { var: tubeRawLabels[rowIndexMap["RAS"]], y: 2, x: 1.3 },
+    { var: tubeRawLabels[rowIndexMap["SURP"]], y: 1, x: 8 },
+    { var: tubeRawLabels[rowIndexMap["FeCl3"]], y: 0, x: 6 },
   ];
 
-  console.log(data_dumbbell);
-  
+  const data_dumbbell2 = [
+    { var: tubeRawLabels[rowIndexMap["RINT"]], y: 3, x: 6 },
+    { var: tubeRawLabels[rowIndexMap["RAS"]], y: 2, x: 8 },
+  ];
+
+  const linea_RINT = [
+    { var: tubeRawLabels[rowIndexMap["RINT"]], y: 3, x: 2 },
+    { var: tubeRawLabels[rowIndexMap["RINT"]], y: 3, x: 6 },
+  ];
+  const linea_RAS= [
+    { var: tubeRawLabels[rowIndexMap["RAS"]], y: 2, x: 1.3 },
+    { var: tubeRawLabels[rowIndexMap["RAS"]], y: 2, x: 8 },
+  ];
+
   return (
     <div className="w-full h-72">
       <ResponsiveContainer width="100%" height="100%">
@@ -278,9 +281,9 @@ const CustomYAxisTick3 = (props: {
               <Line
                 type="monotone"
                 dataKey="y"
-                stroke="#1e3a8a"
-                activeDot={showPoints ? { r: 5 } : undefined}
-                dot={showPoints}
+                stroke="#082464"
+                dot={false}
+                strokeWidth={4}
               />
             </LineChart>
           ) : (
@@ -323,72 +326,57 @@ const CustomYAxisTick3 = (props: {
               <Scatter
                 name="Data Points"
                 data={data}
-                fill="#1e3a8a"
+                fill="#082464"
                 shape={showPoints ? CustomScatterShape : "circle"} // Show cross shape when showPoints is true
               />
             </ScatterChart>
           )
         ) : (
           //esto es si es tube chart
-          <ScatterChart margin={{ top: 30, right: 0, left: 15, bottom: 20 }}>
+            <ComposedChart margin={{ top: 20, right: 10, left: 12, bottom: 50 }}>
             <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
             <XAxis
               dataKey="x"
-              type="category"
-              axisLine={true}
-              tickLine={true}
-              tickCount={headers.length}
+              type="number"
+              ticks={[0, 1, 2, 3, 4, 5, 6, 7,8]}
+              axisLine={false}
+              tickLine={false}
               tick={(props) => <CustomXAxisTick {...props} />}
               orientation="top"
             />
-              <YAxis
-                dataKey="y"
-                type="number"
-                ticks={[0, 1, 2, 3]}
-                orientation="left"
-                axisLine={false}
-                tickLine={false}
-                tick={(props) => <CustomYAxisTick3 {...props} />}
-              />
-            {/* {showPoints && (
             <YAxis
               dataKey="y"
               type="number"
               domain={[4, 0]}
-              yAxisId="right"
-              orientation="right"
+              ticks={[3, 2, 1, 0]}
+              orientation="left"
               axisLine={false}
-              tickLine={true}
-              tick={(props) => (
-                <CustomYAxisTick2 {...props} metrics={metrics} />
-              )}
+              tickLine={false}
+              tick={(props) => <CustomYAxisTick3 {...props} />}
             />
-          )} */}
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter
-              name="Data Points"
-              data={data_dumbbell}
-              fill="#1e3a8a"
+            <Line
+              type="bump"
+              dataKey="y"
+              data={linea_RINT}
+              stroke="#082464"
+              strokeWidth={5} // Set the line width here
+              dot={false} // Hide the dot
             />
-          </ScatterChart>
-          //crea una linea
+            <Line
+              type="bump"
+              dataKey="y"
+              data={linea_RAS}
+              stroke={showPoints?"#f8f4f4":"#082464"}
+              fill="white"
+              dot={false} // Hide the dot
+              strokeWidth={5} // Set the line width here
+            />
+            <Scatter name="Data Points" data={data_dumbbell} shape={(props:ScatterPointItem) => <><circle cx={props.cx} cy={props.cy} r={10} fill="white" /><circle cx={props.cx} cy={props.cy} r={6} fill="#082464" /></>}/>
+            <Scatter name="Data Points" data={data_dumbbell2} shape={(props:ScatterPointItem) => <><circle cx={props.cx} cy={props.cy} r={10} fill="#082464" /><circle cx={props.cx} cy={props.cy} r={6} fill="white" /></>}/>
+            </ComposedChart>
         )}
       </ResponsiveContainer>
     </div>
-  );
-};
-
-const CustomScatterShape2 = (props: ScatterPointItem) => {
-  const { cx, cy, payload } = props;
-  // Validación de datos para evitar errores
-  if (cx === undefined || cy === undefined || payload.value === undefined) {
-    return <></>; // No renderizar nada si los datos son inválidos
-  }
-  // Renderizar el círculo y la línea
-  return (
-    <>
-  <circle cx={cx} cy={cy} r={5} fill="#1e3a8a" />
-    </>
   );
 };
 
