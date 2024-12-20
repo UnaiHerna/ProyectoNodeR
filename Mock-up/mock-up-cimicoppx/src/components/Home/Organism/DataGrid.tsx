@@ -1,5 +1,5 @@
 import React from "react";
-import ScatterChartComponent from "./ScatterChart2";
+import ScatterChartComponent from "./ScatterChart";
 
 const rowLabels = ["TSS", "ORP", "N-NO3", "N-NH4", "DO"];
 const headers = ["INF", "AN", "AX", "AX", "AE", "AE", "AE", "AE", "ST"];
