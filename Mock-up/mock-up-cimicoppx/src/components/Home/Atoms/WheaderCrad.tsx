@@ -11,7 +11,7 @@ type WeatherCardProps = {
 const WeatherCard: React.FC<WeatherCardProps> = ({ time, temperature, isSelected }) => {
   return (
     <div
-      className={`flex flex-col -mt-0 items-center px-7 py-5 gap-4 rounded-lg shadow-2xl ${
+      className={`flex flex-col -mt-0  items-center px-7 py-5 gap-4 rounded-lg shadow-2xl ${
         isSelected ? 'bg-[#f2f2f2] text-[#595959] font-bold font-roboto text-[14pt]' : 'bg-[#ffffff] font-roboto text-[10pt] text-[#595959]'
       }`}
     >
@@ -21,5 +21,5 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ time, temperature, isSelected
     </div>
   );
 };
-
+// aqui
 export default WeatherCard;

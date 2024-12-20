@@ -7,13 +7,15 @@ interface MapAndChartProps {
   handleChartClick: () => void;
   handleSpanClick: () => void;
   activeButton: string; // Recibe el estado activo del botón
+  activeDataType: string;
 }
 
 const MapAndChart: React.FC<MapAndChartProps> = ({
   handleMapClick,
   handleChartClick,
   handleSpanClick,
-  activeButton
+  activeButton,
+  activeDataType
 }) => {
   return (
     <div className="flex items-center space-x-2">
@@ -36,7 +38,7 @@ const MapAndChart: React.FC<MapAndChartProps> = ({
       {/* Ícono del gráfico clicable */}
       <button
         onClick={handleChartClick}
-        className={`text-[1.5rem] focus:outline-none ${activeButton === "chart" ? "text-[#002060]" : "text-[#cfcfcf75]"}`}
+        className={`text-[1.5rem] focus:outline-none ${activeButton === "chart" ? "text-[#002060]" : "text-[#cfcfcf75]"} ${activeDataType=="ww"?"visible":"invisible"}`}
       >
         <PiChartLine />
       </button>

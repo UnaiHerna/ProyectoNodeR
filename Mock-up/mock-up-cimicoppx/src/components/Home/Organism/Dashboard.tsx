@@ -11,39 +11,39 @@ import CylinderAndLine from "../Atoms/CylinderAndLine";
 import NavigationControls from "../Atoms/NavigationsControl";
 
 const Dashboard: React.FC = () => {
-  // State to control whether to show points or numbers in DataGrid
   const [showPoints, setShowPoints] = useState(false);
   const [showLine, setShowLine] = useState(false);
-
-  // State to control which button is active (set to "span" by default)
+  const [activeDataType, setActiveDataType] = useState("ww");
   const [activeButton, setActiveButton] = useState<string>("map");
 
   const handleMapClick = () => {
     console.log("Map marker clicked in MapAndChart");
-    setShowPoints(false); // Set to show points
+    setShowPoints(false);
     setShowLine(false);
-    setActiveButton("map"); // Set active button to "map"
+    setActiveButton("map");
   };
   
   const handleSpanClick = () => {
     console.log("Span clicked in MapAndChart");
-    setShowPoints(true); // Set to show numbers
+    setShowPoints(true);
     setShowLine(false);
-    setActiveButton("span"); // Set active button to "span"
+    setActiveButton("span");
   };
 
   const handleChartClick = () => {
     console.log("Chart icon clicked in MapAndChart");
-    setActiveButton("chart"); // Set active button to "chart"
+    setActiveButton("chart");
     setShowPoints(false);
     setShowLine(true);
   };
 
   const handleWWIconClick = () => {
+    setActiveDataType("ww");
     console.log("WWIcon clicked in CylinderAndLine");
   };
 
   const handleTubeIconClick = () => {
+    setActiveDataType("tube");
     console.log("TubeIcon clicked in CylinderAndLine");
   };
 
@@ -52,8 +52,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
-      {/* Tarjeta con gráfico de caudal */}
+    <div className="grid grid-rows-4 grid-cols-1  lg:grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
       <Card
         title={
           <TitleSelection
@@ -65,20 +64,19 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-3 bg-white"
+        className="row-span-2 col-span-3  bg-white"
       >
-        <div className="w-full h-full">
+        <div className="w-full h-[80%]">
           <FlowRateChart />
         </div>
       </Card>
 
-      {/* Tarjeta de calidad */}
       <Card
         title={
           <TitleSelection
             title="Performance"
             additionalLabels={
-              <section className="mb-[8px]">
+              <section className="lg:mb-[8px] w-full h-full">
                 <DotsCircle />
               </section>
             }
@@ -89,7 +87,6 @@ const Dashboard: React.FC = () => {
         <PerformanceBody />
       </Card>
 
-      {/* Tarjeta del clima */}
       <Card
         title={
           <TitleSelection
@@ -101,27 +98,28 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-2"
+        className="row-span-2 col-span-1 lg:col-span-2"
       >
         <WeatherForecast />
       </Card>
 
-      {/* Tarjeta de notificaciones */}
       <Card
         title={
           <TitleSelection
             title="Online sensors"
             additionalLabels={
-              <section className="w-full p-1 flex flex-row gap-48 align-middle justify-center items-center">
+              <section className="w-full p-1 flex flex-col lg:flex-row gap-4 lg:gap-48 align-middle justify-center items-center">
                 <MapAndChart 
                   handleMapClick={handleMapClick}
                   handleChartClick={handleChartClick}
                   handleSpanClick={handleSpanClick}
-                  activeButton={activeButton} // Pass activeButton to MapAndChart
+                  activeButton={activeButton}
+                  activeDataType={activeDataType}
                 />
                 <CylinderAndLine 
                   handleWWIconClick={handleWWIconClick} 
                   handleTubeIconClick={handleTubeIconClick} 
+                  activeDataType={activeDataType}
                 />
                 <div className="flex flex-col space-y-4">
                   <NavigationControls 
@@ -133,9 +131,9 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-2 bg-white p-0 m-0"
+        className="row-span-2 col-span-1 lg:col-span-2 bg-white p-0 m-0"
       >
-        <DataGrid showPoints={showPoints} showLine={showLine}/> {/* Pass showPoints as prop */}
+        <DataGrid showPoints={showPoints} showLine={showLine} activeDataType={activeDataType}/>
       </Card>
     </div>
   );

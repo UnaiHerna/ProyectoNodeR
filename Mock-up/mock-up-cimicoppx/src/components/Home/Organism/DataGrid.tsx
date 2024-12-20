@@ -1,5 +1,5 @@
 import React from "react";
-import ScatterChartComponent from "./ScatterChart";
+import ScatterChartComponent from "./ScatterChart2";
 
 const rowLabels = ["TSS", "ORP", "N-NO3", "N-NH4", "DO"];
 const headers = ["INF", "AN", "AX", "AX", "AE", "AE", "AE", "AE", "ST"];
@@ -26,7 +26,7 @@ const scatterData = [
   { x: 8, y: rowIndexMap["TSS"], value: 1, metric: "mg/L" },
 ];
 
-const DataGrid: React.FC<{ showPoints: boolean, showLine: boolean }> = ({ showPoints, showLine }) => {
+const DataGrid: React.FC<{ showPoints: boolean, showLine: boolean, activeDataType: string, }> = ({ showPoints, showLine, activeDataType }) => {
   return (
     <div className="flex w-full h-full">
       <div className="w-full">
@@ -38,6 +38,7 @@ const DataGrid: React.FC<{ showPoints: boolean, showLine: boolean }> = ({ showPo
             headers={headers}  
             showPoints={showPoints}  // Pass showPoints as a prop
             showLine={showLine}
+            activeDataType={activeDataType}
           />
         </div>
       </div>

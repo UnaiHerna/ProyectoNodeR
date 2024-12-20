@@ -13,7 +13,7 @@ export default function Body() {
   });
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <NavBar_ />
       <section className="bg-cimico mt-1 w-13 h-auto flex flex-row justify-between">
         <LocationSelector />
@@ -21,10 +21,10 @@ export default function Body() {
           {currentDate}
         </h2>
       </section>
-      <section>
+      <section className="h-screen mt-5">
         <Dashboard />
       </section>
       <Footer />
-    </>
+    </div>
   );
 }
