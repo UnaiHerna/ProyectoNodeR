@@ -59,7 +59,7 @@ interface LineChartComponentProps {
         return (
           <g transform={`translate(${x},${y - 15})`}>
             <foreignObject x={-40} y={-25} width={88} height={30} stroke="red">
-              <div className="flex justify-center items-center w-full h-full">
+              <div className="flex justify-center items-center w-full h-full ">
                 {payload.value == 4 && showLine && activeDataType !== "tube" ? (
                   <SensorButton
                     label={label}
@@ -97,7 +97,7 @@ interface LineChartComponentProps {
         return (
           <g transform={`translate(${x},${y})`}>
             <foreignObject x={-65} y={-15} width={80} height={30}>
-              <div className="flex text-start items-center w-full h-full">
+              <div className="flex text-start items-center w-full h-full pl-1">
                 {showLine && label == "DO" ? (
                   <SensorButton
                     label={label}

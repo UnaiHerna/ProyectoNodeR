@@ -20,7 +20,7 @@ export default function NavBar() {
             <div key={index} className="relative flex items-center">
               <Link
                 to={`/${nav.toLowerCase()}`}
-                className={`text-base font-lato ${
+                className={`text-base sm:text-sm md:text-medium lg:text-large xl:text-xl 2xl:text-xl font-lato ${
                   location.pathname === `/${nav.toLowerCase()}`
                     ? "text-white" // Color para el enlace activo
                     : "text-[#0070C0]" // Color gris para los enlaces no activos

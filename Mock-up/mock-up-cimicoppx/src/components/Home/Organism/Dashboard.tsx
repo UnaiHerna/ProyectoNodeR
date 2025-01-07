@@ -52,19 +52,19 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-rows-4 grid-cols-1  lg:grid-cols-4 gap-6 p-4 bg-white h-[95%] w-[95%] ml-10">
+    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-full w-auto">
       <Card
         title={
           <TitleSelection
             title="Influent flow rate – m³/h"
             additionalLabels={
-              <section className="mb-[8px]">
+              <section className="mb-[55px]">
                 <DotsCircle />
               </section>
             }
           />
-        }
-        className="row-span-2 col-span-3  bg-white"
+        } /* breakpoint grid para influent rate*/
+        className="row-span-2 col-span-3 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3 2xl:col-span-3 bg-white"
       >
         <div className="w-full h-[80%]">
           <FlowRateChart />
@@ -82,7 +82,8 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-1 bg-white"
+        /* breakpoint grid para Performance*/
+        className="row-span-2 col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1 bg-white"
       >
         <PerformanceBody />
       </Card>
@@ -98,7 +99,8 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-1 lg:col-span-2"
+        /* breakpoint grid para wheather info*/
+        className="row-span-2 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2"
       >
         <WeatherForecast />
       </Card>
@@ -131,7 +133,8 @@ const Dashboard: React.FC = () => {
             }
           />
         }
-        className="row-span-2 col-span-1 lg:col-span-2 bg-white p-0 m-0"
+        /* breakpoint grid para online sensors*/
+        className="row-span-2 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2 bg-white p-0 m-0"
       >
         <DataGrid showPoints={showPoints} showLine={showLine} activeDataType={activeDataType}/>
       </Card>

@@ -22,7 +22,7 @@ const MapAndChart: React.FC<MapAndChartProps> = ({
       {/* Ícono de mapa clicable */}
       <button
         onClick={handleMapClick}
-        className={`focus:outline-none ${activeButton === "map" ? "text-[#002060]" : "text-[#f2f2f2]"}`}
+        className={`focus:outline-none ${activeButton === "map" ? "text-[#002060]" : (activeButton === "chart" && activeDataType!== "ww" ? "text-[#002060]" : "text-[#f2f2f2]")}`}
       >
         <FaMapMarkerAlt />
       </button>

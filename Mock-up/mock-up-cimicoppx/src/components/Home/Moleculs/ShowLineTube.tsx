@@ -37,7 +37,7 @@ const ShowLineWW: React.FC<LineChartComponentProps> = ({
     return (
       <g transform={`translate(${x},${y - 15})`}>
         <foreignObject x={-40} y={-25} width={88} height={30} stroke="red">
-          <div className="flex justify-center items-center w-full h-full">
+          <div className="flex justify-center items-center w-full h-full pl-1">
             {payload.value == 4 && showLine ? (
               <SensorButton
                 label={label}

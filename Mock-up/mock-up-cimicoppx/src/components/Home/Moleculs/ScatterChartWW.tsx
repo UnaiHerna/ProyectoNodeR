@@ -60,7 +60,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
     return (
       <g transform={`translate(${x},${y})`}>
         <foreignObject x={-65} y={-15} width={80} height={30}>
-          <div className="flex text-start items-center w-full h-full">
+          <div className="flex pl-1 text-start items-center w-full h-full">
             <SensorButton
               label={label}
               className="rounded-md self-start text-start w-16 bg-gray-100"
@@ -124,7 +124,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
           textAnchor="middle"
           fill="#002060"
           fontFamily="Lato"
-          fontSize="12pt"
+          fontSize="16.8pt"
         >
           {payload.value}
         </text>
@@ -171,7 +171,12 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
         name="Data Points"
         data={data}
         fill="#082464"
-        shape={showPoints ? CustomScatterShape : "circle"} // Show cross shape when showPoints is true
+        fontSize={17}
+        shape={showPoints ? CustomScatterShape : (props: ScatterPointItem)=>(
+          <>
+          <circle cx={props.cx} cy={props.cy} r={6} fill="#082464" />
+          </>
+        )} // Show custom when showPoints(show numbers) is true
       />
     </ScatterChart>
     </ResponsiveContainer>

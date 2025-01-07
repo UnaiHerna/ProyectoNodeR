@@ -39,7 +39,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
             <ScatterChartWW metrics={metrics} showPoints={showPoints}  activeDataType={activeDataType} data={data} headers={headers} rowLabels={rowLabels} showLine />
           )
         ) : (
-          // Render TubeChart
+          // Render TubeChartw
           <TubeChart activeDataType={activeDataType} headers={headers} showLine={showLine} showPoints={showPoints} />
         )}
       </ResponsiveContainer>
