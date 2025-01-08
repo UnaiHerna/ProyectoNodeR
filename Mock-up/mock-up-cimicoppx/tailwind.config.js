@@ -24,9 +24,7 @@ export default {
         aptos: ['Aptos', 'sans-serif'],
       },
       screens: {
-        md: { min: '768px', max: '1419px' }, // Rango exclusivo para pantallas medianas
-        lg: { min: '1420px', max: '2080px' }, // Rango exclusivo para pantallas grandes
-        xl: { min: '1280px' },               // Pantallas a partir de 1280px
+        '3xl': '1920px', // Misma medida que 2xl o mayor
       },
     },
   },

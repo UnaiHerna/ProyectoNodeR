@@ -26,7 +26,7 @@ const scatterData = [
   { x: 8, y: rowIndexMap["TSS"], value: 1, metric: "mg/L" },
 ];
 
-const DataGrid: React.FC<{ showPoints: boolean, showLine: boolean, activeDataType: string, }> = ({ showPoints, showLine, activeDataType }) => {
+const   DataGrid: React.FC<{ showPoints: boolean, showLine: boolean, activeDataType: string, }> = ({ showPoints, showLine, activeDataType }) => {
   return (
     <div className="flex w-full h-full">
       <div className="w-full">

@@ -13,7 +13,7 @@ export default function Body() {
   });
 
   return (
-    <div className="flex flex-col h-screen bg-red-100 sm:bg-red-300 md:bg-red-500 lg:bg-red-700 xl:bg-red-900 2xl:bg-orange-400">
+    <div className="flex flex-col h-screen bg-red-100 sm:bg-red-300 md:bg-red-500 lg:bg-red-700 xl:bg-green-500 2xl:bg-rose-600 ">
       <NavBar_ />
       <section className="bg-cimico mt-1 sm:mt-1 md:mt-1 lg:mt-1 xl:mt-1 2xl:mt-1  w-full h-auto flex flex-row justify-between">
         <LocationSelector />

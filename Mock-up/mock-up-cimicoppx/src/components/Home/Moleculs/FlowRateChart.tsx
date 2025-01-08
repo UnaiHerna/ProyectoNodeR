@@ -10,7 +10,7 @@ interface ForecastData {
   lowerBound: number;
 }
 
-const ForecastChart = () => {
+const FlowRateChart = () => {
   // Tipar el json de forecast_json
   const datosPronostico: ForecastData[] = forecast_json;
 
@@ -24,11 +24,14 @@ const ForecastChart = () => {
   const indiceInicioPronostico = Math.floor(datosPronostico.length * 0.4);
 
   return (
-    <div className="w-full h-full">
-      <ArrowButton
-        direction="back"
-        className="absolute left-0 text-[#002060] p-[10px] mt-28 ml-9 z-10"
-      />
+    <div className="w-full h-full bg-red-200 2xl:bg-violet-100">
+      <section className="flex flex-row justify-between w-full h-auto absolute top-80 z-10 left-0">
+        <ArrowButton direction="back" className=" text-[#002060] 2xl:p-[10px] " />
+        <ArrowButton
+          direction="back"
+          className="  text-[#002060] p-[10px]  invisible"
+        />
+      </section>
       <Plot
         data={[
           // Trazado 0: Área sombreada (límites superior e inferior)
@@ -67,7 +70,7 @@ const ForecastChart = () => {
                 .map((_, i) =>
                   i === indiceInicioPronostico ? "#FFD700" : "#1f77b4"
                 ),
-              size: 15,
+              size: 18,
               line: { color: "white", width: 5 },
             },
             name: "Datos Reales",
@@ -108,7 +111,7 @@ const ForecastChart = () => {
                   .slice(indiceInicioPronostico)
                   .map(() => "gray"),
               ],
-              size: 14,
+              size: 18,
               line: { color: "white", width: 3 },
             },
             name: "Pronostico",
@@ -128,7 +131,7 @@ const ForecastChart = () => {
           xaxis: {
             fixedrange: true,
             range: [-0.2, 23],
-            dtick: 1,
+            dtick: 18,
             visible: true,
             showgrid: false,
             zeroline: false,
@@ -144,7 +147,7 @@ const ForecastChart = () => {
             }),
             tickangle: 0,
             tickfont: {
-              size: 16,
+              size: 20,
               family: "Lato",
             },
             side: "top",
@@ -156,13 +159,13 @@ const ForecastChart = () => {
             zeroline: false,
           },
           showlegend: false,
-          margin: { t: 25, l: 8, r: 0, b: 0 },
+          margin: { t: 35, l: 0, r: 0, b: 0 },
         }}
         config={{ displayModeBar: false }}
-        className="w-full ml-1 h-full"
+        className="w-full  2xl:ml-1 3xl:ml-1 h-full"
       />
     </div>
   );
 };
 
-export default ForecastChart;
+export default FlowRateChart;

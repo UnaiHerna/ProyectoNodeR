@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Influent flow rate – m³/h"
             additionalLabels={
-              <section className="mb-[55px]">
+              <section className="mb-[9px]">
                 <DotsCircle />
               </section>
             }
@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
         } /* breakpoint grid para influent rate*/
         className="row-span-2 col-span-3 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3 2xl:col-span-3 bg-white"
       >
-        <div className="w-full h-[80%]">
+        <div className="md:h-[80%] lg:h-[80%] xl:h-[80%] 2xl:h-[90%] w-full bg-red-200 2xl:bg-violet-300">
           <FlowRateChart />
         </div>
       </Card>
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
               </section>
             }
           />
-        }
+        } /*aqui */
         /* breakpoint grid para Performance*/
         className="row-span-2 col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1 bg-white"
       >

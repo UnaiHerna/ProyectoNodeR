@@ -28,7 +28,7 @@ const Body: React.FC = () => {
   });
 
   return (
-    <div className="p-8 w-full pt-20">
+    <div className="p-0 w-full pt-0">
       <div className="flex flex-row w-full justify-between pb-4">
         <h1 className="text-black font-pt-sans text-2xl font-bold leading-normal self-end"></h1>
         <ul className="flex flex-row-reverse gap-4">
