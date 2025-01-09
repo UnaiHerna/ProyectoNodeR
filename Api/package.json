@@ -12,6 +12,7 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.77",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "echarts": "^5.5.1",
