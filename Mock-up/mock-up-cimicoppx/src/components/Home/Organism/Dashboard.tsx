@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
                   />
                 </div>
               </section>
-            }
+            } 
           />
         }
         /* breakpoint grid para online sensors*/
@@ -141,5 +141,5 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
+ 
 export default Dashboard;

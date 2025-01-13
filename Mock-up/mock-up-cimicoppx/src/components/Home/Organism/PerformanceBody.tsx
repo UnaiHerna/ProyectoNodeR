@@ -9,12 +9,12 @@ interface StatsCardProps {
 
 const StatsCard: React.FC<StatsCardProps> = ({ title, value }) => {
   return (
-    <section className="flex flex-col text-white font-lato lg:py-2 lg:text-[10pt] text-start w-full">
-      <div className="bg-[#156082] text-white font-lato lg:py-2 lg:text-[13pt] shadow-xl p-1">
+    <section className="flex flex-col gap-1 p-1 text-white font-lato lg:pb-2 md:text-medium sm:text-small lg:text-[17pt] xl:text-xl 2xl:text-2xl text-start w-full">
+      <div className="bg-[#156082] text-white font-lato lg:py-0.5 md:text-medium sm:text-small lg:text-small xl:text-medium 2xl:text-medium shadow-xl p-1">
         {title}
       </div>
-      <div className="bg-white shadow-xl  lg:w-28 text-center flex flex-col h-auto lg:mt-[4px]">
-        <div className="text-[#3B7D23] font-lato lg:text-[24pt] text-center font-bold">
+      <div className="bg-white shadow-xl w-full text-center h-auto">
+        <div className="text-[#3B7D23] font-lato lg:text-[28pt] w-full p-2 text-center font-bold">
           {value}
         </div>
       </div>
@@ -75,17 +75,17 @@ const PerformanceBody: React.FC = () => {
   const currentData = chartData[activeIndex];
 
   return (
-    <div className="flex space-y-6 flex-col w-hull h-full">
+    <div className="flex bg-red-200 flex-col w-hull h-full">
       <section className="flex flex-row justify-center gap-2 mt-2 relative">
         <IconButton direction="back" onClick={handleBack} />
 
         {cardData.map((card, index) => (
-          <div key={index} className="relative flex flex-col items-center">
+          <div key={index} className="relative flex flex-col items-center w-full h-auto">
             <StatsCard title={card.title} value={card.value} />
             <span
-              className={`absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 h-[2px] transition-all duration-300 ${
+              className={`absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 h-auto w-full transition-all duration-300 ${
                 activeIndex === index
-                  ? "block bg-cimicoLine h-[7px] w-[7rem]"
+                  ? "block bg-cimicoLine  lg:h-[7px] w-auto "
                   : "hidden"
               }`}
             ></span>
@@ -95,7 +95,7 @@ const PerformanceBody: React.FC = () => {
         <IconButton direction="forward" onClick={handleNext} />
       </section>
 
-      <div className="lg:w-52 lg:h-32 lg:ml-6 lg:-top-2 w-full h-full relative">
+      <div className="lg:w-52 lg:h-32 lg:ml-6 lg:-top-2 w-full h-full relative self-">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={currentData}>
             <Tooltip
@@ -132,7 +132,7 @@ const PerformanceBody: React.FC = () => {
             />
           </BarChart>
         </ResponsiveContainer>
-        <hr className="w-[22rem] bg-[#f8f4f4] h-[2px]" />
+        <hr className="w-full bg-[#f8f4f4] h-auto" />
       </div>
     </div>
   );
