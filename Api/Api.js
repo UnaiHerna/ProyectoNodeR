@@ -15,7 +15,6 @@ const { body, query, validationResult } = require('express-validator');
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
 const { Configuration, OpenAIApi } = require('openai');
-const prompts = require('./utils/prompts.js');
 const fetch = require('node-fetch');
 
 require('dotenv').config();
@@ -134,7 +133,7 @@ app.get('/python', async (req, res) => {
 app.get('/clima', async (req, res) => {
     const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
     const apiKey = process.env.AEMET_API_KEY;
-    const municipioId = '41091'; // Código de municipio para Ranilla
+    const municipioId = '41004'; // Código de municipio para Ranilla
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
@@ -174,8 +173,62 @@ app.get('/clima', async (req, res) => {
     }
 });
 
+app.get('/clima-horaria', async (req, res) => {
+    const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
+    const apiKey = process.env.AEMET_API_KEY;
+    const municipioId = '41004'; // Código de municipio para Ranilla
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
+    }
+
+    try {
+        // Obtener la URL con los datos de predicción horaria
+        const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`);
+        if (!response.ok) {
+            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Obtener los datos reales desde la URL proporcionada
+        const forecastResponse = await fetch(data.datos);
+        if (!forecastResponse.ok) {
+            throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
+        }
+
+        const forecastData = await forecastResponse.json();
+        console.log('Datos de predicción horaria:', forecastData);
+
+        // Procesar los datos correctamente
+        const forecastForNextHours = forecastData[0]?.prediccion?.dia.flatMap(day =>
+            day.estadoCielo.map((estado, index) => ({
+                fecha: day.fecha,
+                hora: `${index * 1}:00`, // AEMET organiza datos en intervalos de 3 horas
+                estadoCielo: estado.descripcion || 'Desconocido',
+                temperatura: day.temperatura[index]?.value || 'No disponible',
+                probabilidadPrecipitacion: day.probPrecipitacion[index]?.value || 0,
+            }))
+        );
+
+        if (!forecastForNextHours) {
+            throw new Error('No se encontraron datos de predicción horaria.');
+        }
+
+        res.status(200).json(forecastForNextHours);
+    } catch (error) {
+        console.error('Error obteniendo el clima:', error.message);
+        res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
+    }
+});
+
+
 app.get('/chat', (req, res) => {
     res.sendFile(path.join(__dirname, '../front-end/chat-prueba', 'index.html'));
+});
+
+app.get('/chatIA', (req, res) => {
+    res.sendFile(path.join(__dirname, '../front-end/chat-ia', 'index.html'));
 });
 
 app.get('/ia', async (req, res) => {
