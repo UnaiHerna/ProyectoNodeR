@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Weather info"
             additionalLabels={
-              <section className="mb-[8px]">
+              <section className="lg:mb-[8px]">
                 <DotsCircle />
               </section>
             }

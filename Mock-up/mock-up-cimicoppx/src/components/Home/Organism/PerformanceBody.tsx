@@ -10,7 +10,7 @@ interface StatsCardProps {
 const StatsCard: React.FC<StatsCardProps> = ({ title, value }) => {
   return (
     <section className="flex flex-col gap-1 p-1 text-white font-lato lg:pb-2 md:text-medium sm:text-small lg:text-[17pt] xl:text-xl 2xl:text-2xl text-start w-full">
-      <div className="bg-[#156082] text-white font-lato lg:py-0.5 md:text-medium sm:text-small lg:text-small xl:text-medium 2xl:text-medium shadow-xl p-1">
+      <div className="bg-[#156082] text-white font-lato lg:py-0.5 md:text-medium sm:text-small lg:text-small xl:text-medium 2xl:text-large shadow-xl p-1">
         {title}
       </div>
       <div className="bg-white shadow-xl w-full text-center h-auto">
@@ -75,7 +75,7 @@ const PerformanceBody: React.FC = () => {
   const currentData = chartData[activeIndex];
 
   return (
-    <div className="flex bg-red-200 flex-col w-hull h-full">
+    <div className="flex flex-col w-hull h-full space-y-9 md:space-y-12 lg:space-y-17 xl:space-y-20 2xl:space-y-12">
       <section className="flex flex-row justify-center gap-2 mt-2 relative">
         <IconButton direction="back" onClick={handleBack} />
 
@@ -95,8 +95,8 @@ const PerformanceBody: React.FC = () => {
         <IconButton direction="forward" onClick={handleNext} />
       </section>
 
-      <div className="lg:w-52 lg:h-32 lg:ml-6 lg:-top-2 w-full h-full relative self-">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="w-auto h-28 items-end ml-6">
+        <ResponsiveContainer width="50%" height="100%">
           <BarChart data={currentData}>
             <Tooltip
               cursor={false}
