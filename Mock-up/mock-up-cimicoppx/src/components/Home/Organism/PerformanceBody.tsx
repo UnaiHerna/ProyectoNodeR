@@ -14,7 +14,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value }) => {
         {title}
       </div>
       <div className="bg-white shadow-xl w-full text-center h-auto">
-        <div className="text-[#3B7D23] font-lato lg:text-[28pt] w-full p-2 text-center font-bold">
+        <div className="text-[#3B7D23] font-lato lg:text-[28pt] w-full p-4 text-center font-bold">
           {value}
         </div>
       </div>
@@ -75,8 +75,8 @@ const PerformanceBody: React.FC = () => {
   const currentData = chartData[activeIndex];
 
   return (
-    <div className="flex flex-col w-hull h-full space-y-9 md:space-y-12 lg:space-y-17 xl:space-y-20 2xl:space-y-12">
-      <section className="flex flex-row justify-center gap-2 mt-2 relative">
+    <div className="flex flex-col w-hull h-full gap-16">
+      <section className="flex flex-row justify-center gap-1 mt-5">
         <IconButton direction="back" onClick={handleBack} />
 
         {cardData.map((card, index) => (
@@ -95,7 +95,7 @@ const PerformanceBody: React.FC = () => {
         <IconButton direction="forward" onClick={handleNext} />
       </section>
 
-      <div className="w-auto h-28 items-end ml-6">
+      <div className="w-auto h-[40%] items-end ml-6">
         <ResponsiveContainer width="50%" height="100%">
           <BarChart data={currentData}>
             <Tooltip
@@ -122,7 +122,7 @@ const PerformanceBody: React.FC = () => {
             <Bar
               dataKey="value"
               fill="#e0f4d4"
-              barSize={13}
+              barSize={16}
               activeBar={{
                 fill: "#407c24", // Color de la barra activa
                 stroke: "#407c24",

@@ -140,7 +140,7 @@ const ShowLineWW: React.FC<LineChartComponentProps> = ({
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={data}
-        margin={{ top: 30, right: 40, left: 15, bottom: 20 }}
+        margin={{ top: 20, right: 40, left: 15, bottom: 0 }}
       >
         <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
         <XAxis

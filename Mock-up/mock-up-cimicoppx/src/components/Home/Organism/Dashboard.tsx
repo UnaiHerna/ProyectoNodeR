@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-full w-auto">
+    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-full w-full">
       <Card
         title={
           <TitleSelection
@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
         } /* breakpoint grid para influent rate*/
         className="row-span-2 col-span-3 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3 2xl:col-span-3 bg-white"
       >
-        <div className="md:h-[80%] lg:h-[80%] xl:h-[80%] 2xl:h-[90%] w-full bg-red-200 2xl:bg-violet-300">
+        <div className="md:h-[80%] lg:h-[80%] xl:h-[80%] 2xl:h-[90%] w-full">
           <FlowRateChart />
         </div>
       </Card>
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
           />
         }
         /* breakpoint grid para wheather info*/
-        className="row-span-2 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2"
+        className="row-span-2 col-span-2 bg-red-50 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2"
       >
         <WeatherForecast />
       </Card>
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Online sensors"
             additionalLabels={
-              <section className="w-full p-1 flex flex-col lg:flex-row gap-4 lg:gap-48 align-middle justify-center items-center">
+              <section className="w-full h-auto  -mt-12 flex flex-col lg:flex-row align-middle justify-center  md:gap-10 lg:gap-16 xl:gap-20 2xl:gap-56 items-center">
                 <MapAndChart 
                   handleMapClick={handleMapClick}
                   handleChartClick={handleChartClick}

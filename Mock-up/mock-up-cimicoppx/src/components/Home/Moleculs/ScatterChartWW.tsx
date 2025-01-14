@@ -171,7 +171,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
         name="Data Points"
         data={data}
         fill="#082464"
-        fontSize={17}
+        fontSize={19}
         shape={showPoints ? CustomScatterShape : (props: ScatterPointItem)=>(
           <>
           <circle cx={props.cx} cy={props.cy} r={6} fill="#082464" />

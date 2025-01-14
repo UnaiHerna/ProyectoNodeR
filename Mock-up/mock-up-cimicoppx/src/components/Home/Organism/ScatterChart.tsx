@@ -27,7 +27,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
 }) => {
    
   return (
-    <div className="w-full h-72">
+    <div className="w-full h-[19rem] flex items-center justify-center mt-3">
       <ResponsiveContainer width="100%" height="100%">
         {/* Conditionally render either ScatterChart or LineChart */}
         {activeDataType !== "tube" ? (

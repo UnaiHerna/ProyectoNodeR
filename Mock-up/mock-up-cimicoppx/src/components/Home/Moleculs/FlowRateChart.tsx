@@ -24,7 +24,7 @@ const FlowRateChart = () => {
   const indiceInicioPronostico = Math.floor(datosPronostico.length * 0.4);
 
   return (
-    <div className="w-full h-full bg-red-200 2xl:bg-violet-100">
+    <div className="w-full h-full">
       <section className="flex flex-row justify-between w-full h-auto absolute top-80 z-10 left-0">
         <ArrowButton direction="back" className=" text-[#002060] 2xl:p-[10px] " />
         <ArrowButton
@@ -162,7 +162,7 @@ const FlowRateChart = () => {
           margin: { t: 35, l: 0, r: 0, b: 0 },
         }}
         config={{ displayModeBar: false }}
-        className="w-full  2xl:ml-1 3xl:ml-1 h-full"
+        className="w-[100.3%] h-full"
       />
     </div>
   );
