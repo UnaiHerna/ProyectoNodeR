@@ -13,15 +13,15 @@ export default function Body() {
   });
 
   return (
-    <div className="flex flex-col h-screen bg-red-100 sm:bg-red-300 md:bg-red-500 lg:bg-red-700 xl:bg-green-500 2xl:bg-rose-600 ">
+    <div className="flex flex-col h-screen overflow-hidden">
       <NavBar_ />
-      <section className="bg-cimico mt-1 sm:mt-1 md:mt-1 lg:mt-1 xl:mt-1 2xl:mt-1  w-full h-auto flex flex-row justify-between">
+      <section className="bg-cimico mt-1 w-full flex flex-row justify-between flex-shrink-0">
         <LocationSelector />
         <h2 className="font-roboto font-bold text-[12pt] text-center self-center text-white mr-[8rem]">
           {currentDate}
         </h2>
       </section>
-      <section className="h-screen mt-5">
+      <section className="flex-grow overflow-hidden">
         <Dashboard />
       </section>
       <Footer />

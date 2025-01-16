@@ -75,7 +75,7 @@ const PerformanceBody: React.FC = () => {
   const currentData = chartData[activeIndex];
 
   return (
-    <div className="flex flex-col w-hull h-full gap-16">
+    <div className="flex flex-col w-hull h-full gap-5">
       <section className="flex flex-row justify-center gap-1 mt-5">
         <IconButton direction="back" onClick={handleBack} />
 

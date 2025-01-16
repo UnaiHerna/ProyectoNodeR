@@ -133,7 +133,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="90%">
         <ScatterChart margin={{ top: 20, right: 0, left: 12, bottom: 40 }}>
       <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
       <XAxis

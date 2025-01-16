@@ -22,7 +22,7 @@ const MapAndChart: React.FC<MapAndChartProps> = ({
       {/* Ícono de mapa clicable */}
       <button
         onClick={handleMapClick}
-        className={`focus:outline-none ${activeButton === "map" ? "text-[#002060]" : (activeButton === "chart" && activeDataType!== "ww" ? "text-[#002060]" : "text-[#f2f2f2]")}`}
+        className={`focus:outline-none ${activeButton === "map" || activeButton === "span" ? "text-[#002060]" : (activeButton === "chart" && activeDataType !== "ww" ? "text-[#002060]" : "text-[#f2f2f2]")}`}
       >
         <FaMapMarkerAlt />
       </button>
@@ -38,7 +38,7 @@ const MapAndChart: React.FC<MapAndChartProps> = ({
       {/* Ícono del gráfico clicable */}
       <button
         onClick={handleChartClick}
-        className={`text-[1.5rem] focus:outline-none ${activeButton === "chart" ? "text-[#002060]" : "text-[#cfcfcf75]"} ${activeDataType=="ww"?"visible":"invisible"}`}
+        className={`text-[1.5rem] focus:outline-none ${activeButton === "chart" ? "text-[#002060]" : "text-[#cfcfcf75]"} ${activeDataType === "ww" ? "visible" : "invisible"}`}
       >
         <PiChartLine />
       </button>

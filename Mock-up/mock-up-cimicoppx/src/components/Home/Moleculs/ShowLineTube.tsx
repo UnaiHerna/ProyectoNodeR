@@ -137,7 +137,7 @@ const ShowLineWW: React.FC<LineChartComponentProps> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="90%">
       <LineChart
         data={data}
         margin={{ top: 20, right: 40, left: 15, bottom: 0 }}
