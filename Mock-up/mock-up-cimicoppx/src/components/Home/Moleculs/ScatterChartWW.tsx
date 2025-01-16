@@ -174,6 +174,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
         fontSize={19}
         shape={showPoints ? CustomScatterShape : (props: ScatterPointItem)=>(
           <>
+           <circle cx={props.cx} cy={props.cy} r={10} fill="white" />
           <circle cx={props.cx} cy={props.cy} r={6} fill="#082464" />
           </>
         )} // Show custom when showPoints(show numbers) is true

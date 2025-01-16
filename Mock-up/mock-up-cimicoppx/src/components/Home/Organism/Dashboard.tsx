@@ -25,10 +25,10 @@ const Dashboard: React.FC = () => {
   
   const handleSpanClick = () => {
     console.log("Span clicked in MapAndChart");
-    setShowPoints(true);
+    setShowPoints((prevShowPoints) => !prevShowPoints);
     setShowLine(false);
-    setActiveButton("span");
-  };
+    setActiveButton((prevActiveButton) => (prevActiveButton === "span" ? "map" : "span"));
+};
 
   const handleChartClick = () => {
     console.log("Chart icon clicked in MapAndChart");
