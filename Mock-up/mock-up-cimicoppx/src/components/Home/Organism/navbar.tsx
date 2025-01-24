@@ -30,9 +30,9 @@ export default function NavBar() {
               </Link>
               {/* Underline for active link */}
               <span
-                className={`absolute bottom-[-4px] left-1/2 transform -translate-x-1/2 h-[2px] transition-all duration-300 ${
+                className={`absolute bottom-[-17px] left-1/2 transform -translate-x-1/2 h-[2px] transition-all duration-300 ${
                   location.pathname === `/${nav.toLowerCase()}`
-                    ? "block bg-cimicoLine h-[4px] w-[2rem]"
+                    ? "block bg-cimicoLine h-[9px] w-[2rem]"
                     : "hidden"
                 }`}
               ></span>
