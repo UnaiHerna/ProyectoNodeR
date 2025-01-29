@@ -13,7 +13,7 @@ export default function Today() {
   });
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen ">
       <NavBar />
       <section className="bg-cimico mt-1 w-full flex flex-row justify-between flex-shrink-0">
         <LocationSelector />
