@@ -122,9 +122,7 @@ const prompts = {
       sludge_prod FLOAT
   );
   
-  Texto: "\${text}"
-  
-  SQL:`,
+  Texto: "\${text}"`,
 };
 
 module.exports = prompts;
