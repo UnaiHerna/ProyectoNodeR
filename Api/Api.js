@@ -8,11 +8,15 @@ const sensorRoutes = require('./routes/sensor');
 const forecastRoutes = require('./routes/forecast'); 
 const userRoutes = require('./security/jwt');
 const externalRoutes = require('./routes/external');
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./docs/swagger');
+const { createServer } = require('http');
 
 require('dotenv').config();
 console.log('Clave API:', process.env.OPENAI_API_KEY); // Esto debería imprimir la clave
 
 const app = express();
+const server = createServer(app);
 
 // Middleware para manejar JSON
 app.use(express.json());
@@ -27,6 +31,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'], // Permitir todos los headers
 }));
 
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
 app.use('/datos/sensorvacio', sensorRoutes); 

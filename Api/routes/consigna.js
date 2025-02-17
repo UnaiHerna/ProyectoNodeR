@@ -4,26 +4,6 @@ const knex = require('../db/knex'); // Importa la configuración de Knex
 const redisClient = require('../db/redisClient');
 const moment = require('moment-timezone');
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     DatosConsigna:
- *       type: object
- *       properties:
- *         time:
- *           type: string
- *           description: El timestamp de los datos
- *         value:
- *           type: number
- *           description: El valor de la consigna
- *         mode:
- *           type: string
- *           description: El modo (Manual o Automático)
- *         consigna:
- *           type: string
- *           description: El nombre de la consigna
- */
 async function readDatosConsignaByNombre(consigna, startDate, endDate) {
     const cacheKey = `datos_consigna_${consigna}_${startDate}_${endDate}`;
     let cachedData = await redisClient.getCachedResponse(cacheKey);
@@ -56,14 +36,6 @@ async function readDatosConsignaByNombre(consigna, startDate, endDate) {
     return datos;
 }
 
-/**
- * Lee los datos de consigna por equipo desde la base de datos o la caché de Redis
- * 
- * @param {string} equipo - Nombre del equipo para filtrar
- * @param {string} startDate - Fecha de inicio para filtrar
- * @param {string} endDate - Fecha de fin para filtrar
- * @returns {Promise<Array>} - Una lista de datos de consigna
- */
 async function readDatosConsignaByEquipo(equipo, startDate, endDate) {
     const cacheKey = `datos_consigna_${equipo}_${startDate}_${endDate}`;
     let cachedData = await redisClient.getCachedResponse(cacheKey);
@@ -99,48 +71,66 @@ async function readDatosConsignaByEquipo(equipo, startDate, endDate) {
 
 /**
  * @swagger
- * /:
+ * /datos/consigna:
  *   get:
- *     summary: Obtiene los datos de consigna filtrados por nombre o equipo
- *     description: Filtra los datos de consigna según los parámetros proporcionados (nombre o equipo).
+ *     summary: Obtiene datos de consignas o equipos
+ *     description: Recupera datos filtrados por nombre de consigna o equipo, con fechas opcionales.
+ *     tags:
+ *       - Consignas
  *     parameters:
  *       - in: query
  *         name: nombre
- *         required: false
  *         schema:
  *           type: string
  *         description: Nombre de la consigna
  *       - in: query
+ *         name: nombres
+ *         schema:
+ *           type: string
+ *         description: Nombres de varias consignas separados por comas
+ *       - in: query
  *         name: equipo
- *         required: false
  *         schema:
  *           type: string
  *         description: Nombre del equipo
  *       - in: query
+ *         name: equipos
+ *         schema:
+ *           type: string
+ *         description: Nombres de varios equipos separados por comas
+ *       - in: query
  *         name: start_date
- *         required: false
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Fecha de inicio del rango
+ *         description: Fecha de inicio en formato ISO 8601
  *       - in: query
  *         name: end_date
- *         required: false
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Fecha de fin del rango
+ *         description: Fecha de fin en formato ISO 8601
  *     responses:
  *       200:
- *         description: Lista de datos de consigna filtrados
+ *         description: Datos de consignas o equipos
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/DatosConsigna'
+ *                 type: object
+ *                 properties:
+ *                   time:
+ *                     type: string
+ *                     format: date-time
+ *                   value:
+ *                     type: number
+ *                   mode:
+ *                     type: string
+ *                   consigna:
+ *                     type: string
  *       400:
- *         description: Parámetros incorrectos
+ *         description: Solicitud incorrecta
  *       500:
  *         description: Error interno del servidor
  */
@@ -172,34 +162,33 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /porcentaje:
+ * /datos/consigna/porcentaje:
  *   get:
- *     summary: Obtiene el porcentaje de modo de una consigna
- *     description: Calcula el porcentaje de modos (Automático y Manual) para una consigna dentro de un rango de fechas
+ *     summary: Obtiene el porcentaje de modos
+ *     description: Calcula el porcentaje de tiempo en modo automático y manual de una consigna.
+ *     tags:
+ *       - Consignas
  *     parameters:
  *       - in: query
  *         name: nombre
- *         required: true
  *         schema:
  *           type: string
  *         description: Nombre de la consigna
  *       - in: query
  *         name: start_date
- *         required: false
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Fecha de inicio del rango
+ *         description: Fecha de inicio en formato ISO 8601
  *       - in: query
  *         name: end_date
- *         required: false
  *         schema:
  *           type: string
  *           format: date-time
- *         description: Fecha de fin del rango
+ *         description: Fecha de fin en formato ISO 8601
  *     responses:
  *       200:
- *         description: Porcentaje de modos
+ *         description: Porcentaje de modos de la consigna
  *         content:
  *           application/json:
  *             schema:
@@ -212,7 +201,7 @@ router.get('/', async (req, res) => {
  *                 Manual:
  *                   type: string
  *       400:
- *         description: Parámetros incorrectos
+ *         description: Solicitud incorrecta
  *       500:
  *         description: Error interno del servidor
  */
@@ -264,15 +253,52 @@ router.get('/porcentaje', async (req, res) => {
     }
 });
 
-// Ruta para obtener promedio del modo
 /**
  * @swagger
- * /ruta:
+ * /datos/consigna/avg_modo:
  *   get:
- *     summary: Devuelve un ejemplo
+ *     summary: Obtiene el promedio del valor por modo
+ *     description: Calcula el promedio del valor de una consigna separando los modos Manual y Automático.
+ *     tags:
+ *       - Consignas
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         schema:
+ *           type: string
+ *         description: Nombre de la consigna
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de inicio en formato ISO 8601
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Fecha de fin en formato ISO 8601
  *     responses:
  *       200:
- *         description: Respuesta exitosa
+ *         description: Promedio del valor en cada modo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   avg:
+ *                     type: number
+ *                   consigna:
+ *                     type: string
+ *                   mode:
+ *                     type: string
+ *       400:
+ *         description: Solicitud incorrecta
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get('/avg_modo', async (req, res) => {
     const { nombre, start_date, end_date } = req.query;
