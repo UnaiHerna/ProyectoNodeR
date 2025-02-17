@@ -4,7 +4,61 @@ const { readDatosSensorByVariable } = require('../utils/readDatos'); // Asegúra
 const redisClient = require('../db/redisClient');
 const knex = require('../db/knex');
 
-// Nueva ruta para /datos/sensorvacio/
+/**
+ * @swagger
+ * /datos/sensor:
+ *   get:
+ *     summary: Obtiene datos de sensores
+ *     description: Recupera datos de un sensor específico basado en la variable, equipo y rango de fechas proporcionados.
+ *     tags:
+ *       - Sensores
+ *     parameters:
+ *       - in: query
+ *         name: variable
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nombre de la variable del sensor
+ *       - in: query
+ *         name: equipo
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nombre del equipo del sensor
+ *       - in: query
+ *         name: start_date
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: true
+ *         description: Fecha de inicio en formato ISO 8601
+ *       - in: query
+ *         name: end_date
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         required: true
+ *         description: Fecha de fin en formato ISO 8601
+ *       - in: query
+ *         name: tipo
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Tipo de datos opcional
+ *     responses:
+ *       200:
+ *         description: Datos obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: Faltan parámetros requeridos
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/', async (req, res) => {
     const { variable, equipo, start_date, end_date, tipo } = req.query;
 
@@ -22,6 +76,45 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /datos/sensor/heatmap:
+ *   get:
+ *     summary: Obtiene datos formateados para un heatmap
+ *     description: Devuelve datos agregados de sensores organizados por semana y día de la semana para un heatmap.
+ *     tags:
+ *       - Sensores
+ *     parameters:
+ *       - in: query
+ *         name: variable
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nombre de la variable del sensor
+ *       - in: query
+ *         name: equipo
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nombre del equipo del sensor
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: Año de los datos, por defecto el actual
+ *     responses:
+ *       200:
+ *         description: Datos procesados exitosamente para el heatmap
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       404:
+ *         description: No se encontraron datos
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/heatmap', async (req, res) => {
     const { variable, equipo, year } = req.query;
     const cacheKey = `heatmap_sensor_${variable}_${equipo}`;

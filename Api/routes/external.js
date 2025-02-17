@@ -7,8 +7,27 @@ const executeRScript = require('../utils/executeRScript');
 const connection = require('../db/database'); // Importa la conexión a la base de datos
 const { body, query, validationResult } = require('express-validator');
 
+/**
+ * @swagger
+ * /heatmap:
+ *   get:
+ *     summary: Obtiene datos del heatmap
+ *     description: Recupera todos los datos de la tabla heatmap_sergio.
+ *     tags:
+ *       - External
+ *     responses:
+ *       200:
+ *         description: Datos obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o no funciona
-
     connection.query('SELECT * FROM heatmap_sergio', (err, rows, fields) => {
         if (err) {
             console.error('Error querying the database:', err);
@@ -19,6 +38,57 @@ router.get('/heatmap', (req, res) => { //pese a no tener req, hay que ponerlo o 
     });
 });
 
+/**
+ * @swagger
+ * /r:
+ *   get:
+ *     summary: Ejecuta un script R con parámetros proporcionados
+ *     description: Ejecuta un script R con los parámetros proporcionados y devuelve el resultado.
+ *     tags:
+ *       - External
+ *     parameters:
+ *       - in: query
+ *         name: mltss_sp
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro mltss_sp
+ *       - in: query
+ *         name: so_aer_sp
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro so_aer_sp
+ *       - in: query
+ *         name: q_int
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro q_int
+ *       - in: query
+ *         name: tss_eff_sp
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro tss_eff_sp
+ *       - in: query
+ *         name: temp
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro temp
+ *     responses:
+ *       200:
+ *         description: Resultado del script R
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Error de validación
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/r', [
     query('mltss_sp').isNumeric().withMessage('mltss_sp debe ser numérico'),
     query('so_aer_sp').isNumeric().withMessage('so_aer_sp debe ser numérico'),
@@ -35,17 +105,9 @@ router.get('/r', [
 
     const { mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp } = req.query;
 
-    const cacheKey = `r_${mltss_sp}_${so_aer_sp}_${q_int}_${tss_eff_sp}_${temp}`;
         
     try {
-        let cachedData = await redisClient.getCachedResponse(cacheKey);
-
-        if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-        }
         const result = await executeRScript(mltss_sp, so_aer_sp, q_int, tss_eff_sp, temp);
-
-        await redisClient.setCachedResponse(cacheKey, result);
 
         res.status(200).send(result);
     } catch (error) {
@@ -54,6 +116,51 @@ router.get('/r', [
     }
 });
 
+/**
+ * @swagger
+ * /java:
+ *   get:
+ *     summary: Ejecuta un script Java con parámetros proporcionados
+ *     description: Ejecuta un script Java con los parámetros proporcionados y devuelve el resultado.
+ *     tags:
+ *       - External
+ *     parameters:
+ *       - in: query
+ *         name: age
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro age
+ *       - in: query
+ *         name: race
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Parámetro race
+ *       - in: query
+ *         name: psa
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro psa
+ *       - in: query
+ *         name: gleason
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro gleason
+ *     responses:
+ *       200:
+ *         description: Resultado del script Java
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Faltan parámetros requeridos
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/java', async (req, res) => {
     const { age, race, psa, gleason } = req.query;
 
@@ -62,17 +169,9 @@ router.get('/java', async (req, res) => {
         return res.status(400).send('Faltan parámetros requeridos');
     }
 
-    const cacheKey = `java_${age}_${race}_${psa}_${gleason}`;
-
     try {
-        let cachedData = await redisClient.getCachedResponse(cacheKey);
-
-        if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-        }
         const result = await executeJava(age, race, psa, gleason);
 
-        await redisClient.setCachedResponse(cacheKey, result);
         res.status(200).send(result);
     } catch (error) {
         console.error('Error ejecutando el script Java:', error.message, error.stack);
@@ -80,6 +179,39 @@ router.get('/java', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /python:
+ *   get:
+ *     summary: Ejecuta un randomizador Python con parámetros proporcionados
+ *     description: Elige el num1 siendo el parámetro inicial y el num2 siendo el parámetro final y devuelve el resultado.
+ *     tags:
+ *       - External
+ *     parameters:
+ *       - in: query
+ *         name: num1
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro num1
+ *       - in: query
+ *         name: num2
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: Parámetro num2
+ *     responses:
+ *       200:
+ *         description: Resultado del script Python
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       400:
+ *         description: Error de validación
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.get('/python', async (req, res) => {
     const { num1, num2 } = req.query;
 
@@ -88,20 +220,9 @@ router.get('/python', async (req, res) => {
         return res.status(400).json({ error: 'Faltan parámetros requeridos' });
     }
 
-    const cacheKey = `python_${num1}_${num2}`;
-
     try {
-        let cachedData = await redisClient.getCachedResponse(cacheKey);
-
-        if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-        }
-
         // Espera el resultado de executePython
         const result = await executePython(num1, num2);
-
-        // Guarda el resultado en la caché
-        await redisClient.setCachedResponse(cacheKey, result);
 
         // Envía el resultado en formato JSON
         res.status(200).json(result);

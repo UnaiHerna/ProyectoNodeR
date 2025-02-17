@@ -8,7 +8,7 @@ const options = {
             title: 'Cimico API',
             version: '1.0.0',
             description:
-                'Esta es una API para organizar las plantas',
+                'Esta es una API para organizar las plantas depuradoras',
             contact: {
                 name: 'Unai',
             },

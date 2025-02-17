@@ -12,9 +12,6 @@ const swaggerUi = require('swagger-ui-express');
 const specs = require('./docs/swagger');
 const { createServer } = require('http');
 
-require('dotenv').config();
-console.log('Clave API:', process.env.OPENAI_API_KEY); // Esto debería imprimir la clave
-
 const app = express();
 const server = createServer(app);
 
@@ -35,7 +32,6 @@ app.use(cors({
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
-app.use('/datos/sensorvacio', sensorRoutes); 
 app.use('/datos/sensor', sensorRoutes);
 app.use('/user', userRoutes);
 app.use('/forecast', forecastRoutes);
