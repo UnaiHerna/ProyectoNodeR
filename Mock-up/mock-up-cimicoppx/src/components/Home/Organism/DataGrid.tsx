@@ -28,9 +28,8 @@ const scatterData = [
 
 const   DataGrid: React.FC<{ showPoints: boolean, showLine: boolean, activeDataType: string, }> = ({ showPoints, showLine, activeDataType }) => {
   return (
-    <div className="flex w-full h-full">
-      <div className="w-full">
-        <div className="w-full h-72">
+    <div className="w-full h-full">
+        <div className="w-full h-full">
           <ScatterChartComponent 
             metrics={["ppm", "ppm", "ppm", "mV", "ppm"]} // Passing the metrics
             data={scatterData} 
@@ -41,7 +40,6 @@ const   DataGrid: React.FC<{ showPoints: boolean, showLine: boolean, activeDataT
             activeDataType={activeDataType}
           />
         </div>
-      </div>
     </div>
   );
 };

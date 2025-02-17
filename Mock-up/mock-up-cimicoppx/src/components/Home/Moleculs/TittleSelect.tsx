@@ -7,11 +7,11 @@ interface TitleSectionProps {
 
 const TitleSelection: React.FC<TitleSectionProps> = ({ title, additionalLabels }) => {
   return (
-    <div className="w-full flex flex-row justify-between">
-      <section className="self-end w-full flex flex-row justify-between">
+    <div className="w-full flex flex-row justify-between ">
+      <section className="self-end w-full flex flex-row justify-between h-auto">
         <h1 className="text-blue-800 mb-2 p-1 sm:text-sm md:text-medium lg:text-large xl:text-xl 2xl:text-xl font-raleway text-center">{title}</h1>
       </section>
-      <section className="flex flex-row gap-4 self-end">
+      <section className="flex flex-row self-end">
         {additionalLabels}
       </section>
     </div>

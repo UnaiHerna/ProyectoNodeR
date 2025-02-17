@@ -1,7 +1,4 @@
 import React from "react";
-import {
-  ResponsiveContainer,
-} from "recharts";
 import ShowLineWW from "../Moleculs/ShowLineTube";
 import ScatterChartWW from "../Moleculs/ScatterChartWW";
 import TubeChart from "../Moleculs/TubeChart";
@@ -27,8 +24,7 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
 }) => {
    
   return (
-    <div className="w-full h-72">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="w-full h-full flex items-center justify-center -mt-3">
         {/* Conditionally render either ScatterChart or LineChart */}
         {activeDataType !== "tube" ? (
           showLine ? (
@@ -39,14 +35,12 @@ const LineChartComponent: React.FC<LineChartComponentProps> = ({
             <ScatterChartWW metrics={metrics} showPoints={showPoints}  activeDataType={activeDataType} data={data} headers={headers} rowLabels={rowLabels} showLine />
           )
         ) : (
-          // Render TubeChartw
+          // Render TubeChart
           <TubeChart activeDataType={activeDataType} headers={headers} showLine={showLine} showPoints={showPoints} />
         )}
-      </ResponsiveContainer>
     </div>
   );
   
 };
-
 
 export default LineChartComponent;

@@ -25,10 +25,10 @@ const Dashboard: React.FC = () => {
   
   const handleSpanClick = () => {
     console.log("Span clicked in MapAndChart");
-    setShowPoints(true);
+    setShowPoints((prevShowPoints) => !prevShowPoints);
     setShowLine(false);
-    setActiveButton("span");
-  };
+    setActiveButton((prevActiveButton) => (prevActiveButton === "span" ? "map" : "span"));
+};
 
   const handleChartClick = () => {
     console.log("Chart icon clicked in MapAndChart");
@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-rows-4 grid-cols-4 gap-6 p-4 bg-white h-full w-auto">
+    <div className="grid grid-rows-2 grid-cols-4 gap-6 p-4 h-full w-full ">
       <Card
         title={
           <TitleSelection
@@ -64,9 +64,9 @@ const Dashboard: React.FC = () => {
             }
           />
         } /* breakpoint grid para influent rate*/
-        className="row-span-2 col-span-3 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3 2xl:col-span-3 bg-white"
+        className="row-span-1 col-span-3 sm:col-span-3 md:col-span-3 lg:col-span-3 xl:col-span-3 2xl:col-span-3 bg-white"
       >
-        <div className="md:h-[80%] lg:h-[80%] xl:h-[80%] 2xl:h-[90%] w-full bg-red-200 2xl:bg-violet-300">
+        <div className="md:h-[80%] lg:h-[80%] xl:h-[80%] 2xl:h-[90%] w-full">
           <FlowRateChart />
         </div>
       </Card>
@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
           />
         } /*aqui */
         /* breakpoint grid para Performance*/
-        className="row-span-2 col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1 bg-white"
+        className="row-span-1 col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1 bg-white"
       >
         <PerformanceBody />
       </Card>
@@ -93,14 +93,14 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Weather info"
             additionalLabels={
-              <section className="mb-[8px]">
+              <section className="lg:mb-[8px]">
                 <DotsCircle />
               </section>
             }
           />
         }
         /* breakpoint grid para wheather info*/
-        className="row-span-2 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2"
+        className="row-span-1 col-span-2 bg-red-50 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2"
       >
         <WeatherForecast />
       </Card>
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
           <TitleSelection
             title="Online sensors"
             additionalLabels={
-              <section className="w-full p-1 flex flex-col lg:flex-row gap-4 lg:gap-48 align-middle justify-center items-center">
+              <section className="w-full h-auto  -mt-12 flex flex-col lg:flex-row align-middle justify-center  md:gap-10 lg:gap-16 xl:gap-20 2xl:gap-56 items-center">
                 <MapAndChart 
                   handleMapClick={handleMapClick}
                   handleChartClick={handleChartClick}
@@ -130,16 +130,16 @@ const Dashboard: React.FC = () => {
                   />
                 </div>
               </section>
-            }
+            } 
           />
         }
         /* breakpoint grid para online sensors*/
-        className="row-span-2 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2 bg-white p-0 m-0"
+        className="row-span-1 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2 bg-white p-0 m-0"
       >
         <DataGrid showPoints={showPoints} showLine={showLine} activeDataType={activeDataType}/>
       </Card>
     </div>
   );
 };
-
+ 
 export default Dashboard;

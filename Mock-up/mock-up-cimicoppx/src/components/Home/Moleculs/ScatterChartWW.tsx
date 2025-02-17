@@ -133,7 +133,7 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="90%">
         <ScatterChart margin={{ top: 20, right: 0, left: 12, bottom: 40 }}>
       <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
       <XAxis
@@ -171,9 +171,10 @@ const ScatterChartWW: React.FC<LineChartComponentProps> = ({
         name="Data Points"
         data={data}
         fill="#082464"
-        fontSize={17}
+        fontSize={19}
         shape={showPoints ? CustomScatterShape : (props: ScatterPointItem)=>(
           <>
+           <circle cx={props.cx} cy={props.cy} r={10} fill="white" />
           <circle cx={props.cx} cy={props.cy} r={6} fill="#082464" />
           </>
         )} // Show custom when showPoints(show numbers) is true

@@ -134,7 +134,7 @@ interface LineChartComponentProps {
             <g transform={`translate(${x + 6},${y})`}>
               <foreignObject x={-1} y={-17} width={80} height={30}>
                 <div className="flex text-start items-center w-full h-full">
-                  <span className="text-[#002060] font-lato text-[11pt]">
+                  <span className="text-[#002060] font-lato text-[14pt]">
                     {label}
                   </span>
                 </div>
@@ -147,7 +147,7 @@ interface LineChartComponentProps {
       };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="90%">
       <ComposedChart margin={{ top: 20, right: 0, left: 12, bottom: 40 }}>
         <CartesianGrid strokeDasharray="0 0" stroke="#f2f2f2" />
         <XAxis
@@ -259,7 +259,7 @@ interface LineChartComponentProps {
                 <>
                   <rect
                     x={props.cx ? props.cx / 1.5 - 40 : 0} // Centrar el rect con respecto al texto
-                    y={props.cy ? props.cy - 20 : 0} // Centrar verticalmente el rect
+                    y={props.cy ? props.cy - 10 : 0} // Centrar verticalmente el rect
                     width={80} // Ancho del fondo
                     height={60} // Alto del fondo
                     fill="white" // Color del fondo
