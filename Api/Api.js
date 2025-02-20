@@ -37,7 +37,6 @@ app.use('/user', userRoutes);
 app.use('/forecast', forecastRoutes);
 app.use('/', externalRoutes);
 
-// Sirve la aplicación React desde la carpeta 'dist'
 app.use(express.static(path.join(__dirname, '../front-end/dist')));
 
 // Redirige todas las rutas al index.html de React

@@ -7,6 +7,62 @@ require('dotenv').config();
 const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
 const apiKey = process.env.AEMET_API_KEY;
 
+// Función para formatear la hora en formato AM/PM
+function formatearHora(hora) {
+    if (hora === 0) {
+        return "12am";
+    } else if (hora < 12) {
+        return `${hora}am`;
+    } else if (hora === 12) {
+        return "12pm";
+    } else {
+        return `${hora - 12}pm`;
+    }
+}
+
+// Función para obtener los datos de las próximas 6 horas
+function obtenerDatosProximas6Horas(datos) {
+    const ahora = new Date();
+    const horaActual = ahora.getHours();
+    const proximas6Horas = [];
+
+    // Tomar el primer objeto del array, que representa el día actual
+    const hoy = datos[0];  
+
+    for (let i = 0; i < 7; i++) {
+        const hora = (horaActual + i) % 24;
+        let periodo;
+        if (hora < 10) {
+            periodo = `0${hora}`;
+        } else {
+            periodo = hora.toString();
+        }
+
+        let tiempo;
+        if (i === 0) {
+            tiempo = "ahora";
+        } else {
+            tiempo = formatearHora(hora);
+        }
+
+        // Buscar los datos dentro de `hoy`
+        const datosHora = hoy.estadoCielo.find(item => item.periodo === periodo);
+        const temperatura = hoy.temperatura.find(temp => temp.periodo === periodo)?.value || 'No disponible';
+        const probabilidadPrecipitacion = hoy.probPrecipitacion.find(prec => prec.periodo === periodo)?.value || 0;
+
+        if (datosHora) {
+            proximas6Horas.push({
+                tiempo: tiempo,
+                icono: datosHora.descripcion,
+                temperatura: temperatura,
+                probabilidadPrecipitacion: probabilidadPrecipitacion
+            });
+        }
+    }
+
+    return proximas6Horas;
+}
+
 /**
  * @swagger
  * /forecast/diario/{municipioId}:
@@ -64,12 +120,11 @@ router.get('/diario/:municipioId', async (req, res) => {
         }
 
         const forecastData = await forecastResponse.json();
-        console.log('Datos de predicción:', forecastData[0].prediccion);
 
         // Procesar los datos correctamente
         const forecastForSevenDays = forecastData[0]?.prediccion?.dia.map(day => ({
             fecha: day.fecha,
-            estadoCielo: day.estadoCielo[0]?.descripcion || 'Desconocido',
+            iconoCielo: day.estadoCielo[0]?.descripcion || 'Desconocido',
             temperaturaMaxima: day.temperatura?.maxima || 'No disponible',
             temperaturaMinima: day.temperatura?.minima || 'No disponible',
             probabilidadPrecipitacion: day.probPrecipitacion[0]?.value || 0,
@@ -141,26 +196,12 @@ router.get('/horario/:municipioId', async (req, res) => {
         }
 
         const forecastData = await forecastResponse.json();
-        console.log('Datos de predicción horaria:', forecastData.prediccion);
 
-        // Procesar los datos correctamente
-        const forecastForNextHours = forecastData[0]?.prediccion?.dia.flatMap(day =>
-            day.estadoCielo.map((estado, index) => ({
-                fecha: day.fecha,
-                hora: `${index * 1}:00`, // AEMET organiza datos en intervalos de 3 horas
-                estadoCielo: estado.descripcion || 'Desconocido',
-                temperatura: day.temperatura[index]?.value || 'No disponible',
-                probabilidadPrecipitacion: day.probPrecipitacion[index]?.value || 0,
-            }))
-        );
+        const datosFinales = obtenerDatosProximas6Horas(forecastData[0].prediccion.dia);
 
-        if (!forecastForNextHours) {
-            throw new Error('No se encontraron datos de predicción horaria.');
-        }
+        await redisClient.setCachedResponse(cacheKey, datosFinales);
 
-        await redisClient.setCachedResponse(cacheKey, forecastForNextHours, 0.1); // Cache for 1 hour
-
-        res.status(200).json(forecastForNextHours);
+        res.status(200).json(datosFinales);
     } catch (error) {
         console.error('Error obteniendo el clima:', error.message);
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
