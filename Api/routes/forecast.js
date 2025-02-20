@@ -29,7 +29,7 @@ function obtenerDatosProximas6Horas(datos) {
     // Tomar el primer objeto del array, que representa el día actual
     const hoy = datos[0];  
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
         const hora = (horaActual + i) % 24;
         let periodo;
         if (hora < 10) {
