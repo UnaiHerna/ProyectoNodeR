@@ -22,21 +22,12 @@ function formatearHora(hora) {
 
 // Función para obtener los datos de las próximas 6 horas
 function obtenerDatosProximas6Horas(datos) {
-    const horaActual = new Date().getHours();
+    const horaActual = parseInt(new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false }));
     const proximas6Horas = []; 
     const longitud = 6;
 
     // Representa el día actual
     let hoy = datos[0];
-
-    // Buscar si existe un registro en "hoy" para la hora actual
-    const registroAhora = hoy.estadoCielo.find(item => parseInt(item.periodo, 10) === horaActual);
-
-    // Si no se encuentra un registro para la hora actual, y hay datos del siguiente día, se usa esos datos
-    if (!registroAhora && datos.length > 1) {
-        hoy = datos[1];
-        longitud++; // Se añade una hora más para compensar el cambio de día
-    }
     
     for (let i = 0; i < longitud; i++) {
         const hora = (horaActual + i) % 24;
@@ -90,7 +81,7 @@ function obtenerDatosProximas6Horas(datos) {
  */
 router.get('/diario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const ahora = new Date().getHours();
+    const ahora = parseInt(new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false }));
     const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
@@ -167,7 +158,7 @@ router.get('/diario/:municipioId', async (req, res) => {
  */
 router.get('/horario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const ahora = new Date().getHours();
+    const ahora = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
     const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
@@ -177,14 +168,14 @@ router.get('/horario/:municipioId', async (req, res) => {
     try {
         let cachedData = await redisClient.getCachedResponse(cacheKey);
 
-        if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-        }
-
         // Obtener la URL con los datos de predicción horaria
         const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`);
         if (!response.ok) {
-            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+            if (cachedData) {
+                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+            }else {
+                throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+            }
         }
 
         const data = await response.json();
@@ -192,7 +183,11 @@ router.get('/horario/:municipioId', async (req, res) => {
         // Obtener los datos reales desde la URL proporcionada
         const forecastResponse = await fetch(data.datos);
         if (!forecastResponse.ok) {
-            throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
+            if (cachedData) {
+                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+            }else {
+                throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
+            }
         }
 
         const forecastData = await forecastResponse.json();
