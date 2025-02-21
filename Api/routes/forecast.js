@@ -91,8 +91,9 @@ function obtenerDatosProximas6Horas(datos) {
  *         description: Error interno al procesar la solicitud
  */
 router.get('/diario/:municipioId', async (req, res) => {
-    const municipioId = req.params.municipioId; // Código de municipio para Ranilla '41004'; 
-    const cacheKey = `forecastDiario_${municipioId}`;
+    const municipioId = req.params.municipioId;
+    const ahora = new Date();
+    const cacheKey = `forecastDiario_${municipioId}_${ahora.getHours}`;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
@@ -168,7 +169,8 @@ router.get('/diario/:municipioId', async (req, res) => {
  */
 router.get('/horario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const cacheKey = `forecastHorario_${municipioId}`;
+    const ahora = new Date();
+    const cacheKey = `forecastDiario_${municipioId}_${ahora.getHours}`;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
