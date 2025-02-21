@@ -22,30 +22,28 @@ function formatearHora(hora) {
 
 // Función para obtener los datos de las próximas 6 horas
 function obtenerDatosProximas6Horas(datos) {
-    const ahora = new Date();
-    const horaActual = ahora.getHours();
-    const proximas6Horas = [];
+    const horaActual = new Date().getHours();
+    const proximas6Horas = []; 
+    const longitud = 6;
 
-    // Tomar el primer objeto del array, que representa el día actual
-    const hoy = datos[0];  
+    // Representa el día actual
+    let hoy = datos[0];
 
-    for (let i = 0; i < 6; i++) {
+    // Buscar si existe un registro en "hoy" para la hora actual
+    const registroAhora = hoy.estadoCielo.find(item => parseInt(item.periodo, 10) === horaActual);
+
+    // Si no se encuentra un registro para la hora actual, y hay datos del siguiente día, se usa esos datos
+    if (!registroAhora && datos.length > 1) {
+        hoy = datos[1];
+        longitud++; // Se añade una hora más para compensar el cambio de día
+    }
+    
+    for (let i = 0; i < longitud; i++) {
         const hora = (horaActual + i) % 24;
-        let periodo;
-        if (hora < 10) {
-            periodo = `0${hora}`;
-        } else {
-            periodo = hora.toString();
-        }
+        const periodo = hora < 10 ? `0${hora}` : hora.toString();
+        const tiempo = i === 0 ? "ahora" : formatearHora(hora);
 
-        let tiempo;
-        if (i === 0) {
-            tiempo = "ahora";
-        } else {
-            tiempo = formatearHora(hora);
-        }
-
-        // Buscar los datos dentro de `hoy`
+        // Buscar los datos correspondientes al período
         const datosHora = hoy.estadoCielo.find(item => item.periodo === periodo);
         const temperatura = hoy.temperatura.find(temp => temp.periodo === periodo)?.value || 'No disponible';
         const probabilidadPrecipitacion = hoy.probPrecipitacion.find(prec => prec.periodo === periodo)?.value || 0;
@@ -92,8 +90,8 @@ function obtenerDatosProximas6Horas(datos) {
  */
 router.get('/diario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const ahora = new Date();
-    const cacheKey = `forecastDiario_${municipioId}_${ahora.getHours}`;
+    const ahora = new Date().getHours();
+    const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
@@ -169,8 +167,8 @@ router.get('/diario/:municipioId', async (req, res) => {
  */
 router.get('/horario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const ahora = new Date();
-    const cacheKey = `forecastDiario_${municipioId}_${ahora.getHours}`;
+    const ahora = new Date().getHours();
+    const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
