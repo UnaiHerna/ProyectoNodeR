@@ -158,20 +158,27 @@ router.get('/diario/:municipioId', async (req, res) => {
  */
 router.get('/horario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const cacheKey = `forecastDiario_${municipioId}`;
+    const ahora = new Date().toLocaleString('es-ES', { 
+        timeZone: 'Europe/Madrid', 
+        hour: 'numeric', 
+        hour12: false 
+    });
+    
+    const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AEMET en las variables de entorno' });
     }
 
-    const fetchWithTimeout = async (url, timeout = 8000) => {
+    // Configuración de timeout para fetch
+    const fetchWithTimeout = async (url, timeout = 5000) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeout);
         
         try {
-            const response = await fetch(url, {
+            const response = await fetch(url, { 
                 signal: controller.signal,
-                headers: { 'Accept-Encoding': 'gzip, deflate' }
+                headers: { 'Accept-Encoding': 'gzip, deflate' } 
             });
             clearTimeout(timeoutId);
             return response;
@@ -182,52 +189,58 @@ router.get('/horario/:municipioId', async (req, res) => {
     };
 
     try {
-        // Intento principal: Obtener datos frescos de AEMET
-        const datosResponse = await fetchWithTimeout(
+        // Paso 1: Obtener URL de predicción
+        const predictionResponse = await fetchWithTimeout(
             `${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`
         );
-
-        if (!datosResponse.ok) {
-            throw new Error(`Error HTTP: ${datosResponse.status}`);
+        
+        if (!predictionResponse.ok) {
+            throw new Error(`Error API AEMET: ${predictionResponse.statusText}`);
         }
 
-        const data = await datosResponse.json();
-        const forecastResponse = await fetchWithTimeout(data.datos);
+        // Paso 2: Obtener datos reales
+        const predictionData = await predictionResponse.json();
+        const forecastResponse = await fetchWithTimeout(predictionData.datos);
         
         if (!forecastResponse.ok) {
-            throw new Error(`Error HTTP: ${forecastResponse.status}`);
+            throw new Error(`Error datos AEMET: ${forecastResponse.statusText}`);
         }
 
+        // Procesar datos
         const forecastData = await forecastResponse.json();
         const datosFinales = obtenerDatosProximas6Horas(forecastData[0].prediccion.dia);
 
-        // Actualizar caché con nuevos datos
-        await redisClient.setCachedResponse(cacheKey, datosFinales, 3600); // 1 hora de cache
-        
+        // Gestión de caché (manteniendo tu lógica original)
+        const existingCache = await redisClient.getCachedResponse(cacheKey);
+        if (!existingCache) {
+            await redisClient.setCachedResponse(cacheKey, datosFinales, 3600);
+        }
+
         return res.status(200).json(datosFinales);
 
     } catch (error) {
-        console.error('Error obteniendo datos en tiempo real:', error.message);
+        console.error(`Error en solicitud: ${error.message}`);
         
-        // Fallback a caché si hay error
+        // Recuperación desde caché con la clave original
         try {
             const cachedData = await redisClient.getCachedResponse(cacheKey);
             if (cachedData) {
-                console.log(`Usando datos en caché: ${cacheKey}`);
+                console.log(`Recuperado desde caché: ${cacheKey}`);
                 return res.json({
                     data: cachedData,
-                    warning: 'Datos pueden no ser actuales',
-                    message: 'Fallo en conexión con AEMET'
+                    warning: 'Datos en caché - Posiblemente no actualizados',
+                    errorOriginal: error.message
                 });
             }
         } catch (cacheError) {
-            console.error('Error accediendo a caché:', cacheError.message);
+            console.error(`Error en caché: ${cacheError.message}`);
         }
 
-        return res.status(500).json({
-            error: 'Error al obtener datos',
-            details: error.message,
-            cacheStatus: 'Sin datos en caché disponibles'
+        // Respuesta de error final
+        return res.status(500).json({ 
+            error: 'Fallo al obtener datos',
+            detalle: error.message,
+            cacheKeyUsada: cacheKey
         });
     }
 });
