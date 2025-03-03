@@ -172,8 +172,8 @@ router.get('/horario/:municipioId', async (req, res) => {
         const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`);
         if (!response.ok) {
             if (cachedData) {
-                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-            }else {
+                return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
+            } else {
                 throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
             }
         }
@@ -184,8 +184,8 @@ router.get('/horario/:municipioId', async (req, res) => {
         const forecastResponse = await fetch(data.datos);
         if (!forecastResponse.ok) {
             if (cachedData) {
-                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
-            }else {
+                return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
+            } else {
                 throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
             }
         }
@@ -203,7 +203,7 @@ router.get('/horario/:municipioId', async (req, res) => {
         let cachedData = await redisClient.getCachedResponse(cacheKey);
         if (cachedData) {
             console.log(`Usando datos en caché tras error: ${cacheKey}`);
-            return res.json(cachedData);
+            return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
         }
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
     }
