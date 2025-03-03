@@ -166,16 +166,10 @@ router.get('/horario/:municipioId', async (req, res) => {
     }
 
     try {
-        let cachedData = await redisClient.getCachedResponse(cacheKey);
-
         // Obtener la URL con los datos de predicción horaria
         const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`);
         if (!response.ok) {
-            if (cachedData) {
-                return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
-            } else {
-                throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
-            }
+            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -183,11 +177,7 @@ router.get('/horario/:municipioId', async (req, res) => {
         // Obtener los datos reales desde la URL proporcionada
         const forecastResponse = await fetch(data.datos);
         if (!forecastResponse.ok) {
-            if (cachedData) {
-                return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
-            } else {
-                throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
-            }
+            throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
         }
 
         const forecastData = await forecastResponse.json();
