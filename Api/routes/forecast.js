@@ -129,6 +129,18 @@ router.get('/diario/:municipioId', async (req, res) => {
     }
 });
 
+// Función auxiliar para implementar un timeout en fetch
+async function fetchWithTimeout(url, options = {}, timeout = 5000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    options.signal = controller.signal;
+    try {
+        return await fetch(url, options);
+    } finally {
+        clearTimeout(id);
+    }
+}
+
 /**
  * @swagger
  * /forecast/horario/{municipioId}:
@@ -166,18 +178,32 @@ router.get('/horario/:municipioId', async (req, res) => {
     }
 
     try {
+        let cachedData = await redisClient.getCachedResponse(cacheKey);
+
+        if (cachedData) {
+            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+        }
+
         // Obtener la URL con los datos de predicción horaria
         const response = await fetch(`${aemetBaseUrl}/prediccion/especifica/municipio/horaria/${municipioId}/?api_key=${apiKey}`);
         if (!response.ok) {
-            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+            if (cachedData) {
+                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+            }else {
+                throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+            }
         }
 
         const data = await response.json();
 
         // Obtener los datos reales desde la URL proporcionada
-        const forecastResponse = await fetch(data.datos);
+        const forecastResponse = await fetchWithTimeout(data.datos, {}, 10000);
         if (!forecastResponse.ok) {
-            throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
+            if (cachedData) {
+                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+            }else {
+                throw new Error(`Error al obtener los datos de predicción horaria: ${forecastResponse.statusText}`);
+            }
         }
 
         const forecastData = await forecastResponse.json();
@@ -190,14 +216,15 @@ router.get('/horario/:municipioId', async (req, res) => {
         }
 
         res.status(200).json(datosFinales);
+
     } catch (error) {
-        console.error('Error obteniendo el clima:', error.message);
         // Intentar recuperar desde la caché si la API falló
         let cachedData = await redisClient.getCachedResponse(cacheKey);
         if (cachedData) {
             console.log(`Usando datos en caché tras error: ${cacheKey}`);
             return res.json({ data: cachedData, message: 'Recurrido a caché por fallo de conexión' });
         }
+
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
     }
 });
