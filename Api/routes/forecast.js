@@ -199,6 +199,12 @@ router.get('/horario/:municipioId', async (req, res) => {
         res.status(200).json(datosFinales);
     } catch (error) {
         console.error('Error obteniendo el clima:', error.message);
+        // Intentar recuperar desde la caché si la API falló
+        let cachedData = await redisClient.getCachedResponse(cacheKey);
+        if (cachedData) {
+            console.log(`Usando datos en caché tras error: ${cacheKey}`);
+            return res.json(cachedData);
+        }
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
     }
 });
