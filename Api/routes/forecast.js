@@ -184,7 +184,10 @@ router.get('/horario/:municipioId', async (req, res) => {
 
         const datosFinales = obtenerDatosProximas6Horas(forecastData[0].prediccion.dia);
 
-        await redisClient.setCachedResponse(cacheKey, datosFinales, 3600); // Cache por 1 hora
+        let existingCache = await redisClient.getCachedResponse(cacheKey);
+        if (!existingCache) {
+            await redisClient.setCachedResponse(cacheKey, datosFinales, 3600); // Cache por 1 hora
+        }
 
         res.status(200).json(datosFinales);
     } catch (error) {
