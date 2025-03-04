@@ -322,7 +322,7 @@ router.get('/accuweather/:municipioId', async (req, res) => {
     const accuWeatherApiKey = process.env.ACCUWEATHER_API_KEY;
     const municipioId = req.params.municipioId || 306733;
 
-    const url = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${municipioId}?apikey=${accuWeatherApiKey}&language=es-ES&metric=true`;
+    const url = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${municipioId}?apikey=${accuWeatherApiKey}&metric=true`;
 
     if (!accuWeatherApiKey) {
         return res.status(500).json({ error: 'Falta la clave de API de AccuWeather en las variables de entorno' });
