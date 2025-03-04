@@ -11,9 +11,6 @@ const apiKey = process.env.AEMET_API_KEY;
 const ahora = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
 const ahoraMasUno = (parseInt(ahora) + 1) % 24;
 
-console.log('Hora actual:', ahora);
-console.log('Hora actual + 1:', ahoraMasUno);
-
 // Función para formatear la hora en formato AM/PM
 function formatearHora(hora) {
     if (hora === 0) {
@@ -202,8 +199,6 @@ router.get('/horario/:municipioId', async (req, res) => {
 
         const data = await response.json();
 
-        console.log('Datos de predicción horaria:', data);
-
         // Obtener los datos reales desde la URL proporcionada
         const forecastResponse = await fetchWithTimeout(data.datos, {}, 10000);
         if (!forecastResponse.ok) {
@@ -306,50 +301,69 @@ router.get('/municipios', async (req, res) => {
     }
 });
 
-// Forecast de AccuWeather con la misma logica que el horario
+// Función para obtener los datos de predicción horaria de AccuWeather
+async function obtenerDatosAccuWeather(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+    }
+
+    const datosFinales = await response.json();
+    return datosFinales.slice(0, 6).map(item => ({
+        tiempo: formatearHora(new Date(item.DateTime).getHours()),
+        icono: item.IconPhrase,
+        temperatura: item.Temperature.Value,
+        probabilidadPrecipitacion: item.PrecipitationProbability
+    }));
+}
+
+// Forecast de AccuWeather con la misma lógica que el horario
 router.get('/accuweather/:municipioId', async (req, res) => {
     const accuWeatherApiKey = process.env.ACCUWEATHER_API_KEY;
     const municipioId = req.params.municipioId || 306733;
+
     const url = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${municipioId}?apikey=${accuWeatherApiKey}&language=es-ES&metric=true`;
 
     if (!accuWeatherApiKey) {
-        return res.status(500).json({ error: 'Falta la clave de API de Accuweather en las variables de entorno' });
+        return res.status(500).json({ error: 'Falta la clave de API de AccuWeather en las variables de entorno' });
     }
 
     try {
+        // Intentar obtener los datos de Redis para la hora actual y la hora siguiente
         let cachedData = await redisClient.getCachedResponse(`forecastAccuweather_${municipioId}_${ahora}`);
+        let cachedDataNextHour = await redisClient.getCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`);
+
+        if (cachedData && cachedDataNextHour) {
+            // Si tiene ambos datos en caché, se devuelve directamente
+            return res.json(cachedData);
+        }
 
         if (cachedData) {
-            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+            // Si solo tiene los datos de la hora actual en caché, pero no para la siguiente hora
+            // Se realiza la petición para obtener los datos de la hora siguiente
+            const datosFinalesNextHour = await obtenerDatosAccuWeather(url);
+            await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`, datosFinalesNextHour, 3600);
+
+            // Devuelve los datos de la hora actual en caché
+            return res.json(cachedData);
         }
 
-        // Obtener la URL con los datos de predicción horaria
-        const response = await fetch(url);
+        // Si no hay datos en caché, entonces hay que esperar una hora
+        if (!cachedData && !cachedDataNextHour) {
+            // Realizar la solicitud para obtener ambos datos
+            const datosFinales = await obtenerDatosAccuWeather(url);
+            
+            // Guardar los datos en Redis
+            await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahora}`, datosFinales, 3600);
+            await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`, datosFinales, 3600);
 
-        if (!response.ok) {
-            if (cachedData) {
-                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termin
-            }
-            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+            // Devolver los datos
+            return res.status(200).json(datosFinales);
         }
 
-        const forecastData = await response.json();
-        
-        const datosFinales = forecastData.slice(0, 6).map(item => ({
-            tiempo: formatearHora(new Date(item.DateTime).getHours()),
-            icono: item.IconPhrase,
-            temperatura: item.Temperature.Value,
-            probabilidadPrecipitacion: item.PrecipitationProbability
-        }));
-
-        let existingCache = await redisClient.getCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`);
-        if (!existingCache) {
-            await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`, datosFinales, 86400); // Cache por 24 horas
-        }
-        
-        res.status(200).json(datosFinales);
     } catch (error) {
-        throw new Error(`Error al obtener la URL de predicción horaria`);
+        console.error('Error obteniendo el clima de AccuWeather:', error.message);
+        res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
     }
 });
 
