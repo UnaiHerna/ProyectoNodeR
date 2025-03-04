@@ -7,6 +7,13 @@ require('dotenv').config();
 const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
 const apiKey = process.env.AEMET_API_KEY;
 
+// Obtener la hora actual en formato 24 horas
+const ahora = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
+const ahoraMasUno = (parseInt(ahora) + 1) % 24;
+
+console.log('Hora actual:', ahora);
+console.log('Hora actual + 1:', ahoraMasUno);
+
 // Función para formatear la hora en formato AM/PM
 function formatearHora(hora) {
     if (hora === 0) {
@@ -81,7 +88,6 @@ function obtenerDatosProximas6Horas(datos) {
  */
 router.get('/diario/:municipioId', async (req, res) => {
     const municipioId = req.params.municipioId;
-    const ahora = parseInt(new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false }));
     const cacheKey = `forecastDiario_${municipioId}_${ahora}`;
 
     if (!apiKey) {
@@ -196,6 +202,8 @@ router.get('/horario/:municipioId', async (req, res) => {
 
         const data = await response.json();
 
+        console.log('Datos de predicción horaria:', data);
+
         // Obtener los datos reales desde la URL proporcionada
         const forecastResponse = await fetchWithTimeout(data.datos, {}, 10000);
         if (!forecastResponse.ok) {
@@ -212,7 +220,7 @@ router.get('/horario/:municipioId', async (req, res) => {
 
         let existingCache = await redisClient.getCachedResponse(cacheKey);
         if (!existingCache) {
-            await redisClient.setCachedResponse(cacheKey, datosFinales, 3600); // Cache por 1 hora
+            await redisClient.setCachedResponse(cacheKey, datosFinales, 1800); // Cache por 1 hora
         }
 
         res.status(200).json(datosFinales);
@@ -295,6 +303,53 @@ router.get('/municipios', async (req, res) => {
     } catch (error) {
         console.error('Error obteniendo la lista de municipios:', error.message);
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
+    }
+});
+
+// Forecast de AccuWeather con la misma logica que el horario
+router.get('/accuweather/:municipioId', async (req, res) => {
+    const accuWeatherApiKey = process.env.ACCUWEATHER_API_KEY;
+    const municipioId = req.params.municipioId || 306733;
+    const url = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${municipioId}?apikey=${accuWeatherApiKey}&language=es-ES&metric=true`;
+
+    if (!accuWeatherApiKey) {
+        return res.status(500).json({ error: 'Falta la clave de API de Accuweather en las variables de entorno' });
+    }
+
+    try {
+        let cachedData = await redisClient.getCachedResponse(`forecastAccuweather_${municipioId}_${ahora}`);
+
+        if (cachedData) {
+            return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termina la ejecución
+        }
+
+        // Obtener la URL con los datos de predicción horaria
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            if (cachedData) {
+                return res.json(cachedData); // Devuelve la respuesta JSON directamente al cliente y termin
+            }
+            throw new Error(`Error al obtener la URL de predicción horaria: ${response.statusText}`);
+        }
+
+        const forecastData = await response.json();
+        
+        const datosFinales = forecastData.slice(0, 6).map(item => ({
+            tiempo: formatearHora(new Date(item.DateTime).getHours()),
+            icono: item.IconPhrase,
+            temperatura: item.Temperature.Value,
+            probabilidadPrecipitacion: item.PrecipitationProbability
+        }));
+
+        let existingCache = await redisClient.getCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`);
+        if (!existingCache) {
+            await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`, datosFinales, 86400); // Cache por 24 horas
+        }
+        
+        res.status(200).json(datosFinales);
+    } catch (error) {
+        throw new Error(`Error al obtener la URL de predicción horaria`);
     }
 });
 
