@@ -309,12 +309,15 @@ async function obtenerDatosAccuWeather(url) {
     }
 
     const datosFinales = await response.json();
-    return datosFinales.slice(0, 6).map(item => ({
-        tiempo: formatearHora(new Date(item.DateTime).getHours()),
-        icono: item.IconPhrase,
-        temperatura: item.Temperature.Value,
-        probabilidadPrecipitacion: item.PrecipitationProbability
-    }));
+    return datosFinales.slice(0, 6).map((item, index) => {
+        const horaEspañola = new Date(item.DateTime).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
+        return {
+            tiempo: index === 0 ? "now" : formatearHora(parseInt(horaEspañola)),
+            icono: item.IconPhrase,
+            temperatura: item.Temperature.Value,
+            probabilidadPrecipitacion: item.PrecipitationProbability
+        };
+    });
 }
 
 // Forecast de AccuWeather con la misma lógica que el horario
@@ -353,6 +356,8 @@ router.get('/accuweather/:municipioId', async (req, res) => {
             // Realizar la solicitud para obtener ambos datos
             const datosFinales = await obtenerDatosAccuWeather(url);
             
+            console.log(url);
+
             // Guardar los datos en Redis
             await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahora}`, datosFinales, 3600);
             await redisClient.setCachedResponse(`forecastAccuweather_${municipioId}_${ahoraMasUno}`, datosFinales, 3600);
