@@ -7,10 +7,6 @@ require('dotenv').config();
 const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
 const apiKey = process.env.AEMET_API_KEY;
 
-// Obtener la hora actual en formato 24 horas
-const ahora = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
-const ahoraMasUno = (parseInt(ahora) + 1) % 24;
-
 // Función para formatear la hora en formato AM/PM
 function formatearHora(hora) {
     if (hora === 0) {
@@ -324,6 +320,9 @@ async function obtenerDatosAccuWeather(url) {
 router.get('/accuweather/:municipioId', async (req, res) => {
     const accuWeatherApiKey = process.env.ACCUWEATHER_API_KEY;
     const municipioId = req.params.municipioId || 306733;
+    // Obtener la hora actual en formato 24 horas
+    const ahora = new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false });
+    const ahoraMasUno = (parseInt(ahora) + 1) % 24;
 
     const url = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${municipioId}?apikey=${accuWeatherApiKey}&metric=true`;
 
