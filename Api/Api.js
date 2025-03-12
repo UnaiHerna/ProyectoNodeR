@@ -5,7 +5,7 @@ const cors = require('cors');
 const consignaRoutes = require('./routes/consigna');
 const senalRoutes = require('./routes/senal'); 
 const sensorRoutes = require('./routes/sensor');
-const forecastRoutes = require('./routes/forecast'); 
+const highlightsRoutes = require('./routes/highlights'); 
 const userRoutes = require('./security/jwt');
 const externalRoutes = require('./routes/external');
 const swaggerUi = require('swagger-ui-express');
@@ -34,7 +34,7 @@ app.use('/datos/consigna', consignaRoutes);
 app.use('/datos/senal', senalRoutes); 
 app.use('/datos/sensor', sensorRoutes);
 app.use('/user', userRoutes);
-app.use('/forecast', forecastRoutes);
+app.use('/highlights', highlightsRoutes);
 app.use('/', externalRoutes);
 
 app.use(express.static(path.join(__dirname, '../front-end/dist')));

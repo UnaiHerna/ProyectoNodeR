@@ -1,16 +1,15 @@
-const { Client } = require('pg');
+const mysql = require('mysql');
 
 // Configuración de la conexión a la base de datos
-const client = new Client({
+const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'admin',
+    user: 'root',
     password: 'Cim12345!',
-    database: 'Ranilla',
-    port: 5432 // Puerto por defecto de PostgreSQL
+    database: 'datos'
 });
 
 // Conectar a la base de datos
-client.connect(err => {
+connection.connect(err => {
     if (err) {
         console.error('Error connecting to the database:', err);
         process.exit(1);
@@ -21,7 +20,7 @@ client.connect(err => {
 
 // Manejar el cierre de la conexión cuando el proceso se interrumpe
 process.on('SIGINT', () => {
-    client.end(err => {
+    connection.end(err => {
         if (err) {
             console.error('Error closing the database connection:', err);
         } else {
@@ -31,4 +30,4 @@ process.on('SIGINT', () => {
     });
 });
 
-module.exports = client;
+module.exports = connection;

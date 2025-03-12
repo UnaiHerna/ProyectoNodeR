@@ -1,56 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const knex = require('../db/knex');
 const redisClient = require('../db/redisClient');
 const fetch = require('node-fetch');
+const { obtenerDatosProximas6Horas, formatearHora } = require('../utils/dateUtils');
 require('dotenv').config();
 
 const aemetBaseUrl = 'https://opendata.aemet.es/opendata/api';
 const apiKey = process.env.AEMET_API_KEY;
-
-// Función para formatear la hora en formato AM/PM
-function formatearHora(hora) {
-    if (hora === 0) {
-        return "12am";
-    } else if (hora < 12) {
-        return `${hora}am`;
-    } else if (hora === 12) {
-        return "12pm";
-    } else {
-        return `${hora - 12}pm`;
-    }
-}
-
-// Función para obtener los datos de las próximas 6 horas
-function obtenerDatosProximas6Horas(datos) {
-    const horaActual = parseInt(new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid', hour: 'numeric', hour12: false }));
-    const proximas6Horas = []; 
-    const longitud = 6;
-
-    // Representa el día actual
-    let hoy = datos[0];
-    
-    for (let i = 0; i < longitud; i++) {
-        const hora = (horaActual + i) % 24;
-        const periodo = hora < 10 ? `0${hora}` : hora.toString();
-        const tiempo = i === 0 ? "ahora" : formatearHora(hora);
-
-        // Buscar los datos correspondientes al período
-        const datosHora = hoy.estadoCielo.find(item => item.periodo === periodo);
-        const temperatura = hoy.temperatura.find(temp => temp.periodo === periodo)?.value || 'No disponible';
-        const probabilidadPrecipitacion = hoy.probPrecipitacion.find(prec => prec.periodo === periodo)?.value || 0;
-
-        if (datosHora) {
-            proximas6Horas.push({
-                tiempo: tiempo,
-                icono: datosHora.descripcion,
-                temperatura: temperatura,
-                probabilidadPrecipitacion: probabilidadPrecipitacion
-            });
-        }
-    }
-
-    return proximas6Horas;
-}
 
 /**
  * @swagger
@@ -317,7 +274,7 @@ async function obtenerDatosAccuWeather(url) {
 }
 
 // Forecast de AccuWeather con la misma lógica que el horario
-router.get('/accuweather/:municipioId', async (req, res) => {
+router.get('/forecast/accuweather/:municipioId', async (req, res) => {
     const accuWeatherApiKey = process.env.ACCUWEATHER_API_KEY;
     const municipioId = req.params.municipioId || 306733;
     // Obtener la hora actual en formato 24 horas
@@ -370,5 +327,38 @@ router.get('/accuweather/:municipioId', async (req, res) => {
         res.status(500).json({ error: 'Error interno al procesar la solicitud', details: error.message });
     }
 });
+
+router.get('/online_sensors', async (req, res) => {
+    try {
+        const result = await knex('analog_process_sensor as aps')
+            .select(
+                'apst.*',
+                'amd.id_loc as localizacion',
+                'var.name as unit',
+                'nl.label as label'
+            )
+            .join('analog_measurement_device as amd', 'aps.id_md', 'amd.id')
+            .join('variable as var', 'aps.id_variable', 'var.id')
+            .join('md_location as mdl', 'amd.id', 'mdl.id_md')
+            .join('node_layout as nl', 'amd.id_loc', 'nl.id')
+            .joinRaw(
+                `JOIN LATERAL (
+                    SELECT * FROM analog_process_sensor_ts apst
+                    WHERE apst.id_sensor = aps.id
+                    ORDER BY apst.time_utc DESC
+                    LIMIT 1
+                ) apst ON true`
+            )
+            .where('mdl.id_lt', 1)
+            .where('nl.id_ec', 9)
+            .where('nl.id_treatment', 6);
+
+        res.status(200).json(result);
+    } catch (error) {
+        console.error("Error fetching online sensors:", error.message);
+        res.status(500).json({ error: 'Error fetching online sensors', details: error.message });
+    }
+});
+
 
 module.exports = router;

@@ -1,12 +1,11 @@
 module.exports = {
     development: {
-        client: 'pg',  // Cliente para PostgreSQL
+        client: 'mysql',  // Asegúrate de que el cliente esté especificado
         connection: {
             host: '127.0.0.1',
-            user: 'admin',
+            user: 'root',
             password: 'Cim12345!',
-            database: 'Ranilla',
-            port: 5432 // Puerto por defecto de PostgreSQL
+            database: 'datos'
         }
     },
     // Puedes agregar más configuraciones para otros entornos (production, test, etc.)
